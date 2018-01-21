@@ -10,7 +10,9 @@ At time of writing, JW Library has _backup_ and _restore_ commands, but no _merg
 
 Download the zip file from the latest release and unzip the contents into a new folder.
 
-Run JWLMergeCLI.exe to view the syntax.
+https://github.com/AntonyCorbett/JWLMerge/releases/latest
+
+Open a command prompt window and run JWLMergeCLI.exe to view the syntax.
 
 ### Important Notes
 
