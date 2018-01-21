@@ -8,7 +8,7 @@ At time of writing, JW Library has _backup_ and _restore_ commands, but no _merg
 
 ### Usage
 
-Download the zip file from the latest release and unzip the contents into a new folder.
+Download the JWLMerge.zip file from the latest release and unzip the contents into a new folder.
 
 https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
@@ -17,6 +17,8 @@ Open a command prompt window and run JWLMergeCLI.exe to view the syntax.
 ### Important Notes
 
 Please use at your own risk! It is possible to crash JW Library by attempting to restore a corrupt backup file, and sometimes the only solution is to reinstall JW Library and reset its data.
+
+You must be familiar with using command-line programs in Windows.
 
 The format of your data in the backup files may change with future JW Library releases and I will try to keep the code up-to-date. If you receive an error stating that the backup file version is not supported then please come back here to see if an update is available.
 
