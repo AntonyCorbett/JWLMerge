@@ -1,0 +1,1 @@
+This is a record of the sqlite database schema used by the userData.db file. The DDL is extracted using SQLite Expert.
