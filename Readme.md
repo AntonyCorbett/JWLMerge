@@ -14,7 +14,7 @@ https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
 Open a command prompt window and run JWLMergeCLI.exe to view the syntax.
 
-![Command Line](https://github.com/AntonyCorbett/JWLMerge/jwlmergecmdline.png)
+![Command Line](jwlmergecmdline.png)
 
 ### Important Notes
 
