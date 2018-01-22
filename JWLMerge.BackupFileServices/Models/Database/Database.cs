@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Models.Database
+﻿using JWLMerge.BackupFileServices.Exceptions;
+
+namespace JWLMerge.BackupFileServices.Models.Database
 {
     using System;
     using System.Collections.Generic;
@@ -6,12 +8,15 @@
 
     public class Database
     {
-        private Lazy<Dictionary<string, Note>> _noteIndex;
-        private Lazy<Dictionary<string, UserMark>> _userMarksIndex;
-        private Lazy<Dictionary<int, Location>> _locationsIndex;
-        private Lazy<Dictionary<string, Tag>> _tagsIndex;
+        private Lazy<Dictionary<string, Note>> _notesGuidIndex;
+        private Lazy<Dictionary<int, Note>> _notesIdIndex;
+        private Lazy<Dictionary<string, UserMark>> _userMarksGuidIndex;
+        private Lazy<Dictionary<int, UserMark>> _userMarksIdIndex;
+        private Lazy<Dictionary<int, Location>> _locationsIdIndex;
+        private Lazy<Dictionary<string, Tag>> _tagsNameIndex;
+        private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
         private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
-        private Lazy<Dictionary<int, BlockRange>> _blockRangeIndex;
+        private Lazy<Dictionary<int, BlockRange>> _blockRangeUserMarkIdIndex;
 
         public Database()
         {
@@ -20,12 +25,15 @@
 
         public void ReinitializeIndexes()
         {
-            _noteIndex = new Lazy<Dictionary<string, Note>>(NoteIndexValueFactory);
-            _userMarksIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
-            _locationsIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
-            _tagsIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
+            _notesGuidIndex = new Lazy<Dictionary<string, Note>>(NoteIndexValueFactory);
+            _notesIdIndex = new Lazy<Dictionary<int, Note>>(NoteIdIndexValueFactory);
+            _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
+            _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
+            _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
+            _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
+            _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
             _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);
-            _blockRangeIndex = new Lazy<Dictionary<int, BlockRange>>(BlockRangeIndexValueFactory);
+            _blockRangeUserMarkIdIndex = new Lazy<Dictionary<int, BlockRange>>(BlockRangeIndexValueFactory);
         }
 
         public void InitBlank()
@@ -36,7 +44,76 @@
             Tags = new List<Tag>();
             TagMaps = new List<TagMap>();
             BlockRanges = new List<BlockRange>();
+            Bookmarks = new List<Bookmark>();
             UserMarks = new List<UserMark>();
+        }
+
+        public void CheckValidity()
+        {
+            ReinitializeIndexes();
+
+            CheckBlockRangeValidity();
+            CheckBookmarkValidity();
+            CheckNoteValidity();
+            CheckTagMapValidity();
+        }
+
+        private void CheckTagMapValidity()
+        {
+            foreach (var tagMap in TagMaps)
+            {
+                if (tagMap.Type == 1)
+                {
+                    if (FindTag(tagMap.TagId) == null)
+                    {
+                        throw new BackupFileServicesException($"Could not find tag for tag map {tagMap.TagMapId}");
+                    }
+
+                    if (FindNote(tagMap.TypeId) == null)
+                    {
+                        throw new BackupFileServicesException($"Could not find note for tag map {tagMap.TagMapId}");
+                    }
+                }
+            }
+        }
+
+        private void CheckNoteValidity()
+        {
+            foreach (var note in Notes)
+            {
+                if (note.UserMarkId != null && FindUserMark(note.UserMarkId.Value) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find user mark Id for note {note.NoteId}");
+                }
+
+                if (note.LocationId != null && FindLocation(note.LocationId.Value) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find location for note {note.NoteId}");
+                }
+            }
+        }
+
+        private void CheckBookmarkValidity()
+        {
+            foreach (var bookmark in Bookmarks)
+            {
+                if (FindLocation(bookmark.LocationId) == null ||
+                    FindLocation(bookmark.PublicationLocationId) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find location for bookmark {bookmark.BookmarkId}");
+                }
+            }
+        }
+
+        private void CheckBlockRangeValidity()
+        {
+            foreach (var range in BlockRanges)
+            {
+                if (FindUserMark(range.UserMarkId) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find user mark Id for block range {range.BlockRangeId}");
+                }
+            }
         }
 
         public LastModified LastModified { get; set; }
@@ -57,17 +134,32 @@
 
         public Note FindNote(string guid)
         {
-            return _noteIndex.Value.TryGetValue(guid, out var note) ? note : null;
+            return _notesGuidIndex.Value.TryGetValue(guid, out var note) ? note : null;
+        }
+
+        public Note FindNote(int noteId)
+        {
+            return _notesIdIndex.Value.TryGetValue(noteId, out var note) ? note : null;
         }
 
         public UserMark FindUserMark(string guid)
         {
-            return _userMarksIndex.Value.TryGetValue(guid, out var userMark) ? userMark : null;
+            return _userMarksGuidIndex.Value.TryGetValue(guid, out var userMark) ? userMark : null;
+        }
+
+        public UserMark FindUserMark(int userMarkId)
+        {
+            return _userMarksIdIndex.Value.TryGetValue(userMarkId, out var userMark) ? userMark : null;
         }
 
         public Tag FindTag(string tagName)
         {
-            return _tagsIndex.Value.TryGetValue(tagName, out var tag) ? tag : null;
+            return _tagsNameIndex.Value.TryGetValue(tagName, out var tag) ? tag : null;
+        }
+
+        public Tag FindTag(int tagId)
+        {
+            return _tagsIdIndex.Value.TryGetValue(tagId, out var tag) ? tag : null;
         }
 
         public TagMap FindTagMap(int tagId, int noteId)
@@ -77,14 +169,14 @@
 
         public Location FindLocation(int locationId)
         {
-            return _locationsIndex.Value.TryGetValue(locationId, out var location) ? location : null;
+            return _locationsIdIndex.Value.TryGetValue(locationId, out var location) ? location : null;
         }
 
         public BlockRange FindBlockRange(int userMarkId)
         {
             // note that we find a block range by userMarkId. The BlockRange.UserMarkId column 
             // isn't marked as a unique index, but we assume it should be.
-            return _blockRangeIndex.Value.TryGetValue(userMarkId, out var range) ? range : null;
+            return _blockRangeUserMarkIdIndex.Value.TryGetValue(userMarkId, out var range) ? range : null;
         }
 
         private Dictionary<string, Note> NoteIndexValueFactory()
@@ -92,9 +184,19 @@
             return Notes.ToDictionary(note => note.Guid);
         }
 
+        private Dictionary<int, Note> NoteIdIndexValueFactory()
+        {
+            return Notes.ToDictionary(note => note.NoteId);
+        }
+
         private Dictionary<string, UserMark> UserMarkIndexValueFactory()
         {
             return UserMarks.ToDictionary(userMark => userMark.UserMarkGuid);
+        }
+
+        private Dictionary<int, UserMark> UserMarkIdIndexValueFactory()
+        {
+            return UserMarks.ToDictionary(userMark => userMark.UserMarkId);
         }
 
         private Dictionary<int, Location> LocationsIndexValueFactory()
@@ -110,6 +212,11 @@
         private Dictionary<string, Tag> TagIndexValueFactory()
         {
             return Tags.ToDictionary(tag => tag.Name);
+        }
+
+        private Dictionary<int, Tag> TagIdIndexValueFactory()
+        {
+            return Tags.ToDictionary(tag => tag.TagId);
         }
 
         private string GetTagMapKey(int tagId, int noteId)

@@ -205,7 +205,7 @@
                 Title = ReadString(reader, "Title"),
                 Snippet = ReadNullableString(reader, "Snippet"),
                 BlockType = ReadInt(reader, "BlockType"),
-                BlockIdentifier = ReadInt(reader, "BlockIdentifier")
+                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier")
             };
         }
 
