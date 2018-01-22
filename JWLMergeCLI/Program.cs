@@ -1,4 +1,6 @@
-﻿namespace JWLMergeCLI
+﻿using System.Diagnostics;
+
+namespace JWLMergeCLI
 {
     using System;
     using Serilog;
@@ -50,26 +52,40 @@
             Log.CloseAndFlush();
         }
 
+        private static string GetVersion()
+        {
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fvi.FileVersion;
+        }
+
         private static void ShowUsage()
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("Description:");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.WriteLine();
+            Console.WriteLine($" JWLMerge version {GetVersion()} ");
+            Console.WriteLine();
             Console.ResetColor();
-            Console.WriteLine("  JWLMergeCLI is used to merge the contents of 2 or more jwlibrary backup");
-            Console.WriteLine("  files. These files are produced by the JW Library backup command and");
-            Console.WriteLine("  contain your personal study notes and highlighting.");
+            
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("   Description:");
+            Console.ResetColor();
+            Console.WriteLine("    JWLMergeCLI is used to merge the contents of 2 or more jwlibrary backup");
+            Console.WriteLine("    files. These files are produced by the JW Library backup command and");
+            Console.WriteLine("    contain your personal study notes and highlighting.");
             Console.WriteLine();
             
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("Usage:");
+            Console.WriteLine("   Usage:");
             Console.ResetColor();
-            Console.WriteLine("  JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>...");
+            Console.WriteLine("    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>...");
             Console.WriteLine();
             
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("An example:");
+            Console.WriteLine("   An example:");
             Console.ResetColor();
-            Console.WriteLine("  JWLMergeCLI \"C:\\Backup_PC16.jwlibrary\" \"C:\\Backup_iPad.jwlibrary\"");
+            Console.WriteLine("    JWLMergeCLI \"C:\\Backup_PC16.jwlibrary\" \"C:\\Backup_iPad.jwlibrary\"");
             Console.WriteLine();
         }
 

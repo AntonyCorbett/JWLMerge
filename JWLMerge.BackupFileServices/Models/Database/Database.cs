@@ -56,64 +56,7 @@ namespace JWLMerge.BackupFileServices.Models.Database
             CheckBookmarkValidity();
             CheckNoteValidity();
             CheckTagMapValidity();
-        }
-
-        private void CheckTagMapValidity()
-        {
-            foreach (var tagMap in TagMaps)
-            {
-                if (tagMap.Type == 1)
-                {
-                    if (FindTag(tagMap.TagId) == null)
-                    {
-                        throw new BackupFileServicesException($"Could not find tag for tag map {tagMap.TagMapId}");
-                    }
-
-                    if (FindNote(tagMap.TypeId) == null)
-                    {
-                        throw new BackupFileServicesException($"Could not find note for tag map {tagMap.TagMapId}");
-                    }
-                }
-            }
-        }
-
-        private void CheckNoteValidity()
-        {
-            foreach (var note in Notes)
-            {
-                if (note.UserMarkId != null && FindUserMark(note.UserMarkId.Value) == null)
-                {
-                    throw new BackupFileServicesException($"Could not find user mark Id for note {note.NoteId}");
-                }
-
-                if (note.LocationId != null && FindLocation(note.LocationId.Value) == null)
-                {
-                    throw new BackupFileServicesException($"Could not find location for note {note.NoteId}");
-                }
-            }
-        }
-
-        private void CheckBookmarkValidity()
-        {
-            foreach (var bookmark in Bookmarks)
-            {
-                if (FindLocation(bookmark.LocationId) == null ||
-                    FindLocation(bookmark.PublicationLocationId) == null)
-                {
-                    throw new BackupFileServicesException($"Could not find location for bookmark {bookmark.BookmarkId}");
-                }
-            }
-        }
-
-        private void CheckBlockRangeValidity()
-        {
-            foreach (var range in BlockRanges)
-            {
-                if (FindUserMark(range.UserMarkId) == null)
-                {
-                    throw new BackupFileServicesException($"Could not find user mark Id for block range {range.BlockRangeId}");
-                }
-            }
+            CheckUserMarkValidity();
         }
 
         public LastModified LastModified { get; set; }
@@ -235,6 +178,75 @@ namespace JWLMerge.BackupFileServices.Models.Database
             }
 
             return result;
+        }
+
+        private void CheckUserMarkValidity()
+        {
+            foreach (var userMark in UserMarks)
+            {
+                if (FindLocation(userMark.LocationId) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find location for user mark {userMark.UserMarkId}");
+                }
+            }
+        }
+
+        private void CheckTagMapValidity()
+        {
+            foreach (var tagMap in TagMaps)
+            {
+                if (tagMap.Type == 1)
+                {
+                    if (FindTag(tagMap.TagId) == null)
+                    {
+                        throw new BackupFileServicesException($"Could not find tag for tag map {tagMap.TagMapId}");
+                    }
+
+                    if (FindNote(tagMap.TypeId) == null)
+                    {
+                        throw new BackupFileServicesException($"Could not find note for tag map {tagMap.TagMapId}");
+                    }
+                }
+            }
+        }
+
+        private void CheckNoteValidity()
+        {
+            foreach (var note in Notes)
+            {
+                if (note.UserMarkId != null && FindUserMark(note.UserMarkId.Value) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find user mark Id for note {note.NoteId}");
+                }
+
+                if (note.LocationId != null && FindLocation(note.LocationId.Value) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find location for note {note.NoteId}");
+                }
+            }
+        }
+
+        private void CheckBookmarkValidity()
+        {
+            foreach (var bookmark in Bookmarks)
+            {
+                if (FindLocation(bookmark.LocationId) == null ||
+                    FindLocation(bookmark.PublicationLocationId) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find location for bookmark {bookmark.BookmarkId}");
+                }
+            }
+        }
+
+        private void CheckBlockRangeValidity()
+        {
+            foreach (var range in BlockRanges)
+            {
+                if (FindUserMark(range.UserMarkId) == null)
+                {
+                    throw new BackupFileServicesException($"Could not find user mark Id for block range {range.BlockRangeId}");
+                }
+            }
         }
     }
 }

@@ -43,7 +43,7 @@
 
         private IReadOnlyCollection<string> GetInputFiles(string[] args)
         {
-            OnProgressEvent("Checking files exist...");
+            OnProgressEvent("Checking files exist");
             
             var result = new List<string>();
             

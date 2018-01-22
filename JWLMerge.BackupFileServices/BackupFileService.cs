@@ -46,7 +46,7 @@
                 throw new BackupFileServicesException($"File does not exist: {backupFilePath}");
             }
 
-            ProgressMessage($"Loading {backupFilePath}");
+            ProgressMessage($"Loading {Path.GetFileName(backupFilePath)}");
             
             using (var archive = new ZipArchive(File.OpenRead(backupFilePath), ZipArchiveMode.Read))
             {
@@ -65,7 +65,7 @@
         /// <inheritdoc />
         public BackupFile CreateBlank()
         {
-            ProgressMessage("Creating blank file...");
+            ProgressMessage("Creating blank file");
             return new BackupFile();
         }
 
@@ -75,7 +75,7 @@
             string newDatabaseFilePath, 
             string originalJwlibraryFilePathForSchema)
         {
-            ProgressMessage("Writing merged database file...");
+            ProgressMessage("Writing merged database file");
             
             using (var memoryStream = new MemoryStream())
             {
@@ -106,7 +106,7 @@
                 
                 using (var fileStream = new FileStream(newDatabaseFilePath, FileMode.Create))
                 {
-                    ProgressMessage("Finishing...");
+                    ProgressMessage("Finishing");
                     
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     memoryStream.CopyTo(fileStream);
@@ -117,7 +117,7 @@
         /// <inheritdoc />
         public BackupFile Merge(IReadOnlyCollection<string> files)
         {
-            ProgressMessage($"Merging backup {files.Count} files...");
+            ProgressMessage($"Merging {files.Count} backup files");
 
             int fileNumber = 1;
             var originals = new List<BackupFile>();
@@ -160,7 +160,7 @@
 
         private Database MergeDatabases(IEnumerable<BackupFile> jwlibraryFiles)
         {
-            ProgressMessage("Merging databases...");
+            ProgressMessage("Merging databases");
             return _merger.Merge(jwlibraryFiles.Select(x => x.Database));
         }
 
@@ -183,7 +183,7 @@
 
         private Database ReadDatabase(ZipArchive archive, string databaseName)
         {
-            ProgressMessage($"Reading database {databaseName}...");
+            ProgressMessage($"Reading database {databaseName}");
             
             var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(databaseName));
             if (databaseEntry == null)
@@ -229,7 +229,7 @@
 
         private Manifest ReadManifest(ZipArchive archive)
         {
-            ProgressMessage("Reading manifest...");
+            ProgressMessage("Reading manifest");
             
             var manifestEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(ManifestEntryName));
             if (manifestEntry == null)
@@ -284,7 +284,7 @@
         /// <returns>The hash.</returns>
         private string GenerateDatabaseHash(string databaseFilePath)
         {
-            ProgressMessage("Generating database hash...");
+            ProgressMessage("Generating database hash");
 
             using (FileStream fs = new FileStream(databaseFilePath, FileMode.Open))
             {
@@ -308,7 +308,7 @@
             Database database, 
             string originalDatabaseFilePathForSchema)
         {
-            ProgressMessage("Adding database to archive...");
+            ProgressMessage("Adding database to archive");
             
             var tmpDatabaseFile = CreateTemporaryDatabaseFile(database, originalDatabaseFilePathForSchema);
             try

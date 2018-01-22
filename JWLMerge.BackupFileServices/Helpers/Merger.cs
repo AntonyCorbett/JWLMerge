@@ -37,8 +37,10 @@
 
             ClearMaxIds();
 
+            var databaseIndex = 1;
             foreach (var database in databasesToMerge)
             {
+                ProgressMessage($"MERGING DATABASE {databaseIndex++}:");
                 Merge(database, result);
             }
 
@@ -58,14 +60,16 @@
         private void Merge(Database source, Database destination)
         {
             ClearTranslators();
-            
+
+            source.CheckValidity();
+
             MergeUserMarks(source, destination);
             MergeNotes(source, destination);
             MergeTags(source, destination);
             MergeTagMap(source, destination);
             MergeBlockRanges(source, destination);
-            
-            destination.ReinitializeIndexes();
+
+            destination.CheckValidity();
         }
 
         private void ClearTranslators()
@@ -78,7 +82,7 @@
         
         private void MergeBlockRanges(Database source, Database destination)
         {
-            ProgressMessage("Merging block ranges...");
+            ProgressMessage(" Block ranges");
 
             foreach (var range in source.BlockRanges)
             {
@@ -93,7 +97,7 @@
 
         private void MergeTagMap(Database source, Database destination)
         {
-            ProgressMessage("Merging tag map...");
+            ProgressMessage(" Tag maps");
 
             foreach (var tagMap in source.TagMaps)
             {
@@ -114,7 +118,7 @@
 
         private void MergeTags(Database source, Database destination)
         {
-            ProgressMessage("Merging tags...");
+            ProgressMessage(" Tags");
 
             foreach (var tag in source.Tags)
             {
@@ -132,7 +136,7 @@
 
         private void MergeUserMarks(Database source, Database destination)
         {
-            ProgressMessage("Merging user marks...");
+            ProgressMessage(" User marks");
 
             foreach (var userMark in source.UserMarks)
             {
@@ -224,7 +228,7 @@
 
         private void MergeNotes(Database source, Database destination)
         {
-            ProgressMessage("Merging notes...");
+            ProgressMessage(" Notes");
             
             foreach (var note in source.Notes)
             {
