@@ -16,7 +16,7 @@ Open a command prompt window and run JWLMergeCLI.exe to view the syntax.
 
 ### Important Notes
 
-Please use at your own risk! It is possible to crash JW Library by attempting to restore a corrupt backup file, and sometimes the only solution is to reinstall JW Library and reset its data.
+Please use at your own risk! It is possible to crash JW Library by attempting to restore a corrupt backup file, and sometimes the only solution is to reinstall JW Library and reset its data. (This hasn't happened yet with a JWLMerge-generated file.)
 
 You must be familiar with using command-line programs in Windows.
 
