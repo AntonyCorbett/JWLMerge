@@ -1,25 +1,25 @@
-﻿using JWLMerge.BackupFileServices.Exceptions;
-
-namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.Database
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Exceptions;
 
     public class Database
     {
+        private readonly Dictionary<int, int> _bookmarkSlots = new Dictionary<int, int>();
+        
         private Lazy<Dictionary<string, Note>> _notesGuidIndex;
         private Lazy<Dictionary<int, Note>> _notesIdIndex;
         private Lazy<Dictionary<string, UserMark>> _userMarksGuidIndex;
         private Lazy<Dictionary<int, UserMark>> _userMarksIdIndex;
         private Lazy<Dictionary<int, Location>> _locationsIdIndex;
+        private Lazy<Dictionary<string, Location>> _locationsKeySymbolIndex;
         private Lazy<Dictionary<string, Tag>> _tagsNameIndex;
         private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
         private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
         private Lazy<Dictionary<int, BlockRange>> _blockRangeUserMarkIdIndex;
         private Lazy<Dictionary<string, Bookmark>> _bookmarksIndex;
-
-        private Dictionary<int, int> _bookmarkSlots = new Dictionary<int, int>();
 
         public Database()
         {
@@ -105,6 +105,11 @@ namespace JWLMerge.BackupFileServices.Models.Database
             return _locationsIdIndex.Value.TryGetValue(locationId, out var location) ? location : null;
         }
 
+        public Location FindPublicationLocation(string keySymbol)
+        {
+            return _locationsKeySymbolIndex.Value.TryGetValue(keySymbol, out var location) ? location : null;
+        }
+
         public BlockRange FindBlockRange(int userMarkId)
         {
             // note that we find a block range by userMarkId. The BlockRange.UserMarkId column 
@@ -153,6 +158,21 @@ namespace JWLMerge.BackupFileServices.Models.Database
         private Dictionary<int, Location> LocationsIndexValueFactory()
         {
             return Locations.ToDictionary(location => location.LocationId);
+        }
+
+        private Dictionary<string, Location> LocationsKeySymbolIndexValueFactory()
+        {
+            var result = new Dictionary<string, Location>();
+
+            foreach (var location in Locations)
+            {
+                if (!result.ContainsKey(location.KeySymbol) && location.Type == 1)
+                {
+                    result.Add(location.KeySymbol, location);
+                }
+            }
+
+            return result;
         }
 
         private Dictionary<int, BlockRange> BlockRangeIndexValueFactory()
@@ -282,6 +302,7 @@ namespace JWLMerge.BackupFileServices.Models.Database
             _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
             _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
             _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
+            _locationsKeySymbolIndex = new Lazy<Dictionary<string, Location>>(LocationsKeySymbolIndexValueFactory);
             _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
             _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
             _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);

@@ -52,6 +52,7 @@
                 PopulateTable(connection, dataToUse.Tags);
                 PopulateTable(connection, dataToUse.TagMaps);
                 PopulateTable(connection, dataToUse.BlockRanges);
+                PopulateTable(connection, dataToUse.Bookmarks);
             }
         }
 

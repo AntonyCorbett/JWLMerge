@@ -96,12 +96,20 @@
                 {
                     var location1 = source.FindLocation(bookmark.LocationId);
                     InsertLocation(location1, destination);
-
+                    
                     var location2 = source.FindLocation(bookmark.PublicationLocationId);
                     if (location2 != location1) 
                     {
                         // location2 == location1 should never be!
-                        InsertLocation(location2, destination);
+                        var publicationLocation = destination.FindPublicationLocation(location2.KeySymbol);
+                        if (publicationLocation == null)
+                        {
+                            InsertLocation(location2, destination);
+                        }
+                        else
+                        {
+                            _translatedLocationIds.Add(bookmark.PublicationLocationId, publicationLocation.LocationId);
+                        }
                     }
 
                     InsertBookmark(bookmark, destination);
@@ -209,7 +217,7 @@
                 _translatedLocationIds.Add(location.LocationId, newLocation.LocationId);
             }
         }
-        
+
         private void InsertUserMark(UserMark userMark, Database destination)
         {
             UserMark newUserMark = userMark.Clone();
