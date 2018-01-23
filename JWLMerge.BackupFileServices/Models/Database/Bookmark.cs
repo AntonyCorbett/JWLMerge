@@ -37,8 +37,9 @@
 
         /// <summary>
         /// The block type.
-        /// 1 = Publication
-        /// 2 = Bible
+        /// 0 = Bible chapter?
+        /// 1 = Publication paragraph
+        /// 2 = Bible verse
         /// </summary>
         public int BlockType { get; set; }
 
@@ -48,5 +49,10 @@
         /// i.e. the one-based paragraph (or verse if a Bible chapter) within the document.
         /// </summary>
         public int? BlockIdentifier { get; set; }
+
+        public Bookmark Clone()
+        {
+            return (Bookmark)MemberwiseClone();
+        }
     }
 }

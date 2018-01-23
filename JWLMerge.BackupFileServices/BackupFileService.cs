@@ -82,25 +82,25 @@
                 using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                 {
                     Log.Logger.Debug("Created ZipArchive");
-                    
+
                     var tmpDatabaseFileName = ExtractDatabaseToFile(originalJwlibraryFilePathForSchema);
                     try
                     {
                         backup.Manifest.UserDataBackup.Hash = GenerateDatabaseHash(tmpDatabaseFileName);
+
+                        var manifestEntry = archive.CreateEntry(ManifestEntryName);
+                        using (var entryStream = manifestEntry.Open())
+                        using (var streamWriter = new StreamWriter(entryStream))
+                        {
+                            streamWriter.Write(JsonConvert.SerializeObject(backup.Manifest));
+                        }
+                    
                         AddDatabaseEntryToArchive(archive, backup.Database, tmpDatabaseFileName);
                     }
                     finally
                     {
                         Log.Logger.Debug("Deleting {tmpDatabaseFileName}", tmpDatabaseFileName);
                         File.Delete(tmpDatabaseFileName);
-                    }
-
-                    var manifestEntry = archive.CreateEntry(ManifestEntryName);
-
-                    using (var entryStream = manifestEntry.Open())
-                    {
-                        var streamWriter = new StreamWriter(entryStream);
-                        streamWriter.Write(JsonConvert.SerializeObject(backup.Manifest));
                     }
                 }
                 

@@ -17,23 +17,13 @@ namespace JWLMerge.BackupFileServices.Models.Database
         private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
         private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
         private Lazy<Dictionary<int, BlockRange>> _blockRangeUserMarkIdIndex;
+        private Lazy<Dictionary<string, Bookmark>> _bookmarksIndex;
+
+        private Dictionary<int, int> _bookmarkSlots = new Dictionary<int, int>();
 
         public Database()
         {
             ReinitializeIndexes();
-        }
-
-        public void ReinitializeIndexes()
-        {
-            _notesGuidIndex = new Lazy<Dictionary<string, Note>>(NoteIndexValueFactory);
-            _notesIdIndex = new Lazy<Dictionary<int, Note>>(NoteIdIndexValueFactory);
-            _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
-            _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
-            _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
-            _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
-            _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
-            _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);
-            _blockRangeUserMarkIdIndex = new Lazy<Dictionary<int, BlockRange>>(BlockRangeIndexValueFactory);
         }
 
         public void InitBlank()
@@ -122,6 +112,24 @@ namespace JWLMerge.BackupFileServices.Models.Database
             return _blockRangeUserMarkIdIndex.Value.TryGetValue(userMarkId, out var range) ? range : null;
         }
 
+        public Bookmark FindBookmark(int locationId, int publicationLocationId)
+        {
+            string key = GetBookmarkKey(locationId, publicationLocationId);
+            return _bookmarksIndex.Value.TryGetValue(key, out var bookmark) ? bookmark : null;
+        }
+
+        public int GetNextBookmarkSlot(int publicationLocationId)
+        {
+            // there are only 10 slots available for each publication...
+            if (_bookmarkSlots.TryGetValue(publicationLocationId, out var slot))
+            {
+                ++slot;
+            }
+            
+            _bookmarkSlots[publicationLocationId] = slot;
+            return slot;
+        }
+
         private Dictionary<string, Note> NoteIndexValueFactory()
         {
             return Notes.ToDictionary(note => note.Guid);
@@ -150,6 +158,24 @@ namespace JWLMerge.BackupFileServices.Models.Database
         private Dictionary<int, BlockRange> BlockRangeIndexValueFactory()
         {
             return BlockRanges.ToDictionary(range => range.UserMarkId);
+        }
+
+        private string GetBookmarkKey(int locationId, int publicationLocationId)
+        {
+            return $"{locationId}-{publicationLocationId}";
+        }
+
+        private Dictionary<string, Bookmark> BookmarkIndexValueFactory()
+        {
+            var result = new Dictionary<string, Bookmark>();
+
+            foreach (var bookmark in Bookmarks)
+            {
+                string key = GetBookmarkKey(bookmark.LocationId, bookmark.PublicationLocationId);
+                result.Add(key, bookmark);
+            }
+
+            return result;
         }
 
         private Dictionary<string, Tag> TagIndexValueFactory()
@@ -247,6 +273,20 @@ namespace JWLMerge.BackupFileServices.Models.Database
                     throw new BackupFileServicesException($"Could not find user mark Id for block range {range.BlockRangeId}");
                 }
             }
+        }
+
+        private void ReinitializeIndexes()
+        {
+            _notesGuidIndex = new Lazy<Dictionary<string, Note>>(NoteIndexValueFactory);
+            _notesIdIndex = new Lazy<Dictionary<int, Note>>(NoteIdIndexValueFactory);
+            _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
+            _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
+            _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
+            _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
+            _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
+            _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);
+            _blockRangeUserMarkIdIndex = new Lazy<Dictionary<int, BlockRange>>(BlockRangeIndexValueFactory);
+            _bookmarksIndex = new Lazy<Dictionary<string, Bookmark>>(BookmarkIndexValueFactory);
         }
     }
 }

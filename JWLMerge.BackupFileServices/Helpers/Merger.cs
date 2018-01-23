@@ -22,6 +22,7 @@
         private int _maxTagId;
         private int _maxTagMapId;
         private int _maxBlockRangeId;
+        private int _maxBookmarkId;
 
         public event EventHandler<ProgressEventArgs> ProgressEvent;
 
@@ -55,20 +56,21 @@
             _maxTagId = 0;
             _maxTagMapId = 0;
             _maxBlockRangeId = 0;
+            _maxBookmarkId = 0;
         }
         
         private void Merge(Database source, Database destination)
         {
             ClearTranslators();
-
-            source.CheckValidity();
-
+            
             MergeUserMarks(source, destination);
             MergeNotes(source, destination);
             MergeTags(source, destination);
             MergeTagMap(source, destination);
             MergeBlockRanges(source, destination);
+            MergeBookmarks(source, destination);
 
+            ProgressMessage(" Checking validity");
             destination.CheckValidity();
         }
 
@@ -79,7 +81,46 @@
             _translatedUserMarkIds.Clear();
             _translatedNoteIds.Clear();
         }
-        
+
+        private void MergeBookmarks(Database source, Database destination)
+        {
+            ProgressMessage(" Bookmarks");
+
+            foreach (var bookmark in source.Bookmarks)
+            {
+                var locationId = _translatedLocationIds.GetTranslatedId(bookmark.LocationId);
+                var publicationLocationId = _translatedLocationIds.GetTranslatedId(bookmark.PublicationLocationId);
+
+                var existingBookmark = destination.FindBookmark(locationId, publicationLocationId);
+                if (existingBookmark == null)
+                {
+                    var location1 = source.FindLocation(bookmark.LocationId);
+                    InsertLocation(location1, destination);
+
+                    var location2 = source.FindLocation(bookmark.PublicationLocationId);
+                    if (location2 != location1) 
+                    {
+                        // location2 == location1 should never be!
+                        InsertLocation(location2, destination);
+                    }
+
+                    InsertBookmark(bookmark, destination);
+                }
+            }
+        }
+
+        private void InsertBookmark(Bookmark bookmark, Database destination)
+        {
+            Bookmark newBookmark = bookmark.Clone();
+            newBookmark.BookmarkId = ++_maxBookmarkId;
+
+            newBookmark.LocationId = _translatedLocationIds.GetTranslatedId(bookmark.LocationId);
+            newBookmark.PublicationLocationId = _translatedLocationIds.GetTranslatedId(bookmark.PublicationLocationId);
+            newBookmark.Slot = destination.GetNextBookmarkSlot(newBookmark.PublicationLocationId);
+                
+            destination.Bookmarks.Add(newBookmark);
+        }
+
         private void MergeBlockRanges(Database source, Database destination)
         {
             ProgressMessage(" Block ranges");
