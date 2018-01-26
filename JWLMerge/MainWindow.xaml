@@ -1,0 +1,103 @@
+﻿<Window x:Class="JWLMerge.MainWindow"
+        x:Name="JwlMergeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="350" Width="525"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:models="clr-namespace:JWLMerge.BackupFileServices.Models;assembly=JWLMerge.BackupFileServices"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Medium"
+        TextElement.FontSize="14"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type models:BackupFile}">
+            <materialDesign:Card 
+                Style="{DynamicResource MaterialDesignCardFlipper}" 
+                Margin="10,10,0,0" Padding="10" Width="220" Height="150">
+                <StackPanel Orientation="Vertical">
+                    <DockPanel>
+                        <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" 
+                                   DockPanel.Dock="Left"
+                                   Text="{Binding Manifest.CreationDate}"/>
+                        <Button Height="24" Width="24" Padding="0" 
+                                DockPanel.Dock="Right" HorizontalAlignment="Right"
+                                Command="{Binding Path=DataContext.CloseCardCommand, ElementName=JwlMergeWindow}"
+                                CommandParameter="{Binding Manifest}"
+                                materialDesign:ShadowAssist.ShadowDepth="Depth0">
+                            <materialDesign:PackIcon
+                                HorizontalAlignment="Center"
+                                Kind="Close" />
+                        </Button>
+                    </DockPanel>
+
+                    <TextBlock Style="{DynamicResource MaterialDesignSubheadingTextBlock}" 
+                               Margin="0,5,0,5"
+                               TextTrimming="CharacterEllipsis"
+                               Text="{Binding Manifest.UserDataBackup.DeviceName}"/>
+
+                    <CheckBox
+                        Style="{DynamicResource MaterialDesignCheckBox}">
+                        Notes
+                    </CheckBox>
+
+                    <CheckBox
+                        Style="{DynamicResource MaterialDesignCheckBox}">
+                        Bookmarks
+                    </CheckBox>
+
+                    <CheckBox
+                        Style="{DynamicResource MaterialDesignCheckBox}">
+                        Underlining
+                    </CheckBox>
+
+                </StackPanel>
+            </materialDesign:Card>
+        </DataTemplate>
+        
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="257*"/>
+            <RowDefinition Height="62"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Margin="10" 
+                   Visibility="{Binding Path=FileListEmpty, Converter={StaticResource BoolToVis}, Mode=OneWay}"
+                   Style="{DynamicResource MaterialDesignBody1TextBlock}">
+            Drag and drop .jwlibrary files here
+        </TextBlock>
+
+        <ScrollViewer Grid.Row="0" 
+                      AllowDrop="True" 
+                      DragOver="PanelOnDragOver" 
+                      Drop="PanelOnDrop">
+            <ItemsControl ItemsSource="{Binding Files}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <materialDesign:ColorZone
+            Grid.Row="1"
+            Mode="PrimaryLight"
+            Padding="10" VerticalAlignment="Stretch">
+            <StackPanel
+                Orientation="Horizontal">
+                <Button Command="{Binding MergeCommand}">
+                    Merge
+                </Button>
+            </StackPanel>
+        </materialDesign:ColorZone>
+    </Grid>
+</Window>

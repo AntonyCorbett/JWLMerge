@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices
+﻿using Newtonsoft.Json.Serialization;
+
+namespace JWLMerge.BackupFileServices
 {
     using System;
     using System.Collections.Generic;
@@ -66,7 +68,15 @@
         public BackupFile CreateBlank()
         {
             ProgressMessage("Creating blank file");
-            return new BackupFile();
+
+            var database = new Database();
+            database.InitBlank();
+            
+            return new BackupFile
+            {
+                Manifest = new Manifest(),
+                Database = database
+            };
         }
 
         /// <inheritdoc />
@@ -92,7 +102,13 @@
                         using (var entryStream = manifestEntry.Open())
                         using (var streamWriter = new StreamWriter(entryStream))
                         {
-                            streamWriter.Write(JsonConvert.SerializeObject(backup.Manifest));
+                            streamWriter.Write(
+                                JsonConvert.SerializeObject(
+                                    backup.Manifest,
+                                    new JsonSerializerSettings
+                                    {
+                                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                    }));
                         }
                     
                         AddDatabaseEntryToArchive(archive, backup.Database, tmpDatabaseFileName);
