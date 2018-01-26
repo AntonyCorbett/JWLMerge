@@ -22,8 +22,6 @@ Please use at your own risk! It is possible to crash JW Library by attempting to
 
 You must be familiar with using command-line programs in Windows.
 
-Bookmarks are not currently merged. The resulting merged backup contains your notes and highlighted text, but no bookmarks.
-
 The format of your data in the backup files may change with future JW Library releases and I will try to keep the code up-to-date. If you receive an error stating that the backup file version is not supported then please come back here to see if an update is available.
 
 It is possible that JW Library will eventually feature a _merge_ command or similar functionality, in which case this project will be deleted.
