@@ -6,6 +6,8 @@ JWLMerge is a utility to merge 2 or more .jwlibrary backup files. These backup f
 
 At time of writing, JW Library has _backup_ and _restore_ commands, but no _merge_ command. This means you can add personal annotations in JW Library on several devices and transfer these between devices, but cannot combine them into a single set. JWLMerge is a Windows application that allows you to merge 2 or more .jwlibrary files into a single backup file that can then be restored onto any device.
 
+![Main Window](jwlmerge.png)
+
 ### Usage
 
 Download the JWLMergeSetup.exe file from the latest release and run it.
