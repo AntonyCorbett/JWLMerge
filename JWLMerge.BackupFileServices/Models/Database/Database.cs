@@ -14,7 +14,7 @@
         private Lazy<Dictionary<string, UserMark>> _userMarksGuidIndex;
         private Lazy<Dictionary<int, UserMark>> _userMarksIdIndex;
         private Lazy<Dictionary<int, Location>> _locationsIdIndex;
-        private Lazy<Dictionary<string, Location>> _locationsKeySymbolIndex;
+        private Lazy<Dictionary<string, Location>> _locationsKeySymbolAndIssueIndex;
         private Lazy<Dictionary<string, Tag>> _tagsNameIndex;
         private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
         private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
@@ -105,9 +105,10 @@
             return _locationsIdIndex.Value.TryGetValue(locationId, out var location) ? location : null;
         }
 
-        public Location FindPublicationLocation(string keySymbol)
+        public Location FindPublicationLocation(string keySymbol, int issueTagNumber, int mepsLanguage)
         {
-            return _locationsKeySymbolIndex.Value.TryGetValue(keySymbol, out var location) ? location : null;
+            var key = GetKeySymbolAndIssueKey(keySymbol, issueTagNumber, mepsLanguage);
+            return _locationsKeySymbolAndIssueIndex.Value.TryGetValue(key, out var location) ? location : null;
         }
 
         public BlockRange FindBlockRange(int userMarkId)
@@ -166,9 +167,11 @@
 
             foreach (var location in Locations)
             {
-                if (!result.ContainsKey(location.KeySymbol) && location.Type == 1)
+                var key = GetKeySymbolAndIssueKey(location.KeySymbol, location.IssueTagNumber, location.MepsLanguage);
+                if (!result.ContainsKey(key) && location.Type == 1) 
                 {
-                    result.Add(location.KeySymbol, location);
+                    // location.Type 1 = publication location
+                    result.Add(key, location);
                 }
             }
 
@@ -185,6 +188,11 @@
             return $"{locationId}-{publicationLocationId}";
         }
 
+        private string GetKeySymbolAndIssueKey(string keySymbol, int issueTagNumber, int mepsLanguage)
+        {
+            return $"{keySymbol}-{issueTagNumber}-{mepsLanguage}";
+        }
+
         private Dictionary<string, Bookmark> BookmarkIndexValueFactory()
         {
             var result = new Dictionary<string, Bookmark>();
@@ -192,7 +200,10 @@
             foreach (var bookmark in Bookmarks)
             {
                 string key = GetBookmarkKey(bookmark.LocationId, bookmark.PublicationLocationId);
-                result.Add(key, bookmark);
+                if (!result.ContainsKey(key))
+                {
+                    result.Add(key, bookmark);
+                }
             }
 
             return result;
@@ -302,7 +313,7 @@
             _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
             _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
             _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
-            _locationsKeySymbolIndex = new Lazy<Dictionary<string, Location>>(LocationsKeySymbolIndexValueFactory);
+            _locationsKeySymbolAndIssueIndex = new Lazy<Dictionary<string, Location>>(LocationsKeySymbolIndexValueFactory);
             _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
             _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
             _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);

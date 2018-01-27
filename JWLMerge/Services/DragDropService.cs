@@ -5,6 +5,7 @@
     using System.IO;
     using System.Windows;
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class DragDropService : IDragDropService
     {
         /// <summary>

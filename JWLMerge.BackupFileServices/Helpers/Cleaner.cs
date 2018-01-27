@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Models;
+    using Models.Database;
     using Serilog;
 
     /// <summary>
@@ -10,11 +11,11 @@
     /// </summary>
     internal class Cleaner
     {
-        private readonly BackupFile _backupFile;
+        private readonly Database _database;
 
-        public Cleaner(BackupFile backupFile)
+        public Cleaner(Database database)
         {
-            _backupFile = backupFile;
+            _database = database;
         }
 
         /// <summary>
@@ -30,7 +31,7 @@
         {
             var result = new HashSet<int>();
             
-            foreach (var userMark in _backupFile.Database.UserMarks)
+            foreach (var userMark in _database.UserMarks)
             {
                 result.Add(userMark.UserMarkId);
             }
@@ -42,13 +43,13 @@
         {
             var result = new HashSet<int>();
 
-            foreach (var bookmark in _backupFile.Database.Bookmarks)
+            foreach (var bookmark in _database.Bookmarks)
             {
                 result.Add(bookmark.LocationId);
                 result.Add(bookmark.PublicationLocationId);
             }
             
-            foreach (var note in _backupFile.Database.Notes)
+            foreach (var note in _database.Notes)
             {
                 if (note.LocationId != null)
                 {
@@ -56,7 +57,7 @@
                 }
             }
 
-            foreach (var userMark in _backupFile.Database.UserMarks)
+            foreach (var userMark in _database.UserMarks)
             {
                 result.Add(userMark.LocationId);
             }
@@ -74,7 +75,7 @@
         {
             int removed = 0;
             
-            var locations = _backupFile.Database.Locations;
+            var locations = _database.Locations;
             if (locations.Any())
             {
                 var locationIds = GetLocationIdsInUse();
@@ -103,7 +104,7 @@
 
             var userMarkIdsFound = new HashSet<int>();
             
-            var ranges = _backupFile.Database.BlockRanges;
+            var ranges = _database.BlockRanges;
             if (ranges.Any())
             {
                 var userMarkIds = GetUserMarkIdsInUse();

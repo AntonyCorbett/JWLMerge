@@ -14,7 +14,7 @@
             BackupFile file = CreateMockBackup();
             file.Manifest = new Manifest();
             
-            Cleaner cleaner = new Cleaner(file);
+            Cleaner cleaner = new Cleaner(file.Database);
             int removedRows = cleaner.Clean();
             
             Assert.AreEqual(removedRows, 0);
@@ -26,7 +26,7 @@
             BackupFile file = CreateMockBackup();
             file.Manifest = new Manifest();
 
-            Cleaner cleaner = new Cleaner(file);
+            Cleaner cleaner = new Cleaner(file.Database);
             int removedRows = cleaner.Clean();
 
             Assert.AreEqual(removedRows, 0);

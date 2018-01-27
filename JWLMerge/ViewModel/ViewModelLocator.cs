@@ -20,6 +20,7 @@ namespace JWLMerge.ViewModel
 
             SimpleIoc.Default.Register<IDragDropService, DragDropService>();
             SimpleIoc.Default.Register<IBackupFileService, BackupFileService>();
+            SimpleIoc.Default.Register<IFileOpenSaveService, FileOpenSaveService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
         }

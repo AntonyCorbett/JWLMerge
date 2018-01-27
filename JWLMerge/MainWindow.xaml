@@ -5,10 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="350" Width="525"
+        Title="{Binding Title}" Height="650" Width="725"
+        Closing="MainWindowOnClosing"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:models="clr-namespace:JWLMerge.BackupFileServices.Models;assembly=JWLMerge.BackupFileServices"
+        xmlns:models="clr-namespace:JWLMerge.Models"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
@@ -17,19 +18,28 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Window.Resources>
-        <DataTemplate DataType="{x:Type models:BackupFile}">
+        <DataTemplate DataType="{x:Type models:JwLibraryFile}">
             <materialDesign:Card 
+                ToolTip="{Binding TooltipSummaryText}"
+                IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
                 Style="{DynamicResource MaterialDesignCardFlipper}" 
-                Margin="10,10,0,0" Padding="10" Width="220" Height="150">
+                Margin="10,10,0,0" Padding="10" Width="220" Height="180">
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
+                        <materialDesign:PackIcon Kind="FileOutline" 
+                                                 Width="22"
+                                                 Height="22"
+                                                 DockPanel.Dock="Left"/>
                         <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" 
                                    DockPanel.Dock="Left"
-                                   Text="{Binding Manifest.CreationDate}"/>
+                                   Text="{Binding BackupFile.Manifest.CreationDate}">
+                            
+                        </TextBlock>
                         <Button Height="24" Width="24" Padding="0" 
                                 DockPanel.Dock="Right" HorizontalAlignment="Right"
                                 Command="{Binding Path=DataContext.CloseCardCommand, ElementName=JwlMergeWindow}"
-                                CommandParameter="{Binding Manifest}"
+                                CommandParameter="{Binding FilePath}"
+                                Style="{DynamicResource MaterialDesignFlatButton}"
                                 materialDesign:ShadowAssist.ShadowDepth="Depth0">
                             <materialDesign:PackIcon
                                 HorizontalAlignment="Center"
@@ -40,22 +50,23 @@
                     <TextBlock Style="{DynamicResource MaterialDesignSubheadingTextBlock}" 
                                Margin="0,5,0,5"
                                TextTrimming="CharacterEllipsis"
-                               Text="{Binding Manifest.UserDataBackup.DeviceName}"/>
+                               Text="{Binding BackupFile.Manifest.UserDataBackup.DeviceName}"/>
 
-                    <CheckBox
-                        Style="{DynamicResource MaterialDesignCheckBox}">
-                        Notes
-                    </CheckBox>
+                    <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,0,0,-4"/>
 
-                    <CheckBox
-                        Style="{DynamicResource MaterialDesignCheckBox}">
-                        Bookmarks
-                    </CheckBox>
+                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}" 
+                              IsChecked="{Binding MergeParameters.IncludeNotes}">Notes</CheckBox>
 
-                    <CheckBox
-                        Style="{DynamicResource MaterialDesignCheckBox}">
-                        Underlining
-                    </CheckBox>
+                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                              IsChecked="{Binding MergeParameters.IncludeBookmarks}">Bookmarks</CheckBox>
+
+                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                              IsChecked="{Binding MergeParameters.IncludeUnderlining}">Underlining</CheckBox>
+
+                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                              IsChecked="{Binding MergeParameters.IncludeTags}">Tags</CheckBox>
+
+                    <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,-4,0,-4"/>
 
                 </StackPanel>
             </materialDesign:Card>
@@ -77,6 +88,7 @@
 
         <ScrollViewer Grid.Row="0" 
                       AllowDrop="True" 
+                      VerticalScrollBarVisibility="Auto"
                       DragOver="PanelOnDragOver" 
                       Drop="PanelOnDrop">
             <ItemsControl ItemsSource="{Binding Files}">
@@ -92,12 +104,19 @@
             Grid.Row="1"
             Mode="PrimaryLight"
             Padding="10" VerticalAlignment="Stretch">
-            <StackPanel
-                Orientation="Horizontal">
-                <Button Command="{Binding MergeCommand}">
+            <DockPanel>
+                <Button DockPanel.Dock="Left" 
+                        Command="{Binding MergeCommand}">
                     Merge
                 </Button>
-            </StackPanel>
+                <ProgressBar
+                    DockPanel.Dock="Right"
+                    HorizontalAlignment="Right"
+                    Visibility="{Binding Path=IsBusy, Converter={StaticResource BoolToVis}, Mode=OneWay}"
+                    Style="{DynamicResource MaterialDesignCircularProgressBar}"
+                    Value="0"
+                    IsIndeterminate="True" />
+            </DockPanel>
         </materialDesign:ColorZone>
     </Grid>
 </Window>

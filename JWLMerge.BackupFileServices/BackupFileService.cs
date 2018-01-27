@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Serialization;
-
-namespace JWLMerge.BackupFileServices
+﻿namespace JWLMerge.BackupFileServices
 {
     using System;
     using System.Collections.Generic;
@@ -17,6 +15,7 @@ namespace JWLMerge.BackupFileServices
     using Models.ManifestFile;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using Newtonsoft.Json.Serialization;
     using Serilog;
 
     public sealed class BackupFileService : IBackupFileService
@@ -131,6 +130,94 @@ namespace JWLMerge.BackupFileServices
         }
 
         /// <inheritdoc />
+        public int RemoveTags(Database database)
+        {
+            // clear all but the first tag (which will be the "favourites")...
+            var tagCount = database.Tags.Count;
+            if (tagCount > 2)
+            {
+                database.Tags.RemoveRange(1, tagCount - 1);
+            }
+
+            database.TagMaps.Clear();
+            
+            return tagCount > 1 
+                ? tagCount - 1 
+                : tagCount;
+        }
+
+        /// <inheritdoc />
+        public int RemoveBookmarks(Database database)
+        {
+            var count = database.Bookmarks.Count;
+            database.Bookmarks.Clear();
+            return count;
+        }
+
+        /// <inheritdoc />
+        public int RemoveNotes(Database database)
+        {
+            var count = database.Notes.Count;
+            database.Notes.Clear();
+            return count;
+        }
+
+        /// <inheritdoc />
+        public int RemoveUnderlining(Database database)
+        {
+            if (!database.Notes.Any())
+            {
+                var count = database.UserMarks.Count;
+                database.UserMarks.Clear();
+                return count;
+            }
+
+            // we must retain user marks that are associated with notes...
+            HashSet<int> userMarksToRetain = new HashSet<int>();
+            foreach (var note in database.Notes)
+            {
+                if (note.UserMarkId != null)
+                {
+                    userMarksToRetain.Add(note.UserMarkId.Value);
+                }
+            }
+
+            int countRemoved = 0;
+            foreach (var userMark in Enumerable.Reverse(database.UserMarks))
+            {
+                if (!userMarksToRetain.Contains(userMark.UserMarkId))
+                {
+                    database.UserMarks.Remove(userMark);
+                    ++countRemoved;
+                }
+            }
+
+            return countRemoved;
+        }
+
+        /// <inheritdoc />
+        public BackupFile Merge(IReadOnlyCollection<BackupFile> files)
+        {
+            ProgressMessage($"Merging {files.Count} backup files");
+
+            int fileNumber = 1;
+            foreach (var file in files)
+            {
+                Log.Logger.Debug("Merging backup file {fileNumber} = {fileName}", fileNumber++, file.Manifest.Name);
+                Log.Logger.Debug("===================");
+
+                Clean(file);
+            }
+
+            // just pick the first manifest as the basis for the 
+            // manifest in the final merged file...
+            var newManifest = UpdateManifest(files.First().Manifest);
+
+            var mergedDatabase = MergeDatabases(files);
+            return new BackupFile { Manifest = newManifest, Database = mergedDatabase };
+        }
+
+        /// <inheritdoc />
         public BackupFile Merge(IReadOnlyCollection<string> files)
         {
             ProgressMessage($"Merging {files.Count} backup files");
@@ -189,7 +276,7 @@ namespace JWLMerge.BackupFileServices
         {
             Log.Logger.Debug("Cleaning backup file {backupFile}", backupFile.Manifest.Name);
             
-            var cleaner = new Cleaner(backupFile);
+            var cleaner = new Cleaner(backupFile.Database);
             int rowsRemoved = cleaner.Clean();
             if (rowsRemoved > 0)
             {

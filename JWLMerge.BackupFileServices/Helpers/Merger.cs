@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Helpers
+﻿using JWLMerge.BackupFileServices.Models;
+
+namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -101,7 +103,11 @@
                     if (location2 != location1) 
                     {
                         // location2 == location1 should never be!
-                        var publicationLocation = destination.FindPublicationLocation(location2.KeySymbol);
+                        var publicationLocation = destination.FindPublicationLocation(
+                            location2.KeySymbol, 
+                            location2.IssueTagNumber,
+                            location2.MepsLanguage);
+                        
                         if (publicationLocation == null)
                         {
                             InsertLocation(location2, destination);

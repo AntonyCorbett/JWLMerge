@@ -1,5 +1,6 @@
 ﻿namespace JWLMerge
 {
+    using System.ComponentModel;
     using System.Windows;
     using GalaSoft.MvvmLight.Messaging;
     using Messages;
@@ -22,6 +23,11 @@
         private void PanelOnDrop(object sender, DragEventArgs e)
         {
             Messenger.Default.Send(new DragDropMessage { DragEventArgs = e });
+        }
+
+        private void MainWindowOnClosing(object sender, CancelEventArgs e)
+        {
+            Messenger.Default.Send(new MainWindowClosingMessage { CancelEventArgs = e });
         }
     }
 }
