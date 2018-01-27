@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>JWLMerge.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
@@ -95,6 +98,7 @@
     </Compile>
     <Compile Include="Helpers\DesignTimeFileCreation.cs" />
     <Compile Include="Helpers\MergePreparation.cs" />
+    <Compile Include="Helpers\VersionDetection.cs" />
     <Compile Include="Messages\DragDropMessage.cs" />
     <Compile Include="Messages\DragOverMessage.cs" />
     <Compile Include="Messages\MainWindowClosingMessage.cs" />
@@ -151,6 +155,9 @@
       <Project>{83446629-cdbb-43ff-b628-1b8a3a9603c3}</Project>
       <Name>JWLMerge.BackupFileServices</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="JWLMerge.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.106.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.106.0\build\net46\System.Data.SQLite.Core.targets')" />

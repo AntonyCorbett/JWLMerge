@@ -33,7 +33,7 @@
                         <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" 
                                    DockPanel.Dock="Left"
                                    Text="{Binding BackupFile.Manifest.CreationDate}">
-                            
+
                         </TextBlock>
                         <Button Height="24" Width="24" Padding="0" 
                                 DockPanel.Dock="Right" HorizontalAlignment="Right"
@@ -71,8 +71,9 @@
                 </StackPanel>
             </materialDesign:Card>
         </DataTemplate>
-        
+
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
     </Window.Resources>
 
     <Grid>
@@ -105,10 +106,13 @@
             Mode="PrimaryLight"
             Padding="10" VerticalAlignment="Stretch">
             <DockPanel>
-                <Button DockPanel.Dock="Left" 
-                        Command="{Binding MergeCommand}">
-                    Merge
-                </Button>
+                <Button DockPanel.Dock="Left" Command="{Binding MergeCommand}" Margin="0,0,10,0">Merge</Button>
+                <Button Style="{DynamicResource MaterialDesignFlatButton}" Command="{Binding HomepageCommand}" Margin="0,0,10,0">Homepage</Button>
+                <Button Style="{DynamicResource MaterialDesignRaisedAccentButton}" 
+                        Command="{Binding UpdateCommand}" 
+                        ToolTip="New version available!"
+                        Visibility="{Binding Path=IsNewVersionAvailable, Converter={StaticResource BoolToVis}, Mode=OneWay}"
+                        Margin="0,0,10,0">Update</Button>
                 <ProgressBar
                     DockPanel.Dock="Right"
                     HorizontalAlignment="Right"

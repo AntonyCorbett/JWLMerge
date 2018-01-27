@@ -22,6 +22,7 @@ namespace JWLMerge.ViewModel
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class MainViewModel : ViewModelBase
     {
+        private const string LatestReleaseUrl = "https://github.com/AntonyCorbett/JWLMerge/releases/latest";
         private readonly IDragDropService _dragDropService;
         private readonly IBackupFileService _backupFileService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
@@ -52,6 +53,8 @@ namespace JWLMerge.ViewModel
             AddDesignTimeItems();
 
             InitCommands();
+
+            GetVersionData();
         }
 
         private void OnMainWindowClosing(MainWindowClosingMessage message)
@@ -71,6 +74,18 @@ namespace JWLMerge.ViewModel
         {
             CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy);
             MergeCommand = new RelayCommand(MergeFiles, () => GetMergableFileCount() > 1 && !IsBusy);
+            HomepageCommand = new RelayCommand(LaunchHomepage);
+            UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
+        }
+
+        private void LaunchLatestReleasePage()
+        {
+            Process.Start(LatestReleaseUrl);
+        }
+
+        private void LaunchHomepage()
+        {
+            Process.Start("https://github.com/AntonyCorbett/JWLMerge");
         }
 
         private void PrepareForMerge()
@@ -281,8 +296,41 @@ namespace JWLMerge.ViewModel
 
         public bool IsNotBusy => !IsBusy;
 
+        public bool IsNewVersionAvailable { get; private set; }
+        
+        private void GetVersionData()
+        {
+            if (IsInDesignMode)
+            {
+                IsNewVersionAvailable = true;
+                RaisePropertyChanged(nameof(IsNewVersionAvailable));
+            }
+            else
+            {
+                Task.Delay(2000).ContinueWith(_ =>
+                {
+                    var latestVersion = VersionDetection.GetLatestReleaseVersion(LatestReleaseUrl);
+                    if (latestVersion != null)
+                    {
+                        if (latestVersion != VersionDetection.GetCurrentVersion())
+                        {
+                            // there is a new version....
+                            IsNewVersionAvailable = true;
+                            RaisePropertyChanged(nameof(IsNewVersionAvailable));
+                        }
+                    }
+                });
+            }
+        }
+
+
+        // commands...
         public RelayCommand<string> CloseCardCommand { get; set; }
         
         public RelayCommand MergeCommand { get; set; }
+
+        public RelayCommand HomepageCommand { get; set; }
+
+        public RelayCommand UpdateCommand { get; set; }
     }
 }
