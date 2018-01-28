@@ -2,6 +2,6 @@
 {
     internal interface IFileOpenSaveService
     {
-        string GetSaveFilePath();
+        string GetSaveFilePath(string title);
     }
 }

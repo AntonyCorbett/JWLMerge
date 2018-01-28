@@ -103,10 +103,15 @@ namespace JWLMerge.BackupFileServices.Helpers
                     if (location2 != location1) 
                     {
                         // location2 == location1 should never be!
-                        var publicationLocation = destination.FindPublicationLocation(
-                            location2.KeySymbol, 
+                        var publicationLocation = destination.FindLocationByValues(
+                            location2.BookNumber,
+                            location2.ChapterNumber,
+                            location2.DocumentId,
+                            location2.Track,
                             location2.IssueTagNumber,
-                            location2.MepsLanguage);
+                            location2.KeySymbol, 
+                            location2.MepsLanguage,
+                            location2.Type);
                         
                         if (publicationLocation == null)
                         {
@@ -156,13 +161,33 @@ namespace JWLMerge.BackupFileServices.Helpers
 
             foreach (var tagMap in source.TagMaps)
             {
-                if (tagMap.Type == 1)
+                var tagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
+                var typeId = 0;
+                
+                switch (tagMap.Type)
                 {
-                    // a tag on a note...
-                    var tagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
-                    var noteId = _translatedNoteIds.GetTranslatedId(tagMap.TypeId);
-                    
-                    var existingTagMap = destination.FindTagMap(tagId, noteId);
+                    case 0:
+                        // a tag on a location
+                        typeId = _translatedLocationIds.GetTranslatedId(tagMap.TypeId);
+                        if (typeId == 0)
+                        {
+                            // must add location...
+                            var location = source.FindLocation(tagMap.TypeId);
+                            InsertLocation(location, destination);
+                            typeId = _translatedLocationIds.GetTranslatedId(tagMap.TypeId);
+                        }
+                        
+                        break;
+                        
+                    case 1:
+                        // a tag on a Note
+                        typeId = _translatedNoteIds.GetTranslatedId(tagMap.TypeId);
+                        break;
+                }
+
+                if (typeId != 0)
+                {
+                    var existingTagMap = destination.FindTagMap(tagId, typeId);
                     if (existingTagMap == null)
                     {
                         InsertTagMap(tagMap, destination);
@@ -216,11 +241,28 @@ namespace JWLMerge.BackupFileServices.Helpers
         {
             if (_translatedLocationIds.GetTranslatedId(location.LocationId) == 0)
             {
-                Location newLocation = location.Clone();
-                newLocation.LocationId = ++_maxLocationId;
-                destination.Locations.Add(newLocation);
+                var found = destination.FindLocationByValues(
+                    location.BookNumber,
+                    location.ChapterNumber,
+                    location.DocumentId,
+                    location.Track,
+                    location.IssueTagNumber,
+                    location.KeySymbol,
+                    location.MepsLanguage,
+                    location.Type);
 
-                _translatedLocationIds.Add(location.LocationId, newLocation.LocationId);
+                if (found != null)
+                {
+                    _translatedLocationIds.Add(location.LocationId, found.LocationId);
+                }
+                else
+                {
+                    Location newLocation = location.Clone();
+                    newLocation.LocationId = ++_maxLocationId;
+                    destination.Locations.Add(newLocation);
+
+                    _translatedLocationIds.Add(location.LocationId, newLocation.LocationId);
+                }
             }
         }
 
@@ -248,9 +290,24 @@ namespace JWLMerge.BackupFileServices.Helpers
             TagMap newTagMap = tagMap.Clone();
             newTagMap.TagMapId = ++_maxTagMapId;
             newTagMap.TagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
-            newTagMap.TypeId = _translatedNoteIds.GetTranslatedId(tagMap.TypeId);
 
-            destination.TagMaps.Add(newTagMap);
+            newTagMap.TypeId = 0;
+            
+            switch (newTagMap.Type)
+            {
+                case 0:
+                    newTagMap.TypeId = _translatedLocationIds.GetTranslatedId(tagMap.TypeId);
+                    break;
+
+                case 1:
+                    newTagMap.TypeId = _translatedNoteIds.GetTranslatedId(tagMap.TypeId);
+                    break;
+            }
+            
+            if (newTagMap.TypeId != 0)
+            {
+                destination.TagMaps.Add(newTagMap);
+            }
         }
 
         private void InsertNote(Note note, Database destination)

@@ -106,9 +106,11 @@
             Mode="PrimaryLight"
             Padding="10" VerticalAlignment="Stretch">
             <DockPanel>
-                <Button DockPanel.Dock="Left" Command="{Binding MergeCommand}" Margin="0,0,10,0">Merge</Button>
-                <Button Style="{DynamicResource MaterialDesignFlatButton}" Command="{Binding HomepageCommand}" Margin="0,0,10,0">Homepage</Button>
+                <Button DockPanel.Dock="Left" Command="{Binding MergeCommand}" 
+                        Width="110" Margin="0,0,10,0" Content="{Binding MergeCommandCaption}" />
+                <Button Style="{DynamicResource MaterialDesignFlatButton}" Width="110" Command="{Binding HomepageCommand}" Margin="0,0,10,0">Homepage</Button>
                 <Button Style="{DynamicResource MaterialDesignRaisedAccentButton}" 
+                        Width="110"
                         Command="{Binding UpdateCommand}" 
                         ToolTip="New version available!"
                         Visibility="{Binding Path=IsNewVersionAvailable, Converter={StaticResource BoolToVis}, Mode=OneWay}"

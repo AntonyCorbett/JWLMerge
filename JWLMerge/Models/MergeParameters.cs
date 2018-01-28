@@ -76,5 +76,10 @@
         {
             return IncludeTags || IncludeBookmarks || IncludeNotes || IncludeUnderlining;
         }
+
+        public bool AnyExcludes()
+        {
+            return !IncludeTags || !IncludeBookmarks || !IncludeNotes || !IncludeUnderlining;
+        }
     }
 }

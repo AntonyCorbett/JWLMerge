@@ -67,13 +67,14 @@ namespace JWLMerge.ViewModel
             System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(FileListEmpty));
+            RaisePropertyChanged(nameof(MergeCommandCaption));
             MergeCommand?.RaiseCanExecuteChanged();
         }
 
         private void InitCommands()
         {
             CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy);
-            MergeCommand = new RelayCommand(MergeFiles, () => GetMergableFileCount() > 1 && !IsBusy);
+            MergeCommand = new RelayCommand(MergeFiles, () => GetMergableFileCount() > 0 && !IsBusy);
             HomepageCommand = new RelayCommand(LaunchHomepage);
             UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
         }
@@ -94,9 +95,16 @@ namespace JWLMerge.ViewModel
             ApplyMergeParameters();
         }
 
+        private string GetSaveDialogTitle()
+        {
+            return GetMergableFileCount() == 1
+                ? "Save Modified File"
+                : "Save Merged File";
+        }
+
         private void MergeFiles()
         {
-            var destPath = _fileOpenSaveService.GetSaveFilePath();
+            var destPath = _fileOpenSaveService.GetSaveFilePath(GetSaveDialogTitle());
             if (!string.IsNullOrWhiteSpace(destPath))
             {
                 IsBusy = true;
@@ -259,6 +267,7 @@ namespace JWLMerge.ViewModel
         {
             // when the merge params are modified it can leave the number of mergeable items at less than 2.
             MergeCommand?.RaiseCanExecuteChanged();
+            RaisePropertyChanged(nameof(MergeCommandCaption));
         }
 
         private bool IsSameFile(string path1, string path2)
@@ -268,7 +277,13 @@ namespace JWLMerge.ViewModel
 
         private int GetMergableFileCount()
         {
-            return _files.Count(file => file.MergeParameters.AnyIncludes());
+            if (_files.Count == 1)
+            {
+                return _files.First().MergeParameters.AnyExcludes() ? 1 : 0;
+            }
+            
+            var count = _files.Count(file => file.MergeParameters.AnyIncludes());
+            return count == 1 ? 0 : count;
         }
 
         public string Title { get; set; }
@@ -320,6 +335,20 @@ namespace JWLMerge.ViewModel
                         }
                     }
                 });
+            }
+        }
+        
+        public string MergeCommandCaption
+        {
+            get
+            {
+                int fileCount = GetMergableFileCount();
+                if (fileCount == 1)
+                {
+                    return "Save As";
+                }
+                
+                return "Merge";
             }
         }
 

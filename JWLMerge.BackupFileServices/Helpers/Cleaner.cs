@@ -62,6 +62,14 @@
                 result.Add(userMark.LocationId);
             }
 
+            foreach (var tagMap in _database.TagMaps)
+            {
+                if (tagMap.Type == 0)
+                {
+                    result.Add(tagMap.TypeId);
+                }
+            }
+
             Log.Logger.Debug($"Found {result.Count} location Ids in use");
             
             return result;

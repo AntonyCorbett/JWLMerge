@@ -9,12 +9,12 @@
     {
         private static string SaveDirectory;
         
-        public string GetSaveFilePath()
+        public string GetSaveFilePath(string title)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 AddExtension = true,
-                Title = "Save Merged File",
+                Title = title,
                 Filter = "JW Library backup file (*.jwlibrary)|*.jwlibrary",
                 InitialDirectory = SaveDirectory ?? GetDefaultSaveFolder()
             };

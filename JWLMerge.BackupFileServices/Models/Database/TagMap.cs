@@ -9,7 +9,8 @@
 
         /// <summary>
         /// The type of data that the tag is attached to.
-        /// Currently it looks like there is only 1 'type' - a Note (value = 1).
+        /// 0 = tag on a Location
+        /// 1 = tag on a Note
         /// </summary>
         public int Type { get; set; }
 
