@@ -23,7 +23,7 @@
                 ToolTip="{Binding TooltipSummaryText}"
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
                 Style="{DynamicResource MaterialDesignCardFlipper}" 
-                Margin="10,10,0,0" Padding="10" Width="220" Height="180">
+                Margin="10,10,0,0" Padding="10" Width="220" Height="215">
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
                         <materialDesign:PackIcon Kind="FileOutline" 
@@ -66,7 +66,13 @@
                     <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeTags}">Tags</CheckBox>
 
-                    <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,-4,0,-4"/>
+                    <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,-4,0,0"/>
+
+                    <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                            Command="{Binding Path=DataContext.ShowDetailsCommand, ElementName=JwlMergeWindow}"
+                            CommandParameter="{Binding FilePath}">
+                        DETAILS
+                    </Button>
 
                 </StackPanel>
             </materialDesign:Card>
@@ -108,13 +114,14 @@
             <DockPanel>
                 <Button DockPanel.Dock="Left" Command="{Binding MergeCommand}" 
                         Width="110" Margin="0,0,10,0" Content="{Binding MergeCommandCaption}" />
-                <Button Style="{DynamicResource MaterialDesignFlatButton}" Width="110" Command="{Binding HomepageCommand}" Margin="0,0,10,0">Homepage</Button>
+                <Button Style="{DynamicResource MaterialDesignFlatButton}" Width="110" 
+                        Command="{Binding HomepageCommand}" Margin="0,0,10,0">HOMEPAGE</Button>
                 <Button Style="{DynamicResource MaterialDesignRaisedAccentButton}" 
                         Width="110"
                         Command="{Binding UpdateCommand}" 
                         ToolTip="New version available!"
                         Visibility="{Binding Path=IsNewVersionAvailable, Converter={StaticResource BoolToVis}, Mode=OneWay}"
-                        Margin="0,0,10,0">Update</Button>
+                        Margin="0,0,10,0">UPDATE</Button>
                 <ProgressBar
                     DockPanel.Dock="Right"
                     HorizontalAlignment="Right"

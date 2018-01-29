@@ -96,20 +96,32 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="DetailWindow.xaml.cs">
+      <DependentUpon>DetailWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\DesignTimeFileCreation.cs" />
     <Compile Include="Helpers\MergePreparation.cs" />
     <Compile Include="Helpers\VersionDetection.cs" />
     <Compile Include="Messages\DragDropMessage.cs" />
     <Compile Include="Messages\DragOverMessage.cs" />
     <Compile Include="Messages\MainWindowClosingMessage.cs" />
+    <Compile Include="Models\DataTypeListItem.cs" />
     <Compile Include="Models\JwLibraryFile.cs" />
+    <Compile Include="Models\JwLibraryFileDataTypes.cs" />
     <Compile Include="Models\MergeParameters.cs" />
     <Compile Include="Services\DragDropService.cs" />
     <Compile Include="Services\FileOpenSaveService.cs" />
     <Compile Include="Services\IDragDropService.cs" />
     <Compile Include="Services\IFileOpenSaveService.cs" />
+    <Compile Include="Services\IWindowService.cs" />
+    <Compile Include="Services\WindowService.cs" />
+    <Compile Include="ViewModel\DetailViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Page Include="DetailWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

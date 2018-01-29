@@ -21,11 +21,15 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IDragDropService, DragDropService>();
             SimpleIoc.Default.Register<IBackupFileService, BackupFileService>();
             SimpleIoc.Default.Register<IFileOpenSaveService, FileOpenSaveService>();
+            SimpleIoc.Default.Register<IWindowService, WindowService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<DetailViewModel>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        
+        public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>();
 
         public static void Cleanup()
         {

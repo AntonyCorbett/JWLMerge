@@ -14,7 +14,7 @@
         private Lazy<Dictionary<string, UserMark>> _userMarksGuidIndex;
         private Lazy<Dictionary<int, UserMark>> _userMarksIdIndex;
         private Lazy<Dictionary<int, Location>> _locationsIdIndex;
-        private Lazy<Dictionary<string, Location>> _locationsKeyHashOfValuesIndex;
+        private Lazy<Dictionary<string, Location>> _locationsValueIndex;
         private Lazy<Dictionary<string, Tag>> _tagsNameIndex;
         private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
         private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
@@ -105,27 +105,10 @@
             return _locationsIdIndex.Value.TryGetValue(locationId, out var location) ? location : null;
         }
 
-        public Location FindLocationByValues(
-            int? bookNumber,
-            int? chapterNumber,
-            int? documentNumber,
-            int? track,
-            int issueTagNumber,
-            string keySymbol,
-            int mepsLanguage,
-            int type)
+        public Location FindLocationByValues(Location locationValues)
         {
-            var key = GetLocationHashValueKey(
-                bookNumber,
-                chapterNumber,
-                documentNumber,
-                track,
-                issueTagNumber,
-                keySymbol,
-                mepsLanguage,
-                type);
-            
-            return _locationsKeyHashOfValuesIndex.Value.TryGetValue(key, out var location) ? location : null;
+            var key = GetLocationByValueKey(locationValues);
+            return _locationsValueIndex.Value.TryGetValue(key, out var location) ? location : null;
         }
 
         public BlockRange FindBlockRange(int userMarkId)
@@ -178,22 +161,13 @@
             return Locations.ToDictionary(location => location.LocationId);
         }
 
-        private Dictionary<string, Location> LocationsHashIndexValueFactory()
+        private Dictionary<string, Location> LocationsByValueIndexValueFactory()
         {
             var result = new Dictionary<string, Location>();
 
             foreach (var location in Locations)
             {
-                var key = GetLocationHashValueKey(
-                    location.BookNumber,
-                    location.ChapterNumber,
-                    location.DocumentId,
-                    location.Track,
-                    location.IssueTagNumber,
-                    location.KeySymbol, 
-                    location.MepsLanguage,
-                    location.Type);
-                
+                var key = GetLocationByValueKey(location);
                 if (!result.ContainsKey(key)) 
                 {
                     result.Add(key, location);
@@ -213,25 +187,9 @@
             return $"{locationId}-{publicationLocationId}";
         }
 
-        private string GetLocationHashValueKey(
-            int? bookNumber,
-            int? chapterNumber,
-            int? documentNumber,
-            int? track,
-            int issueTagNumber,
-            string keySymbol,
-            int mepsLanguage,
-            int type)
+        private string GetLocationByValueKey(Location location)
         {
-            var s1 = $"{keySymbol}-{issueTagNumber}";
-            var s2 = $"{mepsLanguage}-{type}";
-            var s3 = $"{bookNumber ?? 0}-{chapterNumber ?? 0}-{documentNumber ?? 0}-{track ?? 0}";
-
-            var h1 = s1.GetHashCode();
-            var h2 = s2.GetHashCode();
-            var h3 = s3.GetHashCode();
-
-            return $"{h1}-{h2}-{h3}";
+            return $"{location.KeySymbol}|{location.IssueTagNumber}|{location.MepsLanguage}|{location.Type}|{location.BookNumber ?? -1}|{location.ChapterNumber ?? -1}|{location.DocumentId ?? -1}|{location.Track ?? -1}";
         }
 
         private Dictionary<string, Bookmark> BookmarkIndexValueFactory()
@@ -354,7 +312,7 @@
             _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
             _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
             _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
-            _locationsKeyHashOfValuesIndex = new Lazy<Dictionary<string, Location>>(LocationsHashIndexValueFactory);
+            _locationsValueIndex = new Lazy<Dictionary<string, Location>>(LocationsByValueIndexValueFactory);
             _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
             _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
             _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);

@@ -1,6 +1,4 @@
-﻿using JWLMerge.BackupFileServices.Models;
-
-namespace JWLMerge.BackupFileServices.Helpers
+﻿namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -90,40 +88,36 @@ namespace JWLMerge.BackupFileServices.Helpers
 
             foreach (var bookmark in source.Bookmarks)
             {
-                var locationId = _translatedLocationIds.GetTranslatedId(bookmark.LocationId);
-                var publicationLocationId = _translatedLocationIds.GetTranslatedId(bookmark.PublicationLocationId);
+                var location1 = source.FindLocation(bookmark.LocationId);
+                var location2 = source.FindLocation(bookmark.PublicationLocationId);
 
-                var existingBookmark = destination.FindBookmark(locationId, publicationLocationId);
-                if (existingBookmark == null)
+                if (location1 != null && location2 != null)
                 {
-                    var location1 = source.FindLocation(bookmark.LocationId);
                     InsertLocation(location1, destination);
-                    
-                    var location2 = source.FindLocation(bookmark.PublicationLocationId);
-                    if (location2 != location1) 
+                    InsertLocation(location2, destination);
+
+                    var locationId = _translatedLocationIds.GetTranslatedId(bookmark.LocationId);
+                    var publicationLocationId = _translatedLocationIds.GetTranslatedId(bookmark.PublicationLocationId);
+                    if (locationId > 0 && publicationLocationId > 0)
                     {
-                        // location2 == location1 should never be!
-                        var publicationLocation = destination.FindLocationByValues(
-                            location2.BookNumber,
-                            location2.ChapterNumber,
-                            location2.DocumentId,
-                            location2.Track,
-                            location2.IssueTagNumber,
-                            location2.KeySymbol, 
-                            location2.MepsLanguage,
-                            location2.Type);
-                        
-                        if (publicationLocation == null)
+                        var existingBookmark = destination.FindBookmark(locationId, publicationLocationId);
+                        if (existingBookmark == null)
                         {
-                            InsertLocation(location2, destination);
-                        }
-                        else
-                        {
-                            _translatedLocationIds.Add(bookmark.PublicationLocationId, publicationLocation.LocationId);
+                            InsertBookmark(bookmark, destination);
                         }
                     }
+                }
+                else
+                {
+                    if (location1 == null)
+                    {
+                        Log.Logger.Error($"Could not find location for bookmark {bookmark.BookmarkId}");
+                    }
 
-                    InsertBookmark(bookmark, destination);
+                    if (location2 == null)
+                    {
+                        Log.Logger.Error($"Could not find publication location for bookmark {bookmark.BookmarkId}");
+                    }
                 }
             }
         }
@@ -241,16 +235,7 @@ namespace JWLMerge.BackupFileServices.Helpers
         {
             if (_translatedLocationIds.GetTranslatedId(location.LocationId) == 0)
             {
-                var found = destination.FindLocationByValues(
-                    location.BookNumber,
-                    location.ChapterNumber,
-                    location.DocumentId,
-                    location.Track,
-                    location.IssueTagNumber,
-                    location.KeySymbol,
-                    location.MepsLanguage,
-                    location.Type);
-
+                var found = destination.FindLocationByValues(location);
                 if (found != null)
                 {
                     _translatedLocationIds.Add(location.LocationId, found.LocationId);

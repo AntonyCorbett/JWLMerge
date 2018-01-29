@@ -25,6 +25,7 @@ namespace JWLMerge.ViewModel
         private const string LatestReleaseUrl = "https://github.com/AntonyCorbett/JWLMerge/releases/latest";
         private readonly IDragDropService _dragDropService;
         private readonly IBackupFileService _backupFileService;
+        private readonly IWindowService _windowService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
         private readonly ObservableCollection<JwLibraryFile> _files = new ObservableCollection<JwLibraryFile>();
 
@@ -35,10 +36,12 @@ namespace JWLMerge.ViewModel
         public MainViewModel(
             IDragDropService dragDropService, 
             IBackupFileService backupFileService,
+            IWindowService windowService,
             IFileOpenSaveService fileOpenSaveService)
         {
             _dragDropService = dragDropService;
             _backupFileService = backupFileService;
+            _windowService = windowService;
             _fileOpenSaveService = fileOpenSaveService;
 
             _files.CollectionChanged += FilesCollectionChanged;
@@ -49,7 +52,7 @@ namespace JWLMerge.ViewModel
             Messenger.Default.Register<DragOverMessage>(this, OnDragOver);
             Messenger.Default.Register<DragDropMessage>(this, OnDragDrop);
             Messenger.Default.Register<MainWindowClosingMessage>(this, OnMainWindowClosing);
-
+            
             AddDesignTimeItems();
 
             InitCommands();
@@ -60,6 +63,10 @@ namespace JWLMerge.ViewModel
         private void OnMainWindowClosing(MainWindowClosingMessage message)
         {
             message.CancelEventArgs.Cancel = IsBusy;
+            if (!message.CancelEventArgs.Cancel)
+            {
+                _windowService.CloseAll();
+            }
         }
 
         private void FilesCollectionChanged(
@@ -74,6 +81,7 @@ namespace JWLMerge.ViewModel
         private void InitCommands()
         {
             CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy);
+            ShowDetailsCommand = new RelayCommand<string>(ShowDetails, filePath => !IsBusy);
             MergeCommand = new RelayCommand(MergeFiles, () => GetMergableFileCount() > 0 && !IsBusy);
             HomepageCommand = new RelayCommand(LaunchHomepage);
             UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
@@ -194,9 +202,15 @@ namespace JWLMerge.ViewModel
                 if (IsSameFile(file.FilePath, filePath))
                 {
                     _files.Remove(file);
+                    _windowService.Close(filePath);
                     break;
                 }
             }
+        }
+
+        private void ShowDetails(string filePath)
+        {
+            _windowService.ShowDetailWindow(_backupFileService, filePath);
         }
 
         public ObservableCollection<JwLibraryFile> Files => _files;
@@ -345,17 +359,19 @@ namespace JWLMerge.ViewModel
                 int fileCount = GetMergableFileCount();
                 if (fileCount == 1)
                 {
-                    return "Save As";
+                    return "SAVE AS";
                 }
                 
-                return "Merge";
+                return "MERGE";
             }
         }
 
 
         // commands...
         public RelayCommand<string> CloseCardCommand { get; set; }
-        
+
+        public RelayCommand<string> ShowDetailsCommand { get; set; }
+
         public RelayCommand MergeCommand { get; set; }
 
         public RelayCommand HomepageCommand { get; set; }
