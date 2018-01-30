@@ -22,7 +22,7 @@
         {
             if (e.Data is DataObject dataObject && dataObject.ContainsFileDropList())
             {
-                foreach (string filePath in dataObject.GetFileDropList())
+                foreach (var filePath in dataObject.GetFileDropList())
                 {
                     if (IsJwLibraryFile(filePath))
                     {
@@ -40,7 +40,7 @@
             
             if (e.Data is DataObject dataObject && dataObject.ContainsFileDropList())
             {
-                foreach (string filePath in dataObject.GetFileDropList())
+                foreach (var filePath in dataObject.GetFileDropList())
                 {
                     if (IsJwLibraryFile(filePath))
                     {

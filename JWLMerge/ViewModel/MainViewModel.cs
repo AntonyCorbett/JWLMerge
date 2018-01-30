@@ -366,7 +366,6 @@ namespace JWLMerge.ViewModel
             }
         }
 
-
         // commands...
         public RelayCommand<string> CloseCardCommand { get; set; }
 

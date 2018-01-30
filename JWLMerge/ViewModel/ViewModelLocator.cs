@@ -1,5 +1,6 @@
 namespace JWLMerge.ViewModel
 {
+    using System;
     using BackupFileServices;
     using GalaSoft.MvvmLight.Ioc;
     using Microsoft.Practices.ServiceLocation;
@@ -29,7 +30,8 @@ namespace JWLMerge.ViewModel
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
         
-        public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>();
+        // NB - the guid key produces a new instance per view.
+        public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>(Guid.NewGuid().ToString());
 
         public static void Cleanup()
         {

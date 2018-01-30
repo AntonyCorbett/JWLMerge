@@ -11,7 +11,7 @@
         
         public string GetSaveFilePath(string title)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            var saveFileDialog = new SaveFileDialog
             {
                 AddExtension = true,
                 Title = title,

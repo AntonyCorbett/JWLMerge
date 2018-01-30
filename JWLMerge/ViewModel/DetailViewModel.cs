@@ -1,19 +1,19 @@
-﻿using System.Collections;
-using JWLMerge.BackupFileServices.Models.ManifestFile;
-
-namespace JWLMerge.ViewModel
+﻿namespace JWLMerge.ViewModel
 {
+    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
     using BackupFileServices.Models;
     using BackupFileServices.Models.Database;
+    using BackupFileServices.Models.ManifestFile;
     using GalaSoft.MvvmLight;
     using Models;
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class DetailViewModel : ViewModelBase
     {
         public string FilePath { get; set; }
         
+        // ReSharper disable once MemberCanBePrivate.Global
         public BackupFile BackupFile { get; set; }
 
         private DataTypeListItem _selectedDataType;
@@ -97,7 +97,6 @@ namespace JWLMerge.ViewModel
         public DetailViewModel()
         {
             ListItems = CreateListItems();
-            SelectedDataType = ListItems.First();
         }
 
         private List<DataTypeListItem> CreateListItems()

@@ -14,7 +14,7 @@
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (var client = new HttpClient())
                 {
                     var response = client.GetAsync(latestReleaseUrl).Result;
                     if (response.IsSuccessStatusCode)
@@ -31,6 +31,7 @@
                     }
                 }
             }
+            // ReSharper disable once CatchAllClause
             catch (Exception ex)
             {
                 Log.Logger.Error(ex, "Getting latest release version");

@@ -27,6 +27,10 @@
             else
             {
                 var window = CreateDetailWindow(backupFileService, filePath);
+                
+                var viewModel = (DetailViewModel)window.DataContext;
+                viewModel.SelectedDataType = viewModel.ListItems.FirstOrDefault();
+
                 window.Show();
             }
         }
@@ -48,13 +52,9 @@
         private DetailWindow CreateDetailWindow(IBackupFileService backupFileService, string filePath)
         {
             var window = new DetailWindow();
-            var viewModel = new DetailViewModel
-            {
-                FilePath = filePath,
-                BackupFile = backupFileService.Load(filePath)
-            };
-            
-            window.DataContext = viewModel;
+            var viewModel = (DetailViewModel)window.DataContext;
+            viewModel.FilePath = filePath;
+            viewModel.BackupFile = backupFileService.Load(filePath);
 
             window.Closed += DetailWindowClosed;
             _detailWindows.Add(window);
