@@ -74,6 +74,9 @@
                 result.BlockRanges = ReadAllRows(connection, ReadBlockRange);
                 result.Bookmarks = ReadAllRows(connection, ReadBookmark);
                 result.UserMarks = ReadAllRows(connection, ReadUserMark);
+
+                // ensure bookmarks appear in similar order to original.
+                result.Bookmarks.Sort((bookmark1, bookmark2) => bookmark1.Slot.CompareTo(bookmark2.Slot));
             }
 
             return result;
