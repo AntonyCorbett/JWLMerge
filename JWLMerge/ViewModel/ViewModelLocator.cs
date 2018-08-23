@@ -2,8 +2,8 @@ namespace JWLMerge.ViewModel
 {
     using System;
     using BackupFileServices;
+    using CommonServiceLocator;
     using GalaSoft.MvvmLight.Ioc;
-    using Microsoft.Practices.ServiceLocation;
     using Services;
 
     /// <summary>

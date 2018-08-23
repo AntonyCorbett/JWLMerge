@@ -11,7 +11,7 @@ namespace JWLMerge.ViewModel
     using System.Windows;
     using BackupFileServices;
     using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.Command;
+    using GalaSoft.MvvmLight.CommandWpf;
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
     using Helpers;
