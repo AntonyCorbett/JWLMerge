@@ -8,7 +8,7 @@
 
     internal static class VersionDetection
     {
-        public static string GetLatestReleaseVersion(string latestReleaseUrl)
+        public static Version GetLatestReleaseVersion(string latestReleaseUrl)
         {
             string version = null;
 
@@ -37,13 +37,13 @@
                 Log.Logger.Error(ex, "Getting latest release version");
             }
 
-            return version;
+            return !string.IsNullOrWhiteSpace(version) ? new Version(version) : null;
         }
 
-        public static string GetCurrentVersion()
+        public static Version GetCurrentVersion()
         {
             var ver = Assembly.GetExecutingAssembly().GetName().Version;
-            return $"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}";
+            return new Version($"{ver.Major}.{ver.Minor}.{ver.Build}.{ver.Revision}");
         }
     }
 }
