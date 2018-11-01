@@ -339,14 +339,11 @@ namespace JWLMerge.ViewModel
                 Task.Delay(2000).ContinueWith(_ =>
                 {
                     var latestVersion = VersionDetection.GetLatestReleaseVersion(LatestReleaseUrl);
-                    if (latestVersion != null)
+                    if (latestVersion != null && VersionDetection.GetCurrentVersion().CompareTo(latestVersion) < 0)
                     {
-                        if (latestVersion != VersionDetection.GetCurrentVersion())
-                        {
-                            // there is a new version....
-                            IsNewVersionAvailable = true;
-                            RaisePropertyChanged(nameof(IsNewVersionAvailable));
-                        }
+                        // there is a new version....
+                        IsNewVersionAvailable = true;
+                        RaisePropertyChanged(nameof(IsNewVersionAvailable));
                     }
                 });
             }
