@@ -133,7 +133,7 @@ namespace JWLMerge.ViewModel
                     }
                     finally
                     {
-                        // we need to ensure the files are back to nnormal after 
+                        // we need to ensure the files are back to normal after 
                         // applying any merge parameters.
                         ReloadFiles();
                     }
