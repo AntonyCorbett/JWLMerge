@@ -38,6 +38,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\x64\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\x86\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -48,7 +49,6 @@ Source: "D:\ProjectsPersonal\JWLMerge\JWLMergeCLI\bin\Release\JWLMergeCLI.exe"; 
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMergeCLI\bin\Release\JWLMergeCLI.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\MaterialDesignColors.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\MaterialDesignThemes.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Microsoft.Practices.ServiceLocation.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Serilog.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
