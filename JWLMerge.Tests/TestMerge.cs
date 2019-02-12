@@ -1,8 +1,7 @@
-﻿using JWLMerge.BackupFileServices.Helpers;
-
-namespace JWLMerge.Tests
+﻿namespace JWLMerge.Tests
 {
     using System;
+    using JWLMerge.BackupFileServices.Helpers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]

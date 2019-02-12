@@ -26,7 +26,7 @@
         private const string DatabaseEntryName = "userData.db";
 
         private readonly Merger _merger = new Merger();
-
+        
         public event EventHandler<ProgressEventArgs> ProgressEvent;
 
         public BackupFileService()
@@ -240,6 +240,22 @@
             
             var mergedDatabase = MergeDatabases(originals);
             return new BackupFile { Manifest = newManifest, Database = mergedDatabase };
+        }
+
+        /// <inheritdoc />
+        public BackupFile ImportBibleNotes(
+            BackupFile originalBackupFile, 
+            IEnumerable<BibleNote> notes,
+            string bibleKeySymbol,
+            int mepsLanguageId)
+        {
+            ProgressMessage("Importing Bible notes");
+
+            var newManifest = UpdateManifest(originalBackupFile.Manifest);
+            var notesImporter = new NotesImporter(originalBackupFile.Database, bibleKeySymbol, mepsLanguageId);
+            notesImporter.Import(notes);
+
+            return new BackupFile { Manifest = newManifest, Database = originalBackupFile.Database };
         }
 
         private Manifest UpdateManifest(Manifest manifestToBaseOn)

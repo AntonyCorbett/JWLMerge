@@ -1,3 +1,8 @@
+using System.Collections.Generic;
+using JWLMerge.BackupFileServices.Models;
+using JWLMerge.BackupFileServices.Models.Database;
+using Serilog;
+
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -27,7 +32,6 @@ namespace JWLMerge.ViewModel
         private readonly IBackupFileService _backupFileService;
         private readonly IWindowService _windowService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
-        private readonly ObservableCollection<JwLibraryFile> _files = new ObservableCollection<JwLibraryFile>();
 
         /// <inheritdoc />
         /// <summary>
@@ -44,7 +48,7 @@ namespace JWLMerge.ViewModel
             _windowService = windowService;
             _fileOpenSaveService = fileOpenSaveService;
 
-            _files.CollectionChanged += FilesCollectionChanged;
+            Files.CollectionChanged += FilesCollectionChanged;
 
             SetTitle();
 
@@ -127,9 +131,13 @@ namespace JWLMerge.ViewModel
 
                         if (schemaFilePath != null)
                         {
-                            var mergedFile = _backupFileService.Merge(_files.Select(x => x.BackupFile).ToArray());
+                            var mergedFile = _backupFileService.Merge(Files.Select(x => x.BackupFile).ToArray());
                             _backupFileService.WriteNewDatabase(mergedFile, destPath, schemaFilePath);
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Logger.Error(ex, "Could not merge");
                     }
                     finally
                     {
@@ -147,6 +155,27 @@ namespace JWLMerge.ViewModel
             }
         }
 
+        private IEnumerable<BibleNote> GetSampleBibleNotes()
+        {
+            var result = new List<BibleNote>();
+
+            result.Add(new BibleNote
+            {
+                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 1, ChapterNumber = 1, VerseNumber = 1 },
+                NoteTitle = "A note 1",
+                NoteContent = "My notes go here"
+            });
+
+            result.Add(new BibleNote
+            {
+                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 2, ChapterNumber = 2, VerseNumber = 2 },
+                NoteTitle = "A note 2",
+                NoteContent = "My notes go here"
+            });
+
+            return result;
+        }
+
         [Conditional("DEBUG")]
         private void DebugSleep()
         {
@@ -157,7 +186,7 @@ namespace JWLMerge.ViewModel
         {
             // ReSharper disable once StyleCop.SA1116
             // ReSharper disable once StyleCop.SA1115
-            Parallel.ForEach(_files, file =>
+            Parallel.ForEach(Files, file =>
             {
                 if (File.Exists(file.FilePath))
                 {
@@ -173,7 +202,7 @@ namespace JWLMerge.ViewModel
         {
             // ReSharper disable once StyleCop.SA1116
             // ReSharper disable once StyleCop.SA1115
-            Parallel.ForEach(_files, file =>
+            Parallel.ForEach(Files, file =>
             {
                 if (File.Exists(file.FilePath))
                 {
@@ -184,7 +213,7 @@ namespace JWLMerge.ViewModel
 
         private string GetSuitableFilePathForSchema()
         {
-            foreach (var file in _files)
+            foreach (var file in Files)
             {
                 if (File.Exists(file.FilePath))
                 {
@@ -197,11 +226,11 @@ namespace JWLMerge.ViewModel
 
         private void RemoveCard(string filePath)
         {
-            foreach (var file in _files)
+            foreach (var file in Files)
             {
                 if (IsSameFile(file.FilePath, filePath))
                 {
-                    _files.Remove(file);
+                    Files.Remove(file);
                     _windowService.Close(filePath);
                     break;
                 }
@@ -213,7 +242,7 @@ namespace JWLMerge.ViewModel
             _windowService.ShowDetailWindow(_backupFileService, filePath);
         }
 
-        public ObservableCollection<JwLibraryFile> Files => _files;
+        public ObservableCollection<JwLibraryFile> Files { get; } = new ObservableCollection<JwLibraryFile>();
 
         private void AddDesignTimeItems()
         {
@@ -221,7 +250,7 @@ namespace JWLMerge.ViewModel
             {
                 for (int n = 0; n < 3; ++n)
                 {
-                    _files.Add(DesignTimeFileCreation.CreateMockJwLibraryFile(_backupFileService, n));
+                    Files.Add(DesignTimeFileCreation.CreateMockJwLibraryFile(_backupFileService, n));
                 }
             }
         }
@@ -266,10 +295,10 @@ namespace JWLMerge.ViewModel
 
                 foreach (var file in tmpFilesCollection)
                 {
-                    if (_files.FirstOrDefault(x => IsSameFile(file.FilePath, x.FilePath)) == null)
+                    if (Files.FirstOrDefault(x => IsSameFile(file.FilePath, x.FilePath)) == null)
                     {
                         file.PropertyChanged += FilePropertyChanged;
-                        _files.Add(file);
+                        Files.Add(file);
                     }
                 }
             }
@@ -291,18 +320,18 @@ namespace JWLMerge.ViewModel
 
         private int GetMergableFileCount()
         {
-            if (_files.Count == 1)
+            if (Files.Count == 1)
             {
-                return _files.First().MergeParameters.AnyExcludes() ? 1 : 0;
+                return Files.First().MergeParameters.AnyExcludes() ? 1 : 0;
             }
             
-            var count = _files.Count(file => file.MergeParameters.AnyIncludes());
+            var count = Files.Count(file => file.MergeParameters.AnyIncludes());
             return count == 1 ? 0 : count;
         }
 
         public string Title { get; set; }
         
-        public bool FileListEmpty => _files.Count == 0;
+        public bool FileListEmpty => Files.Count == 0;
 
         private bool _isBusy;
 

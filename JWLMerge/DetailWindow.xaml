@@ -14,20 +14,25 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="DetailWindow" Height="402" Width="544" MinHeight="450" ShowInTaskbar="False">
+        Title="DetailWindow" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="175"/>
             <ColumnDefinition Width="373*"/>
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Column="0" Header="Data Type" Margin="10,10,5,10">
+        <GroupBox Grid.Row="0" Grid.Column="0" Header="Data Type" Margin="10,10,5,10">
             <ListBox ItemsSource="{Binding ListItems}" DisplayMemberPath="Caption" 
                      SelectedItem="{Binding SelectedDataType, Mode=TwoWay}">
             </ListBox>
         </GroupBox>
 
-        <GroupBox Grid.Column="1" Header="Data" Margin="5,10,10,10">
+        <GroupBox Grid.Row="0" Grid.Column="1" Header="Data" Margin="5,10,10,10">
 
             <DataGrid ItemsSource="{Binding DataItemsSource}"
                       IsReadOnly="True"
@@ -38,6 +43,19 @@
             </DataGrid>
             
         </GroupBox>
+
+        <Button
+            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+            Command="{Binding ImportBibleNotesCommand}"
+            HorizontalAlignment="Left"
+            Margin="10,0,0,10"
+            Grid.Column="0" Grid.Row="1" 
+            ToolTip="Import Bible Notes">
+            <materialDesign:PackIcon
+                Kind="Import"
+                Height="24"
+                Width="24" />
+        </Button>
     </Grid>
 </Window>
  

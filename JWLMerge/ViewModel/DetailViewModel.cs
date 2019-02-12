@@ -1,4 +1,8 @@
-﻿namespace JWLMerge.ViewModel
+﻿using JWLMerge.BackupFileServices;
+using JWLMerge.BackupFileServices.Helpers;
+using JWLMerge.Services;
+
+namespace JWLMerge.ViewModel
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -6,18 +10,24 @@
     using BackupFileServices.Models.Database;
     using BackupFileServices.Models.ManifestFile;
     using GalaSoft.MvvmLight;
+    using GalaSoft.MvvmLight.CommandWpf;
     using Models;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class DetailViewModel : ViewModelBase
     {
+        private readonly IBackupFileService _backupFileService;
+        private readonly IFileOpenSaveService _fileOpenSaveService;
+
         public string FilePath { get; set; }
         
         // ReSharper disable once MemberCanBePrivate.Global
         public BackupFile BackupFile { get; set; }
 
         private DataTypeListItem _selectedDataType;
-        
+
+        public RelayCommand ImportBibleNotesCommand { get; set; }
+
         public DataTypeListItem SelectedDataType
         {
             get => _selectedDataType;
@@ -94,9 +104,24 @@
 
         public List<DataTypeListItem> ListItems { get; }
 
-        public DetailViewModel()
+        public DetailViewModel(IBackupFileService backupFileService, IFileOpenSaveService fileOpenSaveService)
         {
+            _backupFileService = backupFileService;
+            _fileOpenSaveService = fileOpenSaveService;
+
             ListItems = CreateListItems();
+
+            ImportBibleNotesCommand = new RelayCommand(ImportBibleNotes);
+        }
+
+        private void ImportBibleNotes()
+        {
+            var path = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                var file = new BibleNotesFile(path);
+                _backupFileService.ImportBibleNotes(BackupFile, file.GetNotes(), file.GetBibleKeySymbol(), file.GetMepsLanguageId());
+            }
         }
 
         private List<DataTypeListItem> CreateListItems()

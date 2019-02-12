@@ -31,7 +31,7 @@
         public int? Track { get; set; }
 
         /// <summary>
-        /// A refernce to the publication issue (if applicable), e.g. "20171100"
+        /// A reference to the publication issue (if applicable), e.g. "20171100"
         /// </summary>
         public int IssueTagNumber { get; set; }
 

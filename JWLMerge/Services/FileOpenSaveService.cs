@@ -8,7 +8,29 @@
     internal class FileOpenSaveService : IFileOpenSaveService
     {
         private static string SaveDirectory;
-        
+        private static string ImportDirectory;
+
+        public string GetBibleNotesImportFilePath(string title)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                AddExtension = true,
+                CheckFileExists = true,
+                DefaultExt = ".txt",
+                Title = title,
+                Filter = "Text file (*.txt)|*.txt",
+                InitialDirectory = ImportDirectory ?? GetDefaultImportFolder()
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                ImportDirectory = Path.GetDirectoryName(openFileDialog.FileName);
+                return openFileDialog.FileName;
+            }
+
+            return null;
+        }
+
         public string GetSaveFilePath(string title)
         {
             var saveFileDialog = new SaveFileDialog
@@ -31,6 +53,17 @@
         private string GetDefaultSaveFolder()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMerge");
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            return folder;
+        }
+
+        private string GetDefaultImportFolder()
+        {
+            var folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);

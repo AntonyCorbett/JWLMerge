@@ -63,15 +63,21 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Helpers\BibleBookNames.cs" />
+    <Compile Include="Helpers\BibleNotesFile.cs" />
     <Compile Include="Helpers\Cleaner.cs" />
     <Compile Include="Helpers\IdTranslator.cs" />
     <Compile Include="Helpers\Merger.cs" />
+    <Compile Include="Helpers\NotesImporter.cs" />
     <Compile Include="Models\BackupFile.cs" />
     <Compile Include="BackupFileService.cs" />
     <Compile Include="Events\ProgressEventArgs.cs" />
     <Compile Include="Exceptions\BackupFileServicesException.cs" />
     <Compile Include="Helpers\DataAccessLayer.cs" />
     <Compile Include="IBackupFileService.cs" />
+    <Compile Include="Models\BibleBookChapterAndVerse.cs" />
+    <Compile Include="Models\BibleNotesVerseSpecification.cs" />
+    <Compile Include="Models\Database\BibleNote.cs" />
     <Compile Include="Models\Database\BlockRange.cs" />
     <Compile Include="Models\Database\Bookmark.cs" />
     <Compile Include="Models\Database\Database.cs" />
@@ -83,6 +89,8 @@
     <Compile Include="Models\Database\UserMark.cs" />
     <Compile Include="Models\ManifestFile\Manifest.cs" />
     <Compile Include="Models\ManifestFile\UserDataBackup.cs" />
+    <Compile Include="Models\NotesImportResults.cs" />
+    <Compile Include="Models\NoteTitleAndContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
