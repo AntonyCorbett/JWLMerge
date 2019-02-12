@@ -1,4 +1,4 @@
-# JWLMerge
+# JWLMerge <img src="https://ci.appveyor.com/api/projects/status/2nl90i7apndaxcac?svg=true">
 
 ### Introduction
 
