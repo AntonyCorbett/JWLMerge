@@ -23,7 +23,7 @@ namespace JWLMerge.BackupFileServices.Models.Database
         private Lazy<Dictionary<string, Tag>> _tagsNameIndex;
         private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
         private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
-        private Lazy<Dictionary<int, BlockRange>> _blockRangeUserMarkIdIndex;
+        private Lazy<Dictionary<int, List<BlockRange>>> _blockRangesUserMarkIdIndex;
         private Lazy<Dictionary<string, Bookmark>> _bookmarksIndex;
 
         public Database()
@@ -105,9 +105,16 @@ namespace JWLMerge.BackupFileServices.Models.Database
         {
             BlockRanges.Add(value);
 
-            if (_blockRangeUserMarkIdIndex.IsValueCreated)
+            if (_blockRangesUserMarkIdIndex.IsValueCreated)
             {
-                _blockRangeUserMarkIdIndex.Value.Add(value.UserMarkId, value);
+                if (!_blockRangesUserMarkIdIndex.Value.TryGetValue(value.UserMarkId, out var blockRangeList))
+                {
+                    blockRangeList = new List<BlockRange>();
+                    _blockRangesUserMarkIdIndex.Value.Add(value.UserMarkId, blockRangeList);
+
+                }
+
+                blockRangeList.Add(value);
             }
         }
 
@@ -234,11 +241,9 @@ namespace JWLMerge.BackupFileServices.Models.Database
             return _locationsBibleChapterIndex.Value.TryGetValue(key, out var location) ? location : null;
         }
 
-        public BlockRange FindBlockRange(int userMarkId)
+        public IReadOnlyCollection<BlockRange> FindBlockRanges(int userMarkId)
         {
-            // note that we find a block range by userMarkId. The BlockRange.UserMarkId column 
-            // isn't marked as a unique index, but we assume it should be.
-            return _blockRangeUserMarkIdIndex.Value.TryGetValue(userMarkId, out var range) ? range : null;
+            return _blockRangesUserMarkIdIndex.Value.TryGetValue(userMarkId, out var ranges) ? ranges : null;
         }
 
         public Bookmark FindBookmark(int locationId, int publicationLocationId)
@@ -375,11 +380,23 @@ namespace JWLMerge.BackupFileServices.Models.Database
 
             return result;
         }
-
-
-        private Dictionary<int, BlockRange> BlockRangeIndexValueFactory()
+        
+        private Dictionary<int, List<BlockRange>> BlockRangeIndexValueFactory()
         {
-            return BlockRanges.ToDictionary(range => range.UserMarkId);
+            var result = new Dictionary<int, List<BlockRange>>();
+
+            foreach (var range in BlockRanges)
+            {
+                if (!result.TryGetValue(range.UserMarkId, out var blockRangeList))
+                {
+                    blockRangeList = new List<BlockRange>();
+                    result.Add(range.UserMarkId, blockRangeList);
+                }
+
+                blockRangeList.Add(range);
+            }
+            
+            return result;
         }
 
         private string GetBookmarkKey(int locationId, int publicationLocationId)
@@ -524,7 +541,7 @@ namespace JWLMerge.BackupFileServices.Models.Database
             _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
             _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
             _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);
-            _blockRangeUserMarkIdIndex = new Lazy<Dictionary<int, BlockRange>>(BlockRangeIndexValueFactory);
+            _blockRangesUserMarkIdIndex = new Lazy<Dictionary<int, List<BlockRange>>>(BlockRangeIndexValueFactory);
             _bookmarksIndex = new Lazy<Dictionary<string, Bookmark>>(BookmarkIndexValueFactory);
         }
     }

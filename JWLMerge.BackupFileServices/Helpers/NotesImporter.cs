@@ -152,10 +152,16 @@
 
             foreach (var userMark in userMarksForLocation)
             {
-                var range = _targetDatabase.FindBlockRange(userMark.UserMarkId);
-                if (range != null && range.StartToken == startToken && range.EndToken == endToken)
+                var ranges = _targetDatabase.FindBlockRanges(userMark.UserMarkId);
+                if (ranges != null)
                 {
-                    return userMark;
+                    foreach (var range in ranges)
+                    {
+                        if (range != null && range.StartToken == startToken && range.EndToken == endToken)
+                        {
+                            return userMark;
+                        }
+                    }
                 }
             }
 

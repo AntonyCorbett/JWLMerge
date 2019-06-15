@@ -1,4 +1,7 @@
-﻿using JWLMerge.BackupFileServices;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Threading;
+using JWLMerge.BackupFileServices;
 using JWLMerge.BackupFileServices.Helpers;
 using JWLMerge.Services;
 
@@ -18,6 +21,7 @@ namespace JWLMerge.ViewModel
     {
         private readonly IBackupFileService _backupFileService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
+        private bool _isBusy;
 
         public string FilePath { get; set; }
         
@@ -38,6 +42,19 @@ namespace JWLMerge.ViewModel
                     _selectedDataType = value;
                     RaisePropertyChanged();
                     RaisePropertyChanged(nameof(DataItemsSource));
+                }
+            }
+        }
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    RaisePropertyChanged();
                 }
             }
         }
@@ -119,8 +136,24 @@ namespace JWLMerge.ViewModel
             var path = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");
             if (!string.IsNullOrWhiteSpace(path))
             {
-                var file = new BibleNotesFile(path);
-                _backupFileService.ImportBibleNotes(BackupFile, file.GetNotes(), file.GetBibleKeySymbol(), file.GetMepsLanguageId());
+                IsBusy = true;
+                Task.Run(() =>
+                {
+                    var file = new BibleNotesFile(path);
+
+                    _backupFileService.ImportBibleNotes(
+                        BackupFile, file.GetNotes(), file.GetBibleKeySymbol(), file.GetMepsLanguageId());
+
+                    _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
+
+                    if (SelectedDataType.DataType == JwLibraryFileDataTypes.Note)
+                    {
+                        SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Manifest);
+                    }
+                }).ContinueWith(t =>
+                {
+                    IsBusy = false;
+                });
             }
         }
 

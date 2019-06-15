@@ -1,4 +1,7 @@
-﻿namespace JWLMerge.BackupFileServices.Helpers
+﻿using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+
+namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -137,16 +140,41 @@
         private void MergeBlockRanges(Database source, Database destination)
         {
             ProgressMessage(" Block ranges");
-
+            
             foreach (var range in source.BlockRanges)
             {
                 var userMarkId = _translatedUserMarkIds.GetTranslatedId(range.UserMarkId);
-                var existingRange = destination.FindBlockRange(userMarkId);
-                if (existingRange == null)
+                if (userMarkId != 0)
                 {
-                    InsertBlockRange(range, destination);
+                    var existingRanges = destination.FindBlockRanges(userMarkId);
+
+                    if (existingRanges == null ||
+                        !existingRanges.Any(x => OverlappingBlockRanges(x, range)))
+                    {
+                        InsertBlockRange(range, destination);
+                    }
                 }
             }
+        }
+
+        private bool OverlappingBlockRanges(BlockRange blockRange1, BlockRange blockRange2)
+        {
+            if (blockRange1.StartToken == blockRange2.StartToken && 
+                blockRange1.EndToken == blockRange2.EndToken)
+            {
+                return true;
+            }
+
+            if (blockRange1.StartToken == null ||
+                blockRange1.EndToken == null ||
+                blockRange2.StartToken == null ||
+                blockRange2.EndToken == null)
+            {
+                return false;
+            }
+
+            return blockRange2.StartToken < blockRange1.EndToken 
+                   && blockRange2.EndToken > blockRange1.StartToken;
         }
 
         private void MergeTagMap(Database source, Database destination)

@@ -56,6 +56,11 @@
                 Height="24"
                 Width="24" />
         </Button>
+
+        <ProgressBar Grid.Row="1" Grid.Column="1" 
+                     Margin="0,0,10,0"
+                     Visibility="{Binding Path=IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     Height="20" IsIndeterminate="True" />
     </Grid>
 </Window>
  

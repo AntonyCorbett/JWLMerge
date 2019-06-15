@@ -86,7 +86,7 @@ namespace JWLMerge.ViewModel
         {
             CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy);
             ShowDetailsCommand = new RelayCommand<string>(ShowDetails, filePath => !IsBusy);
-            MergeCommand = new RelayCommand(MergeFiles, () => GetMergableFileCount() > 0 && !IsBusy);
+            MergeCommand = new RelayCommand(MergeFiles, () => GetMergeableFileCount() > 0 && !IsBusy);
             HomepageCommand = new RelayCommand(LaunchHomepage);
             UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
         }
@@ -109,7 +109,7 @@ namespace JWLMerge.ViewModel
 
         private string GetSaveDialogTitle()
         {
-            return GetMergableFileCount() == 1
+            return GetMergeableFileCount() == 1
                 ? "Save Modified File"
                 : "Save Merged File";
         }
@@ -153,27 +153,6 @@ namespace JWLMerge.ViewModel
                     });
                 });
             }
-        }
-
-        private IEnumerable<BibleNote> GetSampleBibleNotes()
-        {
-            var result = new List<BibleNote>();
-
-            result.Add(new BibleNote
-            {
-                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 1, ChapterNumber = 1, VerseNumber = 1 },
-                NoteTitle = "A note 1",
-                NoteContent = "My notes go here"
-            });
-
-            result.Add(new BibleNote
-            {
-                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 2, ChapterNumber = 2, VerseNumber = 2 },
-                NoteTitle = "A note 2",
-                NoteContent = "My notes go here"
-            });
-
-            return result;
         }
 
         [Conditional("DEBUG")]
@@ -318,7 +297,7 @@ namespace JWLMerge.ViewModel
             return Path.GetFullPath(path1).Equals(Path.GetFullPath(path2), StringComparison.OrdinalIgnoreCase);
         }
 
-        private int GetMergableFileCount()
+        private int GetMergeableFileCount()
         {
             if (Files.Count == 1)
             {
@@ -382,7 +361,7 @@ namespace JWLMerge.ViewModel
         {
             get
             {
-                int fileCount = GetMergableFileCount();
+                int fileCount = GetMergeableFileCount();
                 if (fileCount == 1)
                 {
                     return "SAVE AS";

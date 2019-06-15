@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using JWLMerge.BackupFileServices.Models;
 using JWLMerge.BackupFileServices.Models.Database;
-using Microsoft.Build.Tasks;
 
 namespace JWLMerge.BackupFileServices.Helpers
 {
     public class BibleNotesFile
     {
         private const int MaxTitleLength = 50;
+        private const string BibleKeySymbolToken = @"[BibleKeySymbol";
+        private const string MepsLanguageIdToken = @"[MepsLanguageId";
 
         private readonly string _path;
         private string _bibleKeySymbol;
@@ -59,7 +57,26 @@ namespace JWLMerge.BackupFileServices.Helpers
             var lines = ReadLinesFromFile();
 
             ParseParameters(lines);
+            RemoveParamLines(lines);
             ParseNotes(lines);
+        }
+
+        private void RemoveParamLines(string[] lines)    
+        {
+            RemoveLineStarting(BibleKeySymbolToken, lines);
+            RemoveLineStarting(MepsLanguageIdToken, lines);
+        }
+
+        private void RemoveLineStarting(string token, string[] lines)
+        {
+            for (int n = 0; n < lines.Length; ++n)
+            {
+                if (lines[n].Trim().StartsWith(token, StringComparison.OrdinalIgnoreCase))
+                {
+                    lines[n] = string.Empty;
+                    break;
+                }
+            }
         }
 
         private string[] ReadLinesFromFile()
@@ -88,7 +105,10 @@ namespace JWLMerge.BackupFileServices.Helpers
                 var verseSpec = GetVerseSpecification(line);
                 if (verseSpec == null)
                 {
-                    linesInNote.Add(line);
+                    if (linesInNote.Count > 0 || !string.IsNullOrWhiteSpace(line))
+                    {
+                        linesInNote.Add(line);
+                    }
                 }
                 else
                 {
@@ -140,19 +160,16 @@ namespace JWLMerge.BackupFileServices.Helpers
 
             var result = new NoteTitleAndContent();
 
-            if (lines.Count > 1)
+            // use first line as title if length is reasonable
+            if (lines[0].Length <= MaxTitleLength)
             {
-                // use first line as title if length is reasonable
-                if (lines[0].Length <= MaxTitleLength)
-                {
-                    result.Title = lines[0];
-                    result.Content = string.Join(Environment.NewLine, lines.Skip(1));
-                }
-                else
-                {
-                    result.Title = string.Empty;
-                    result.Content = string.Join(Environment.NewLine, lines);
-                }
+                result.Title = lines[0];
+                result.Content = string.Join(Environment.NewLine, lines.Skip(1).SkipWhile(string.IsNullOrWhiteSpace));
+            }
+            else
+            {
+                result.Title = string.Empty;
+                result.Content = string.Join(Environment.NewLine, lines);
             }
 
             return result;
@@ -220,17 +237,15 @@ namespace JWLMerge.BackupFileServices.Helpers
 
         private void ParseParameters(string[] lines)
         {
-            var bibleKeySymbolToken = @"[BibleKeySymbol";
-            var bibleKeySymbol = FindValue(lines, bibleKeySymbolToken);
+            var bibleKeySymbol = FindValue(lines, BibleKeySymbolToken);
             if (string.IsNullOrEmpty(bibleKeySymbol))
             {
                 throw new Exception("Could not find Bible Key Symbol");
             }
 
             _bibleKeySymbol = bibleKeySymbol.Trim('"');
-
-            var mepsLanguageIdToken = @"[MepsLanguageId";
-            var mepsLanguageId = FindValue(lines, mepsLanguageIdToken);
+            
+            var mepsLanguageId = FindValue(lines, MepsLanguageIdToken);
             if (string.IsNullOrEmpty(mepsLanguageId))
             {
                 throw new Exception("Could not find Meps Language Id");
@@ -258,7 +273,7 @@ namespace JWLMerge.BackupFileServices.Helpers
                 return null;
             }
 
-            return line.Substring(equalsPos).TrimEnd(']').Trim();
+            return line.Substring(equalsPos + 1).TrimEnd(']').Trim();
         }
     }
 }
