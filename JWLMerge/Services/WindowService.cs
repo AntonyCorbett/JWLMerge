@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using BackupFileServices;
-    using ViewModel;
+    using JWLMerge.BackupFileServices;
+    using JWLMerge.ViewModel;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class WindowService : IWindowService
@@ -17,7 +17,10 @@
             _detailWindows = new List<DetailWindow>();
         }
 
-        public void ShowDetailWindow(IBackupFileService backupFileService, string filePath)
+        public void ShowDetailWindow(
+            IBackupFileService backupFileService, 
+            string filePath,
+            bool notesRedacted)
         {
             var existingWindow = GetDetailWindow(filePath);
             if (existingWindow != null)
@@ -26,7 +29,7 @@
             }
             else
             {
-                var window = CreateDetailWindow(backupFileService, filePath);
+                var window = CreateDetailWindow(backupFileService, filePath, notesRedacted);
                 
                 var viewModel = (DetailViewModel)window.DataContext;
                 viewModel.SelectedDataType = viewModel.ListItems.FirstOrDefault();
@@ -49,12 +52,16 @@
             }
         }
 
-        private DetailWindow CreateDetailWindow(IBackupFileService backupFileService, string filePath)
+        private DetailWindow CreateDetailWindow(
+            IBackupFileService backupFileService, 
+            string filePath,
+            bool notesRedacted)
         {
             var window = new DetailWindow();
             var viewModel = (DetailViewModel)window.DataContext;
             viewModel.FilePath = filePath;
             viewModel.BackupFile = backupFileService.Load(filePath);
+            viewModel.NotesRedacted = notesRedacted;
 
             window.Closed += DetailWindowClosed;
             _detailWindows.Add(window);

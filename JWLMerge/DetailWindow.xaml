@@ -44,12 +44,12 @@
             
         </GroupBox>
 
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
         <Button
             Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
             Command="{Binding ImportBibleNotesCommand}"
             HorizontalAlignment="Left"
             Margin="10,0,0,10"
-            Grid.Column="0" Grid.Row="1" 
             ToolTip="Import Bible Notes">
             <materialDesign:PackIcon
                 Kind="Import"
@@ -57,8 +57,23 @@
                 Width="24" />
         </Button>
 
+        <Button
+            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+            Command="{Binding RedactNotesCommand}"
+            HorizontalAlignment="Left"
+            Margin="10,0,0,10"
+            Visibility="{Binding Path=IsNotesItemSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+            IsEnabled="{Binding NotesNotRedacted}"
+            ToolTip="Redact Notes">
+            <materialDesign:PackIcon
+                Kind="SwordCross"
+                Height="24"
+                Width="24" />
+        </Button>
+        </StackPanel>
+
         <ProgressBar Grid.Row="1" Grid.Column="1" 
-                     Margin="0,0,10,0"
+                     Background="Aqua"
                      Visibility="{Binding Path=IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
                      Height="20" IsIndeterminate="True" />
     </Grid>

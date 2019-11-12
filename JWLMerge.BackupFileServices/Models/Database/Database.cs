@@ -1,6 +1,4 @@
-﻿using System.Data.Odbc;
-
-namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.Database
 {
     using System;
     using System.Collections.Generic;

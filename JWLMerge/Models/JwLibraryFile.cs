@@ -1,16 +1,24 @@
 ﻿namespace JWLMerge.Models
 {
     using System.Text;
-    using BackupFileServices.Models;
     using GalaSoft.MvvmLight;
+    using JWLMerge.BackupFileServices.Models;
 
     internal class JwLibraryFile : ViewModelBase
     {
+        public JwLibraryFile()
+        {
+            MergeParameters = new MergeParameters();
+            MergeParameters.PropertyChanged += MergeParametersPropertyChanged;
+        }
+
         public string FilePath { get; set; }
         
         public BackupFile BackupFile { get; set; }
 
         public MergeParameters MergeParameters { get; }
+
+        public bool NotesRedacted { get; set; }
 
         public string TooltipSummaryText
         {
@@ -26,12 +34,6 @@
             }
         }
 
-        public JwLibraryFile()
-        {
-            MergeParameters = new MergeParameters();
-            MergeParameters.PropertyChanged += MergeParametersPropertyChanged;
-        }
-        
         private void MergeParametersPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(MergeParameters));

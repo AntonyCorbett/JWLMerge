@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using JWLMerge.BackupFileServices.Models;
-using JWLMerge.BackupFileServices.Models.Database;
-using Serilog;
-
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -14,15 +9,16 @@ namespace JWLMerge.ViewModel
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
-    using BackupFileServices;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.CommandWpf;
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
-    using Helpers;
-    using Messages;
-    using Models;
-    using Services;
+    using JWLMerge.BackupFileServices;
+    using JWLMerge.Helpers;
+    using JWLMerge.Messages;
+    using JWLMerge.Models;
+    using JWLMerge.Services;
+    using Serilog;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class MainViewModel : ViewModelBase
@@ -33,10 +29,6 @@ namespace JWLMerge.ViewModel
         private readonly IWindowService _windowService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
         public MainViewModel(
             IDragDropService dragDropService, 
             IBackupFileService backupFileService,
@@ -56,12 +48,33 @@ namespace JWLMerge.ViewModel
             Messenger.Default.Register<DragOverMessage>(this, OnDragOver);
             Messenger.Default.Register<DragDropMessage>(this, OnDragDrop);
             Messenger.Default.Register<MainWindowClosingMessage>(this, OnMainWindowClosing);
-            
+            Messenger.Default.Register<NotesRedactedMessage>(this, OnNotesRedacted);
+
             AddDesignTimeItems();
 
             InitCommands();
 
             GetVersionData();
+        }
+
+        private JwLibraryFile GetFile(string filePath)
+        {
+            var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
+            if (file == null)
+            {
+                Log.Logger.Error($"Could not find file: {filePath}");
+            }
+
+            return file;
+        }
+
+        private void OnNotesRedacted(NotesRedactedMessage message)
+        {
+            var file = GetFile(message.FilePath);
+            if (file != null)
+            {
+                file.NotesRedacted = true;
+            }
         }
 
         private void OnMainWindowClosing(MainWindowClosingMessage message)
@@ -218,7 +231,14 @@ namespace JWLMerge.ViewModel
 
         private void ShowDetails(string filePath)
         {
-            _windowService.ShowDetailWindow(_backupFileService, filePath);
+            var file = GetFile(filePath);
+            if (file != null)
+            {
+                _windowService.ShowDetailWindow(
+                    _backupFileService,
+                    filePath,
+                    file.NotesRedacted);
+            }
         }
 
         public ObservableCollection<JwLibraryFile> Files { get; } = new ObservableCollection<JwLibraryFile>();
@@ -301,7 +321,8 @@ namespace JWLMerge.ViewModel
         {
             if (Files.Count == 1)
             {
-                return Files.First().MergeParameters.AnyExcludes() ? 1 : 0;
+                var file = Files.First();
+                return file.MergeParameters.AnyExcludes() ? 1 : 0;
             }
             
             var count = Files.Count(file => file.MergeParameters.AnyIncludes());

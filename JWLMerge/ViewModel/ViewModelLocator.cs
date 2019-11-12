@@ -1,10 +1,10 @@
 namespace JWLMerge.ViewModel
 {
     using System;
-    using BackupFileServices;
     using CommonServiceLocator;
     using GalaSoft.MvvmLight.Ioc;
-    using Services;
+    using JWLMerge.BackupFileServices;
+    using JWLMerge.Services;
 
     /// <summary>
     /// This class contains static references to all the view models in the
@@ -12,9 +12,6 @@ namespace JWLMerge.ViewModel
     /// </summary>
     internal class ViewModelLocator
     {
-        /// <summary>
-        /// Initializes a new instance of the ViewModelLocator class.
-        /// </summary>
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
@@ -23,6 +20,7 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IBackupFileService, BackupFileService>();
             SimpleIoc.Default.Register<IFileOpenSaveService, FileOpenSaveService>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
+            SimpleIoc.Default.Register<IRedactService, RedactService>();
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DetailViewModel>();
