@@ -21,6 +21,7 @@
     {
         private readonly IBackupFileService _backupFileService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
+        private readonly IDialogService _dialogService;
         private readonly IRedactService _redactService;
         private bool _isBusy;
         private DataTypeListItem _selectedDataType;
@@ -29,10 +30,12 @@
         public DetailViewModel(
             IBackupFileService backupFileService, 
             IFileOpenSaveService fileOpenSaveService,
+            IDialogService dialogService,
             IRedactService redactService)
         {
             _backupFileService = backupFileService;
             _fileOpenSaveService = fileOpenSaveService;
+            _dialogService = dialogService;
             _redactService = redactService;
 
             ListItems = CreateListItems();
@@ -157,42 +160,46 @@
             return result;
         }
 
-        private void RedactNotes()
+        private async void RedactNotes()
         {
             var notes = BackupFile?.Database.Notes;
-            if (notes != null)
+            if (notes != null && await _dialogService.ShouldRedactNotes())
             {
-                IsBusy = true;
-                Task.Run(() =>
-                {
-                    foreach (var note in notes)
-                    {
-                        if (!string.IsNullOrEmpty(note.Title))
-                        {
-                            note.Title = _redactService.GetNoteTitle(note.Title.Length);
-                        }
-
-                        if (!string.IsNullOrEmpty(note.Content))
-                        {
-                            note.Content = _redactService.GenerateNoteContent(note.Content.Length);
-                        }
-                    }
-
-                    _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
-
-                    SelectedDataType = null;
-
-                    Messenger.Default.Send(new NotesRedactedMessage { FilePath = FilePath });
-
-                    NotesRedacted = true;
-                }).ContinueWith(t =>
-                {
-                    SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Note);
-                    IsBusy = false;
-                });
+                RedactNotesInternal(notes);
             }
         }
 
+        private void RedactNotesInternal(List<Note> notes)
+        {
+            IsBusy = true;
+            Task.Run(() =>
+            {
+                foreach (var note in notes)
+                {
+                    if (!string.IsNullOrEmpty(note.Title))
+                    {
+                        note.Title = _redactService.GetNoteTitle(note.Title.Length);
+                    }
+
+                    if (!string.IsNullOrEmpty(note.Content))
+                    {
+                        note.Content = _redactService.GenerateNoteContent(note.Content.Length);
+                    }
+                }
+
+                _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
+
+                SelectedDataType = null;
+
+                Messenger.Default.Send(new NotesRedactedMessage { FilePath = FilePath });
+
+                NotesRedacted = true;
+            }).ContinueWith(t =>
+            {
+                SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Note);
+                IsBusy = false;
+            });
+        }
         private void ImportBibleNotes()
         {
             var path = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");

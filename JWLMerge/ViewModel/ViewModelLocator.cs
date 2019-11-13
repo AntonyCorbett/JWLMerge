@@ -21,13 +21,17 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IFileOpenSaveService, FileOpenSaveService>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
             SimpleIoc.Default.Register<IRedactService, RedactService>();
+            SimpleIoc.Default.Register<IDialogService, DialogService>();
 
+            SimpleIoc.Default.Register<RedactNotesPromptViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DetailViewModel>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-        
+
+        public RedactNotesPromptViewModel RedactNotesPromptDialog => ServiceLocator.Current.GetInstance<RedactNotesPromptViewModel>();
+
         // NB - the guid key produces a new instance per view.
         public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>(Guid.NewGuid().ToString());
 

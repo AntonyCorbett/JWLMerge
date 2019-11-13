@@ -28,17 +28,20 @@ namespace JWLMerge.ViewModel
         private readonly IBackupFileService _backupFileService;
         private readonly IWindowService _windowService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
+        private readonly IDialogService _dialogService;
 
         public MainViewModel(
             IDragDropService dragDropService, 
             IBackupFileService backupFileService,
             IWindowService windowService,
-            IFileOpenSaveService fileOpenSaveService)
+            IFileOpenSaveService fileOpenSaveService,
+            IDialogService dialogService)
         {
             _dragDropService = dragDropService;
             _backupFileService = backupFileService;
             _windowService = windowService;
             _fileOpenSaveService = fileOpenSaveService;
+            _dialogService = dialogService;
 
             Files.CollectionChanged += FilesCollectionChanged;
 
@@ -79,7 +82,7 @@ namespace JWLMerge.ViewModel
 
         private void OnMainWindowClosing(MainWindowClosingMessage message)
         {
-            message.CancelEventArgs.Cancel = IsBusy;
+            message.CancelEventArgs.Cancel = IsBusy || _dialogService.IsDialogVisible();
             if (!message.CancelEventArgs.Cancel)
             {
                 _windowService.CloseAll();
@@ -97,9 +100,9 @@ namespace JWLMerge.ViewModel
 
         private void InitCommands()
         {
-            CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy);
+            CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy && !_dialogService.IsDialogVisible());
             ShowDetailsCommand = new RelayCommand<string>(ShowDetails, filePath => !IsBusy);
-            MergeCommand = new RelayCommand(MergeFiles, () => GetMergeableFileCount() > 0 && !IsBusy);
+            MergeCommand = new RelayCommand(MergeFiles, () => GetMergeableFileCount() > 0 && !IsBusy && !_dialogService.IsDialogVisible());
             HomepageCommand = new RelayCommand(LaunchHomepage);
             UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
         }

@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="JWLMerge.Dialogs.RedactNotesPromptDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Height="217" Width="367"
+             DataContext="{Binding RedactNotesPromptDialog, Source={StaticResource Locator}}"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource MaterialDesignPaper}"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+
+    <UserControl.Resources>
+        <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
+            <Setter Property="Width" Value="125"/>
+        </Style>
+        <Style x:Key="OkBtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Width" Value="125"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Padding="20">
+            <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                           Margin="0,0,0,10"
+                           Text="Redacting Notes" />
+
+                <TextBlock 
+                    Style="{StaticResource MaterialDesignBody2TextBlock}"
+                    Margin="0,0,0,10"
+                    TextWrapping="Wrap"
+                    Text="Are you sure you want to redact notes?" />
+
+            <TextBlock 
+                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                TextWrapping="Wrap"
+                Text="This function is typically used to redact confidential notes. It will replace your existing notes with 'Lorem Ipsum' text and automatically overwrite the backup file." />
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Center" 
+                            Margin="0,20,0,0" >
+
+                    <Button Style="{StaticResource OkBtnStyle}"
+                            Command="{Binding YesCommand}"
+                            Content="YES">
+                    </Button>
+
+                    <Button Style="{StaticResource BtnStyle}" 
+                            HorizontalAlignment="Right"
+                            IsDefault="true" 
+                            Command="{Binding NoCommand}"
+                            IsCancel="true" 
+                            Content="NO">
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+    </Border>
+</UserControl>

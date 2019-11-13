@@ -15,6 +15,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="DetailWindow" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
+    <materialDesign:DialogHost Identifier="DetailDialogHost">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -76,5 +77,11 @@
                      Visibility="{Binding Path=IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
                      Height="20" IsIndeterminate="True" />
     </Grid>
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel Margin="16">
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
+    </materialDesign:DialogHost>
+
 </Window>
  

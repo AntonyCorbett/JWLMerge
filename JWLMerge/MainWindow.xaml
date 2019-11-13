@@ -85,6 +85,7 @@
 
     </Window.Resources>
 
+    <materialDesign:DialogHost Identifier="MainDialogHost">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="257*"/>
@@ -135,4 +136,10 @@
             </DockPanel>
         </materialDesign:ColorZone>
     </Grid>
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel Margin="16">
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
+    </materialDesign:DialogHost>
+
 </Window>
