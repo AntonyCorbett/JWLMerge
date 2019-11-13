@@ -162,26 +162,34 @@
             var notes = BackupFile?.Database.Notes;
             if (notes != null)
             {
-                foreach (var note in notes)
+                IsBusy = true;
+                Task.Run(() =>
                 {
-                    if (!string.IsNullOrEmpty(note.Title))
+                    foreach (var note in notes)
                     {
-                        note.Title = _redactService.GetNoteTitle(note.Title.Length);
+                        if (!string.IsNullOrEmpty(note.Title))
+                        {
+                            note.Title = _redactService.GetNoteTitle(note.Title.Length);
+                        }
+
+                        if (!string.IsNullOrEmpty(note.Content))
+                        {
+                            note.Content = _redactService.GenerateNoteContent(note.Content.Length);
+                        }
                     }
 
-                    if (!string.IsNullOrEmpty(note.Content))
-                    {
-                        note.Content = _redactService.GenerateNoteContent(note.Content.Length);
-                    }
-                }
+                    _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
 
-                _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
+                    SelectedDataType = null;
 
-                SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Manifest);
+                    Messenger.Default.Send(new NotesRedactedMessage { FilePath = FilePath });
 
-                Messenger.Default.Send(new NotesRedactedMessage { FilePath = FilePath });
-
-                NotesRedacted = true;
+                    NotesRedacted = true;
+                }).ContinueWith(t =>
+                {
+                    SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Note);
+                    IsBusy = false;
+                });
             }
         }
 

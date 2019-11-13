@@ -73,7 +73,6 @@
         </StackPanel>
 
         <ProgressBar Grid.Row="1" Grid.Column="1" 
-                     Background="Aqua"
                      Visibility="{Binding Path=IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
                      Height="20" IsIndeterminate="True" />
     </Grid>
