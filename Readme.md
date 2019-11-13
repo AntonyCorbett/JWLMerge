@@ -26,4 +26,6 @@ Please review the JW Library terms and conditions of use. Some view the backup d
 
 There is no guarantee of software support. However, if you find a bug or other problem, please feel free to create an issue in this project.
 
+Log files are stored in your Documents\JWLMerge\Logs folder.
+
 "JW Library" is a registered trademark of Watch Tower Bible and Tract Society of Pennsylvania.
