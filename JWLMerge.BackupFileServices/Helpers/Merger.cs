@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-
-namespace JWLMerge.BackupFileServices.Helpers
+﻿namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using Events;
     using Models.Database;
@@ -65,6 +63,8 @@ namespace JWLMerge.BackupFileServices.Helpers
         private void Merge(Database source, Database destination)
         {
             ClearTranslators();
+
+            source.FixupAnomalies();
             
             MergeUserMarks(source, destination);
             MergeNotes(source, destination);

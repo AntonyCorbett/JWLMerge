@@ -1,9 +1,11 @@
-﻿namespace JWLMerge.BackupFileServices.Models.Database
+﻿using Serilog;
+
+namespace JWLMerge.BackupFileServices.Models.Database
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Exceptions;
+    using JWLMerge.BackupFileServices.Exceptions;
 
     public class Database
     {
@@ -50,6 +52,22 @@
             CheckNoteValidity();
             CheckTagMapValidity();
             CheckUserMarkValidity();
+        }
+
+        public void FixupAnomalies()
+        {
+            var count = 0;
+
+            count += FixupBlockRangeValidity();
+            count += FixupBookmarkValidity();
+            count += FixupNoteValidity();
+            count += FixupTagMapValidity();
+            count += FixupUserMarkValidity();
+
+            if (count > 0)
+            {
+                ReinitializeIndexes();
+            }
         }
 
         public LastModified LastModified { get; set; }
@@ -541,6 +559,116 @@
             _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);
             _blockRangesUserMarkIdIndex = new Lazy<Dictionary<int, List<BlockRange>>>(BlockRangeIndexValueFactory);
             _bookmarksIndex = new Lazy<Dictionary<string, Bookmark>>(BookmarkIndexValueFactory);
+        }
+
+        private int FixupUserMarkValidity()
+        {
+            var fixupCount = 0;
+
+            for (var n = UserMarks.Count - 1; n >= 0; --n)
+            {
+                var userMark = UserMarks[n];
+
+                if (FindLocation(userMark.LocationId) == null)
+                {
+                    ++fixupCount;
+                    UserMarks.RemoveAt(n);
+
+                    Log.Logger.Error($"Removed invalid user mark {userMark.UserMarkId}");
+                }
+            }
+            
+            return fixupCount;
+        }
+
+        private int FixupTagMapValidity()
+        {
+            var fixupCount = 0;
+
+            for (var n = TagMaps.Count - 1; n >= 0; --n)
+            {
+                var tagMap = TagMaps[n];
+
+                if (tagMap.Type == 1 && 
+                    (FindTag(tagMap.TagId) == null || FindNote(tagMap.TypeId) == null))
+                {
+                    ++fixupCount;
+                    TagMaps.RemoveAt(n);
+
+                    Log.Logger.Error($"Removed invalid tag map {tagMap.TagMapId}");
+                }
+            }
+
+            return fixupCount;
+        }
+
+        private int FixupNoteValidity()
+        {
+            var fixupCount = 0;
+
+            for (var n = Notes.Count - 1; n >= 0; --n)
+            {
+                var note = Notes[n];
+                
+                if (note.UserMarkId != null && FindUserMark(note.UserMarkId.Value) == null)
+                {
+                    ++fixupCount;
+                    note.UserMarkId = null;
+
+                    Log.Logger.Error($"Cleared invalid user mark ID for note {note.NoteId}");
+                }
+
+                if (note.LocationId != null && FindLocation(note.LocationId.Value) == null)
+                {
+                    ++fixupCount;
+                    note.LocationId = null;
+
+                    Log.Logger.Error($"Cleared invalid location ID for note {note.NoteId}");
+                }
+            }
+
+            return fixupCount;
+        }
+
+        private int FixupBookmarkValidity()
+        {
+            var fixupCount = 0;
+
+            for (var n = Bookmarks.Count - 1; n >= 0; --n)
+            {
+                var bookmark = Bookmarks[n];
+
+                if (FindLocation(bookmark.LocationId) == null ||
+                    FindLocation(bookmark.PublicationLocationId) == null)
+                {
+                    ++fixupCount;
+                    Bookmarks.RemoveAt(n);
+
+                    Log.Logger.Error($"Removed invalid bookmark {bookmark.BookmarkId}");
+                }
+            }
+
+            return fixupCount;
+        }
+
+        private int FixupBlockRangeValidity()
+        {
+            var fixupCount = 0;
+
+            for (var n = BlockRanges.Count - 1; n >= 0; --n)
+            {
+                var range = BlockRanges[n];
+
+                if (FindUserMark(range.UserMarkId) == null)
+                {
+                    ++fixupCount;
+                    BlockRanges.RemoveAt(n);
+
+                    Log.Logger.Error($"Removed invalid block range {range.BlockRangeId}");
+                }
+            }
+            
+            return fixupCount;
         }
     }
 }
