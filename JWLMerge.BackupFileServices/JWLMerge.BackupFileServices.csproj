@@ -89,6 +89,7 @@
     <Compile Include="Models\Database\Tag.cs" />
     <Compile Include="Models\Database\TagMap.cs" />
     <Compile Include="Models\Database\UserMark.cs" />
+    <Compile Include="Models\ImportBibleNotesParams.cs" />
     <Compile Include="Models\ManifestFile\Manifest.cs" />
     <Compile Include="Models\ManifestFile\UserDataBackup.cs" />
     <Compile Include="Models\NotesImportResults.cs" />

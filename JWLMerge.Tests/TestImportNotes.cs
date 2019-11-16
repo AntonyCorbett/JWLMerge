@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using JWLMerge.BackupFileServices.Models;
-
-namespace JWLMerge.Tests
+﻿namespace JWLMerge.Tests
 {
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Collections.Generic;
+    using System.Linq;
     using JWLMerge.BackupFileServices.Helpers;
+    using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.Database;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     public class TestImportNotes : TestBase
@@ -18,9 +17,15 @@ namespace JWLMerge.Tests
             
             var file1 = CreateMockBackup(numRecords);
             var notes = CreateMockBibleNotes().ToArray();
+            var mockImportOptions = new ImportBibleNotesParams();
 
             int mepsLanguageId = 0;
-            var importer = new NotesImporter(file1.Database, "nwtsty", mepsLanguageId);
+            var importer = new NotesImporter(
+                file1.Database, 
+                "nwtsty", 
+                mepsLanguageId,
+                mockImportOptions);
+
             var result = importer.Import(notes);
 
             file1.Database.CheckValidity();

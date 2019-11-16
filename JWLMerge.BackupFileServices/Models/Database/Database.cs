@@ -1,7 +1,6 @@
-﻿using Serilog;
-
-namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.Database
 {
+    using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -86,9 +85,22 @@ namespace JWLMerge.BackupFileServices.Models.Database
 
         public List<UserMark> UserMarks { get; set; }
 
-        public void AddBibleNoteAndUpdateIndex(BibleBookChapterAndVerse verseRef, Note value)
+        public static string GetDateTimeUtcAsDbString(DateTime dateTime)
+        {
+            return $"{dateTime:s}Z";
+        }
+
+        public void AddBibleNoteAndUpdateIndex(
+            BibleBookChapterAndVerse verseRef, 
+            Note value,
+            TagMap tagMap)
         {
             Notes.Add(value);
+
+            if (tagMap != null)
+            {
+                TagMaps.Add(tagMap);
+            }
 
             if (_notesGuidIndex.IsValueCreated)
             {
@@ -110,11 +122,6 @@ namespace JWLMerge.BackupFileServices.Models.Database
 
                 notes.Add(value);
             }
-        }
-
-        public static string GetDateTimeUtcAsDbString(DateTime dateTime)
-        {
-            return $"{dateTime:s}Z";
         }
 
         public void AddBlockRangeAndUpdateIndex(BlockRange value)

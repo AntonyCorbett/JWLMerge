@@ -1,10 +1,10 @@
 ﻿namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using Events;
-    using Models.Database;
+    using System.Linq;
+    using JWLMerge.BackupFileServices.Events;
+    using JWLMerge.BackupFileServices.Models.Database;
     using Serilog;
 
     /// <summary>

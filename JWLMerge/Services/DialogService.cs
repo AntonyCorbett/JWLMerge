@@ -1,6 +1,9 @@
 ﻿namespace JWLMerge.Services
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using JWLMerge.BackupFileServices.Models;
+    using JWLMerge.BackupFileServices.Models.Database;
     using JWLMerge.Dialogs;
     using JWLMerge.ViewModel;
     using MaterialDesignThemes.Wpf;
@@ -20,8 +23,31 @@
             await DialogHost.Show(
                 dialog, 
                 "DetailDialogHost",
-                (object sender, DialogClosingEventArgs args) => 
-                { _isDialogVisible = false; }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
+
+            return dc.Result;
+        }
+
+        public async Task<ImportBibleNotesParams> GetImportBibleNotesParams(IReadOnlyCollection<Tag> databaseTags)
+        {
+            _isDialogVisible = true;
+
+            var dialog = new ImportBibleNotesDialog();
+            var dc = (ImportBibleNotesViewModel)dialog.DataContext;
+
+            dc.Tags = databaseTags;
+            dc.SelectedTagId = 0;
+
+            await DialogHost.Show(
+                dialog,
+                "DetailDialogHost",
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
 
             return dc.Result;
         }

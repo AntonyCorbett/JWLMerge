@@ -200,18 +200,35 @@
                 IsBusy = false;
             });
         }
-        private void ImportBibleNotes()
+
+        private async void ImportBibleNotes()
         {
             var path = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");
             if (!string.IsNullOrWhiteSpace(path))
             {
+                var userDefinedTags = BackupFile.Database.Tags.Where(x => x.Type != 0)
+                    .OrderBy(x => x.Name)
+                    .ToList();
+
+                userDefinedTags.Insert(0, new Tag { TagId = 0, Type = 0, Name = "** No Tag **" });
+
+                var options = await _dialogService.GetImportBibleNotesParams(userDefinedTags);
+                if (options == null)
+                {
+                    return;
+                }
+
                 IsBusy = true;
-                Task.Run(() =>
+                await Task.Run(() =>
                 {
                     var file = new BibleNotesFile(path);
 
                     _backupFileService.ImportBibleNotes(
-                        BackupFile, file.GetNotes(), file.GetBibleKeySymbol(), file.GetMepsLanguageId());
+                        BackupFile, 
+                        file.GetNotes(), 
+                        file.GetBibleKeySymbol(), 
+                        file.GetMepsLanguageId(),
+                        options);
 
                     _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
 

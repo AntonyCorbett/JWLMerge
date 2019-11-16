@@ -100,6 +100,9 @@
     <Compile Include="DetailWindow.xaml.cs">
       <DependentUpon>DetailWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ImportBibleNotesDialog.xaml.cs">
+      <DependentUpon>ImportBibleNotesDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RedactNotesPromptDialog.xaml.cs">
       <DependentUpon>RedactNotesPromptDialog.xaml</DependentUpon>
     </Compile>
@@ -125,10 +128,15 @@
     <Compile Include="Services\RedactService.cs" />
     <Compile Include="Services\WindowService.cs" />
     <Compile Include="ViewModel\DetailViewModel.cs" />
+    <Compile Include="ViewModel\ImportBibleNotesViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\RedactNotesPromptViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="DetailWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ImportBibleNotesDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

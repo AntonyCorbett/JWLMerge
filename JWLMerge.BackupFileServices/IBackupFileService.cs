@@ -55,14 +55,16 @@ namespace JWLMerge.BackupFileServices
         /// <param name="notes">The notes.</param>
         /// <param name="bibleKeySymbol">Bible key symbol, e.g. "nwtsty", "nwt" or "Rbi8"</param>
         /// <param name="mepsLanguageId">Meps Language Id.</param>
+        /// <param name="options">User-specified import parameters.</param>
         /// <returns>
         /// A <see cref="BackupFile"/>.
         /// </returns>
         BackupFile ImportBibleNotes(
-            BackupFile originalBackupFile, 
-            IEnumerable<BibleNote> notes, 
+            BackupFile originalBackupFile,
+            IEnumerable<BibleNote> notes,
             string bibleKeySymbol,
-            int mepsLanguageId);
+            int mepsLanguageId, 
+            ImportBibleNotesParams options);
 
         /// <summary>
         /// Writes the specified backup to a "jwlibrary" file.

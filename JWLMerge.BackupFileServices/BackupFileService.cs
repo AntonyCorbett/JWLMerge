@@ -244,15 +244,21 @@
 
         /// <inheritdoc />
         public BackupFile ImportBibleNotes(
-            BackupFile originalBackupFile, 
+            BackupFile originalBackupFile,
             IEnumerable<BibleNote> notes,
             string bibleKeySymbol,
-            int mepsLanguageId)
+            int mepsLanguageId, 
+            ImportBibleNotesParams options)
         {
             ProgressMessage("Importing Bible notes");
 
             var newManifest = UpdateManifest(originalBackupFile.Manifest);
-            var notesImporter = new NotesImporter(originalBackupFile.Database, bibleKeySymbol, mepsLanguageId);
+            var notesImporter = new NotesImporter(
+                originalBackupFile.Database, 
+                bibleKeySymbol, 
+                mepsLanguageId,
+                options);
+
             notesImporter.Import(notes);
 
             return new BackupFile { Manifest = newManifest, Database = originalBackupFile.Database };

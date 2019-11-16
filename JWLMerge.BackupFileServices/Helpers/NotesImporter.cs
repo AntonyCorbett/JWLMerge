@@ -11,20 +11,31 @@
         private readonly Database _targetDatabase;
         private readonly string _bibleKeySymbol;
         private readonly int _mepsLanguageId;
+        private readonly ImportBibleNotesParams _options;
         private int _maxNoteId;
+        private int _maxTagMapId;
         private int _maxLocationId;
         private int _maxUserMarkId;
         private int _maxBlockRangeId;
 
-        public NotesImporter(Database targetDatabase, string bibleKeySymbol, int mepsLanguageId)
+        public NotesImporter(
+            Database targetDatabase, 
+            string bibleKeySymbol, 
+            int mepsLanguageId,
+            ImportBibleNotesParams options)
         {
             _targetDatabase = targetDatabase;
             _bibleKeySymbol = bibleKeySymbol;
             _mepsLanguageId = mepsLanguageId;
+            _options = options;
 
             _maxNoteId = !_targetDatabase.Notes.Any()
                 ? 0 
                 : _targetDatabase.Notes.Max(x => x.NoteId);
+
+            _maxTagMapId = !_targetDatabase.TagMaps.Any()
+                ? 0
+                : _targetDatabase.TagMaps.Max(x => x.TagMapId);
 
             _maxLocationId = !_targetDatabase.Locations.Any()
                 ? 0
@@ -84,7 +95,6 @@
             {
                 // the note should be associated with some
                 // highlighted text in the verse.
-
                 userMark = FindExistingUserMark(
                                    location.LocationId, 
                                    note.StartTokenInVerse.Value,
@@ -107,13 +117,36 @@
                 Content = note.NoteContent,
                 BlockType = 2,
                 BlockIdentifier = note.BookChapterAndVerse.VerseNumber,
-                LastModified = Database.GetDateTimeUtcAsDbString(DateTime.UtcNow)
+                LastModified = Database.GetDateTimeUtcAsDbString(DateTime.UtcNow),
             };
 
-            _targetDatabase.AddBibleNoteAndUpdateIndex(note.BookChapterAndVerse, newNote);
+            var newTagMapEntry = _options.TagId == 0
+                ? null
+                : CreateTagMapEntryForImportedBibleNote(newNote.NoteId, _options.TagId);
+
+            _targetDatabase.AddBibleNoteAndUpdateIndex(
+                note.BookChapterAndVerse, 
+                newNote, 
+                newTagMapEntry);
         }
 
-        private UserMark InsertUserMark(int locationId, int colourIndex, int startToken, int endToken, int verseNumber)
+        private TagMap CreateTagMapEntryForImportedBibleNote(int noteId, int tagId)
+        {
+            return new TagMap
+            {
+                TagMapId = ++_maxTagMapId,
+                TagId = tagId,
+                Type = 1,   // tag is on a note
+                TypeId = noteId,
+            };
+        }
+
+        private UserMark InsertUserMark(
+            int locationId, 
+            int colourIndex, 
+            int startToken, 
+            int endToken, 
+            int verseNumber)
         {
             var userMark = new UserMark
             {
@@ -121,7 +154,7 @@
                 LocationId = locationId,
                 UserMarkGuid = Guid.NewGuid().ToString().ToLower(),
                 Version = 1,
-                ColorIndex = colourIndex
+                ColorIndex = colourIndex,
             };
 
             _targetDatabase.AddUserMarkAndUpdateIndex(userMark);
@@ -134,7 +167,7 @@
                 Identifier = verseNumber,
                 StartToken = startToken,
                 EndToken = endToken,
-                UserMarkId = userMark.UserMarkId
+                UserMarkId = userMark.UserMarkId,
             };
 
             _targetDatabase.AddBlockRangeAndUpdateIndex(blockRange);
@@ -177,7 +210,7 @@
                 ChapterNumber = chapter,
                 KeySymbol = _bibleKeySymbol,
                 MepsLanguage = _mepsLanguageId,
-                Title = $"{BibleBookNames.GetName(book)} {chapter}"
+                Title = $"{BibleBookNames.GetName(book)} {chapter}",
             };
 
             _targetDatabase.AddLocationAndUpdateIndex(location);
