@@ -14,6 +14,8 @@ Download the JWLMergeSetup.exe file from the latest release and run it.
 
 https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
+Please see the wiki for further information.
+
 ### Important Notes
 
 Please use at your own risk! It is possible to crash JW Library by attempting to restore a corrupt backup file, and sometimes the only solution is to reinstall JW Library and reset its data. (This hasn't happened yet with a JWLMerge-generated file.)
