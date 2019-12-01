@@ -1,5 +1,3 @@
-using JWLMerge.Dialogs;
-
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -26,6 +24,7 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IDialogService, DialogService>();
 
             SimpleIoc.Default.Register<RedactNotesPromptViewModel>();
+            SimpleIoc.Default.Register<RemoveFavouritesPromptViewModel>();
             SimpleIoc.Default.Register<ImportBibleNotesViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DetailViewModel>();
@@ -34,6 +33,8 @@ namespace JWLMerge.ViewModel
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         public RedactNotesPromptViewModel RedactNotesPromptDialog => ServiceLocator.Current.GetInstance<RedactNotesPromptViewModel>();
+
+        public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => ServiceLocator.Current.GetInstance<RemoveFavouritesPromptViewModel>();
 
         public ImportBibleNotesViewModel ImportBibleNotesDialog => ServiceLocator.Current.GetInstance<ImportBibleNotesViewModel>();
 

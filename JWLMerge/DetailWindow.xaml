@@ -70,7 +70,21 @@
                 Height="24"
                 Width="24" />
         </Button>
-        </StackPanel>
+
+        <Button
+            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+            Command="{Binding DeleteFavouritesCommand}"
+            HorizontalAlignment="Left"
+            Margin="10,0,0,10"
+            IsEnabled="{Binding FavouritesExist}"
+            ToolTip="Delete Favourites">
+            <materialDesign:PackIcon
+                Kind="DeleteForever"
+                Height="24"
+                Width="24" />
+        </Button>
+
+    </StackPanel>
 
         <ProgressBar Grid.Row="1" Grid.Column="1" 
                      Margin="10"

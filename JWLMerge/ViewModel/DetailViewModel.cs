@@ -42,6 +42,7 @@
 
             ImportBibleNotesCommand = new RelayCommand(ImportBibleNotes);
             RedactNotesCommand = new RelayCommand(RedactNotes);
+            DeleteFavouritesCommand = new RelayCommand(DeleteFavourites);
         }
 
         public string FilePath { get; set; }
@@ -51,6 +52,8 @@
         public RelayCommand ImportBibleNotesCommand { get; set; }
 
         public RelayCommand RedactNotesCommand { get; set; }
+
+        public RelayCommand DeleteFavouritesCommand { get; set; }
 
         public List<DataTypeListItem> ListItems { get; }
 
@@ -69,6 +72,15 @@
         }
 
         public bool NotesNotRedacted => !NotesRedacted;
+
+        public bool FavouritesExists
+        {
+            get
+            {
+                var favourites = BackupFile?.Database.TagMaps.Where(x => x.TagId == 1);
+                return favourites != null && favourites.Any();
+            }
+        }
 
         public DataTypeListItem SelectedDataType
         {
@@ -160,10 +172,37 @@
             return result;
         }
 
+        private async void DeleteFavourites()
+        {
+            var favourites = BackupFile?.Database.TagMaps.Where(x => x.TagId == 1);
+            if (favourites != null && 
+                favourites.Any() && 
+                await _dialogService.ShouldRemoveFavourites())
+            {
+                DeleteFavouritesInternal();
+            }
+        }
+
+        private void DeleteFavouritesInternal()
+        {
+            IsBusy = true;
+            Task.Run(() =>
+            {
+                BackupFile?.Database.TagMaps.RemoveAll(x => x.TagId == 1);
+                _backupFileService.WriteNewDatabase(BackupFile, FilePath, FilePath);
+                SelectedDataType = null;
+            }).ContinueWith(t =>
+            {
+                SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Manifest);
+                IsBusy = false;
+            });
+        }
+
         private async void RedactNotes()
         {
             var notes = BackupFile?.Database.Notes;
-            if (notes != null && await _dialogService.ShouldRedactNotes())
+            if (notes != null && 
+                await _dialogService.ShouldRedactNotes())
             {
                 RedactNotesInternal(notes);
             }
@@ -196,7 +235,7 @@
                 NotesRedacted = true;
             }).ContinueWith(t =>
             {
-                SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Note);
+                SelectedDataType = ListItems.Single(x => x.DataType == JwLibraryFileDataTypes.Manifest);
                 IsBusy = false;
             });
         }

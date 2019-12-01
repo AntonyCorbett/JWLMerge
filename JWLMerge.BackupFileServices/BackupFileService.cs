@@ -7,12 +7,12 @@
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
-    using Events;
-    using Exceptions;
-    using Helpers;
-    using Models;
-    using Models.Database;
-    using Models.ManifestFile;
+    using JWLMerge.BackupFileServices.Events;
+    using JWLMerge.BackupFileServices.Exceptions;
+    using JWLMerge.BackupFileServices.Helpers;
+    using JWLMerge.BackupFileServices.Models;
+    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.ManifestFile;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Serialization;
@@ -27,12 +27,12 @@
 
         private readonly Merger _merger = new Merger();
         
-        public event EventHandler<ProgressEventArgs> ProgressEvent;
-
         public BackupFileService()
         {
             _merger.ProgressEvent += MergerProgressEvent;
         }
+
+        public event EventHandler<ProgressEventArgs> ProgressEvent;
 
         /// <inheritdoc />
         public BackupFile Load(string backupFilePath)
@@ -58,7 +58,7 @@
                 return new BackupFile
                 {
                     Manifest = manifest,
-                    Database = database
+                    Database = database,
                 };
             }
         }
@@ -74,7 +74,7 @@
             return new BackupFile
             {
                 Manifest = new Manifest(),
-                Database = database
+                Database = database,
             };
         }
 
@@ -106,7 +106,7 @@
                                     backup.Manifest,
                                     new JsonSerializerSettings
                                     {
-                                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
                                     }));
                         }
                     

@@ -2,9 +2,9 @@
 {
     using System.Windows.Controls;
 
-    public partial class RedactNotesPromptDialog : UserControl
+    public partial class RemoveFavouritesPromptDialog : UserControl
     {
-        public RedactNotesPromptDialog()
+        public RemoveFavouritesPromptDialog()
         {
             InitializeComponent();
         }

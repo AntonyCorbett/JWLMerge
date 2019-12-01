@@ -106,6 +106,9 @@
     <Compile Include="Dialogs\RedactNotesPromptDialog.xaml.cs">
       <DependentUpon>RedactNotesPromptDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\RemoveFavouritesPromptDialog.xaml.cs">
+      <DependentUpon>RemoveFavouritesPromptDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\DesignTimeFileCreation.cs" />
     <Compile Include="Helpers\MergePreparation.cs" />
     <Compile Include="Helpers\VersionDetection.cs" />
@@ -131,6 +134,7 @@
     <Compile Include="ViewModel\ImportBibleNotesViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\RedactNotesPromptViewModel.cs" />
+    <Compile Include="ViewModel\RemoveFavouritesPromptViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="DetailWindow.xaml">
       <SubType>Designer</SubType>
@@ -141,6 +145,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RedactNotesPromptDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RemoveFavouritesPromptDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

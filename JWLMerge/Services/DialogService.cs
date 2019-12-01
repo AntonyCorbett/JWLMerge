@@ -13,6 +13,24 @@
     {
         private bool _isDialogVisible;
 
+        public async Task<bool> ShouldRemoveFavourites()
+        {
+            _isDialogVisible = true;
+
+            var dialog = new RemoveFavouritesPromptDialog();
+            var dc = (RemoveFavouritesPromptViewModel)dialog.DataContext;
+
+            await DialogHost.Show(
+                dialog,
+                "DetailDialogHost",
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
+
+            return dc.Result;
+        }
+
         public async Task<bool> ShouldRedactNotes()
         {
             _isDialogVisible = true;

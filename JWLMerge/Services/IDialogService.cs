@@ -9,6 +9,8 @@
     {
         Task<bool> ShouldRedactNotes();
 
+        Task<bool> ShouldRemoveFavourites();
+
         Task<ImportBibleNotesParams> GetImportBibleNotesParams(IReadOnlyCollection<Tag> databaseTags);
 
         bool IsDialogVisible();

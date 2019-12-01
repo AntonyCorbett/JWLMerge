@@ -1,6 +1,6 @@
 ﻿namespace JWLMerge.BackupFileServices.Models
 {
-    using ManifestFile;
+    using JWLMerge.BackupFileServices.Models.ManifestFile;
 
     /// <summary>
     /// The Backup file.
