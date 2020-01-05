@@ -114,36 +114,39 @@
         {
             get
             {
-                switch (SelectedDataType.DataType)
+                if (SelectedDataType != null)
                 {
-                    case JwLibraryFileDataTypes.BlockRange:
-                        return BackupFile?.Database.BlockRanges;
+                    switch (SelectedDataType.DataType)
+                    {
+                        case JwLibraryFileDataTypes.BlockRange:
+                            return BackupFile?.Database.BlockRanges;
 
-                    case JwLibraryFileDataTypes.Location:
-                        return BackupFile?.Database.Locations;
+                        case JwLibraryFileDataTypes.Location:
+                            return BackupFile?.Database.Locations;
 
-                    case JwLibraryFileDataTypes.Bookmark:
-                        return BackupFile?.Database.Bookmarks;
+                        case JwLibraryFileDataTypes.Bookmark:
+                            return BackupFile?.Database.Bookmarks;
 
-                    case JwLibraryFileDataTypes.Note:
-                        return BackupFile?.Database.Notes;
+                        case JwLibraryFileDataTypes.Note:
+                            return BackupFile?.Database.Notes;
 
-                    case JwLibraryFileDataTypes.LastModified:
-                        return BackupFile != null
-                            ? new List<LastModified> { BackupFile.Database.LastModified }
-                            : null;
+                        case JwLibraryFileDataTypes.LastModified:
+                            return BackupFile != null
+                                ? new List<LastModified> {BackupFile.Database.LastModified}
+                                : null;
 
-                    case JwLibraryFileDataTypes.Tag:
-                        return BackupFile?.Database.Tags;
+                        case JwLibraryFileDataTypes.Tag:
+                            return BackupFile?.Database.Tags;
 
-                    case JwLibraryFileDataTypes.TagMap:
-                        return BackupFile?.Database.TagMaps;
+                        case JwLibraryFileDataTypes.TagMap:
+                            return BackupFile?.Database.TagMaps;
 
-                    case JwLibraryFileDataTypes.UserMark:
-                        return BackupFile?.Database.UserMarks;
+                        case JwLibraryFileDataTypes.UserMark:
+                            return BackupFile?.Database.UserMarks;
 
-                    case JwLibraryFileDataTypes.Manifest:
-                        return ManifestAsItemsSource(BackupFile?.Manifest);
+                        case JwLibraryFileDataTypes.Manifest:
+                            return ManifestAsItemsSource(BackupFile?.Manifest);
+                    }
                 }
 
                 return null;

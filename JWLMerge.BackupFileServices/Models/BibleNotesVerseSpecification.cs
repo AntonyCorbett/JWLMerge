@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JWLMerge.BackupFileServices.Models
+﻿namespace JWLMerge.BackupFileServices.Models
 {
     internal class BibleNotesVerseSpecification
     {
@@ -14,9 +8,9 @@ namespace JWLMerge.BackupFileServices.Models
 
         public int VerseNumber { get; set; }
 
-        public int StartWordIndex { get; set; }
+        public int? StartWordIndex { get; set; }
 
-        public int EndWordIndex { get; set; }
+        public int? EndWordIndex { get; set; }
 
         public int ColourIndex { get; set; }
     }

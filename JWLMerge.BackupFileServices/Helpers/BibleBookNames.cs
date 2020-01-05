@@ -2,7 +2,7 @@
 {
     internal static class BibleBookNames
     {
-        private static string[] Names =
+        private static readonly string[] Names =
         {
             "Genesis",
             "Exodus",
@@ -69,7 +69,7 @@
             "2 John",
             "3 John",
             "Jude",
-            "Revelation"
+            "Revelation",
         };
 
         public static string GetName(int oneBasedIndex)

@@ -2,8 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Models;
-    using Models.Database;
+    using JWLMerge.BackupFileServices.Models.Database;
     using Serilog;
 
     /// <summary>

@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
-    using Models.Database;
+    using JWLMerge.BackupFileServices.Models.Database;
     using Serilog;
 
     /// <summary>
@@ -143,7 +143,7 @@
                 KeySymbol = ReadString(reader, "KeySymbol"),
                 MepsLanguage = ReadInt(reader, "MepsLanguage"),
                 Type = ReadInt(reader, "Type"),
-                Title = ReadNullableString(reader, "Title")
+                Title = ReadNullableString(reader, "Title"),
             };
         }
 
@@ -159,7 +159,7 @@
                 Content = ReadNullableString(reader, "Content"),
                 LastModified = ReadString(reader, "LastModified"),
                 BlockType = ReadInt(reader, "BlockType"),
-                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier")
+                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier"),
             };
         }
 
@@ -169,7 +169,7 @@
             {
                 TagId = ReadInt(reader, "TagId"),
                 Type = ReadInt(reader, "Type"),
-                Name = ReadString(reader, "Name")
+                Name = ReadString(reader, "Name"),
             };
         }
 
@@ -181,7 +181,7 @@
                 Type = ReadInt(reader, "Type"),
                 TypeId = ReadInt(reader, "TypeId"),
                 TagId = ReadInt(reader, "TagId"),
-                Position = ReadInt(reader, "Position")
+                Position = ReadInt(reader, "Position"),
             };
         }
 
@@ -194,7 +194,7 @@
                 Identifier = ReadInt(reader, "Identifier"),
                 StartToken = ReadNullableInt(reader, "StartToken"),
                 EndToken = ReadNullableInt(reader, "EndToken"),
-                UserMarkId = ReadInt(reader, "UserMarkId")
+                UserMarkId = ReadInt(reader, "UserMarkId"),
             };
         }
 
@@ -209,7 +209,7 @@
                 Title = ReadString(reader, "Title"),
                 Snippet = ReadNullableString(reader, "Snippet"),
                 BlockType = ReadInt(reader, "BlockType"),
-                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier")
+                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier"),
             };
         }
 
@@ -217,7 +217,7 @@
         {
             return new LastModified
             {
-                TimeLastModified = ReadString(reader, "LastModified")
+                TimeLastModified = ReadString(reader, "LastModified"),
             };
         }
         
@@ -230,7 +230,7 @@
                 LocationId = ReadInt(reader, "LocationId"),
                 StyleIndex = ReadInt(reader, "StyleIndex"),
                 UserMarkGuid = ReadString(reader, "UserMarkGuid"),
-                Version = ReadInt(reader, "Version")
+                Version = ReadInt(reader, "Version"),
             };
         }
 

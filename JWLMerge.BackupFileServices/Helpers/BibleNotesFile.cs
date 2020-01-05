@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using JWLMerge.BackupFileServices.Models;
-using JWLMerge.BackupFileServices.Models.Database;
-
-namespace JWLMerge.BackupFileServices.Helpers
+﻿namespace JWLMerge.BackupFileServices.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using JWLMerge.BackupFileServices.Models;
+    using JWLMerge.BackupFileServices.Models.Database;
+
     public class BibleNotesFile
     {
         private const int MaxTitleLength = 50;
         private const string BibleKeySymbolToken = @"[BibleKeySymbol";
         private const string MepsLanguageIdToken = @"[MepsLanguageId";
 
+        private readonly List<BibleNote> _notes = new List<BibleNote>();
         private readonly string _path;
         private string _bibleKeySymbol;
         private int _mepsLanguageId;
         private bool _initialised;
-        private readonly List<BibleNote> _notes = new List<BibleNote>();
 
         public BibleNotesFile(string path)
         {
@@ -141,13 +141,13 @@ namespace JWLMerge.BackupFileServices.Helpers
                 {
                     BookNumber = currentVerseSpec.BookNumber,
                     ChapterNumber = currentVerseSpec.ChapterNumber,
-                    VerseNumber = currentVerseSpec.VerseNumber
+                    VerseNumber = currentVerseSpec.VerseNumber,
                 },
                 NoteTitle = titleAndContent.Title,
                 NoteContent = titleAndContent.Content,
                 ColourIndex = currentVerseSpec.ColourIndex,
                 StartTokenInVerse = currentVerseSpec.StartWordIndex,
-                EndTokenInVerse = currentVerseSpec.EndWordIndex
+                EndTokenInVerse = currentVerseSpec.EndWordIndex,
             });
         }
 
@@ -179,12 +179,12 @@ namespace JWLMerge.BackupFileServices.Helpers
         {
             var trimmed = line.Trim();
 
-            if(!trimmed.StartsWith("[") || !trimmed.EndsWith("]"))
+            if (!trimmed.StartsWith("[") || !trimmed.EndsWith("]"))
             {
                 return null;
             }
 
-            var digits = trimmed.TrimStart('[').TrimEnd(']').Split(new [] {':'}, StringSplitOptions.RemoveEmptyEntries);
+            var digits = trimmed.TrimStart('[').TrimEnd(']').Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
             if (digits.Length < 3 || digits.Length > 6)
             {
                 return null;
@@ -209,26 +209,21 @@ namespace JWLMerge.BackupFileServices.Helpers
             {
                 BookNumber = bibleBook,
                 ChapterNumber = chapter,
-                VerseNumber = verse
+                VerseNumber = verse,
             };
 
-            if (digits.Length > 4)
+            if (digits.Length > 4 && 
+                int.TryParse(digits[3], out var startWord) && 
+                int.TryParse(digits[4], out var endWord) && 
+                endWord >= startWord && 
+                startWord >= 0)
             {
-                if (int.TryParse(digits[3], out var startWord) &&
-                    int.TryParse(digits[4], out var endWord) &&
-                    endWord >= startWord && startWord >= 0)
-                {
-                    result.StartWordIndex = startWord;
-                    result.EndWordIndex = endWord;
+                result.StartWordIndex = startWord;
+                result.EndWordIndex = endWord;
 
-                    if (digits.Length > 5)
-                    {
-                        if (int.TryParse(digits[5], out var colourIndex) &&
-                            colourIndex >= 0)
-                        {
-                            result.ColourIndex = colourIndex;
-                        }
-                    }
+                if (digits.Length > 5 && int.TryParse(digits[5], out var colourIndex) && colourIndex >= 0)
+                {
+                    result.ColourIndex = colourIndex;
                 }
             }
 
