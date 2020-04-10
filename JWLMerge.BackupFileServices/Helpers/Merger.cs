@@ -183,37 +183,40 @@
 
             foreach (var tagMap in source.TagMaps)
             {
-                var tagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
-                var typeId = 0;
-                
-                switch (tagMap.Type)
+                if (tagMap.PlaylistItemId != null)
                 {
-                    case 0:
-                        // a tag on a location
-                        typeId = _translatedLocationIds.GetTranslatedId(tagMap.TypeId);
-                        if (typeId == 0)
-                        {
-                            // must add location...
-                            var location = source.FindLocation(tagMap.TypeId);
-                            InsertLocation(location, destination);
-                            typeId = _translatedLocationIds.GetTranslatedId(tagMap.TypeId);
-                        }
-                        
-                        break;
-                        
-                    case 1:
-                        // a tag on a Note
-                        typeId = _translatedNoteIds.GetTranslatedId(tagMap.TypeId);
-                        break;
+                    // we ignore playlist during merge
+                    continue;
                 }
 
-                if (typeId != 0)
+                var tagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
+                var id = 0;
+                TagMap existingTagMap = null;
+                
+                if (tagMap.LocationId != null)
                 {
-                    var existingTagMap = destination.FindTagMap(tagId, typeId);
-                    if (existingTagMap == null)
+                    // a tag on a location.
+                    id = _translatedLocationIds.GetTranslatedId(tagMap.LocationId.Value);
+                    if (id == 0)
                     {
-                        InsertTagMap(tagMap, destination);
+                        // must add location...
+                        var location = source.FindLocation(tagMap.LocationId.Value);
+                        InsertLocation(location, destination);
+                        id = _translatedLocationIds.GetTranslatedId(tagMap.LocationId.Value);
                     }
+
+                    existingTagMap = destination.FindTagMapForLocation(tagId, id);
+                }
+                else if (tagMap.NoteId != null)
+                {
+                    // a tag on a Note
+                    id = _translatedNoteIds.GetTranslatedId(tagMap.NoteId.Value);
+                    existingTagMap = destination.FindTagMapForNote(tagId, id);
+                }
+
+                if (id != 0 && existingTagMap == null)
+                {
+                    InsertTagMap(tagMap, destination);
                 }
             }
         }
@@ -224,7 +227,7 @@
 
             foreach (var tag in source.Tags)
             {
-                var existingTag = destination.FindTag(tag.Name);
+                var existingTag = destination.FindTag(tag.Type, tag.Name);
                 if (existingTag != null)
                 {
                     _translatedTagIds.Add(tag.TagId, existingTag.TagId);
@@ -300,24 +303,30 @@
 
         private void InsertTagMap(TagMap tagMap, Database destination)
         {
+            if (tagMap.PlaylistItemId != null)
+            {
+                // we ignore playlists during merge.
+                return;
+            }
+
             TagMap newTagMap = tagMap.Clone();
             newTagMap.TagMapId = ++_maxTagMapId;
             newTagMap.TagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
 
-            newTagMap.TypeId = 0;
-            
-            switch (newTagMap.Type)
-            {
-                case 0:
-                    newTagMap.TypeId = _translatedLocationIds.GetTranslatedId(tagMap.TypeId);
-                    break;
+            newTagMap.LocationId = null;
+            newTagMap.PlaylistItemId = null;
+            newTagMap.NoteId = null;
 
-                case 1:
-                    newTagMap.TypeId = _translatedNoteIds.GetTranslatedId(tagMap.TypeId);
-                    break;
+            if (tagMap.LocationId != null)
+            {
+                newTagMap.LocationId = _translatedLocationIds.GetTranslatedId(tagMap.LocationId.Value);
             }
-            
-            if (newTagMap.TypeId != 0)
+            else if (tagMap.NoteId != null)
+            {
+                newTagMap.NoteId = _translatedNoteIds.GetTranslatedId(tagMap.NoteId.Value);
+            }
+
+            if (newTagMap.LocationId != null || newTagMap.NoteId != null)
             {
                 destination.TagMaps.Add(newTagMap);
             }

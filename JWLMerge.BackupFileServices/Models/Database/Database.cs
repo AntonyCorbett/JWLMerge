@@ -1,10 +1,10 @@
 ﻿namespace JWLMerge.BackupFileServices.Models.Database
 {
-    using Serilog;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using JWLMerge.BackupFileServices.Exceptions;
+    using Serilog;
 
     public class Database
     {
@@ -19,9 +19,10 @@
         private Lazy<Dictionary<int, Location>> _locationsIdIndex;
         private Lazy<Dictionary<string, Location>> _locationsValueIndex;
         private Lazy<Dictionary<string, Location>> _locationsBibleChapterIndex;
-        private Lazy<Dictionary<string, Tag>> _tagsNameIndex;
+        private Lazy<Dictionary<TagTypeAndName, Tag>> _tagsNameIndex;
         private Lazy<Dictionary<int, Tag>> _tagsIdIndex;
-        private Lazy<Dictionary<string, TagMap>> _tagMapIndex;
+        private Lazy<Dictionary<string, TagMap>> _tagMapNoteIndex;
+        private Lazy<Dictionary<string, TagMap>> _tagMapLocationIndex;
         private Lazy<Dictionary<int, List<BlockRange>>> _blockRangesUserMarkIdIndex;
         private Lazy<Dictionary<string, Bookmark>> _bookmarksIndex;
 
@@ -232,9 +233,10 @@
             return _userMarksLocationIdIndex.Value.TryGetValue(locationId, out var userMarks) ? userMarks : null;
         }
 
-        public Tag FindTag(string tagName)
+        public Tag FindTag(int tagType, string tagName)
         {
-            return _tagsNameIndex.Value.TryGetValue(tagName, out var tag) ? tag : null;
+            var key = new TagTypeAndName(tagType, tagName);
+            return _tagsNameIndex.Value.TryGetValue(key, out var tag) ? tag : null;
         }
 
         public Tag FindTag(int tagId)
@@ -242,9 +244,14 @@
             return _tagsIdIndex.Value.TryGetValue(tagId, out var tag) ? tag : null;
         }
 
-        public TagMap FindTagMap(int tagId, int noteId)
+        public TagMap FindTagMapForNote(int tagId, int noteId)
         {
-            return _tagMapIndex.Value.TryGetValue(GetTagMapKey(tagId, noteId), out var tag) ? tag : null;
+            return _tagMapNoteIndex.Value.TryGetValue(GetTagMapNoteKey(tagId, noteId), out var tag) ? tag : null;
+        }
+
+        public TagMap FindTagMapForLocation(int tagId, int locationId)
+        {
+            return _tagMapLocationIndex.Value.TryGetValue(GetTagMapLocationKey(tagId, locationId), out var tag) ? tag : null;
         }
 
         public Location FindLocation(int locationId)
@@ -453,9 +460,9 @@
             return result;
         }
 
-        private Dictionary<string, Tag> TagIndexValueFactory()
+        private Dictionary<TagTypeAndName, Tag> TagIndexValueFactory()
         {
-            return Tags.ToDictionary(tag => tag.Name);
+            return Tags.ToDictionary(tag => new TagTypeAndName(tag.Type, tag.Name));
         }
 
         private Dictionary<int, Tag> TagIdIndexValueFactory()
@@ -463,19 +470,43 @@
             return Tags.ToDictionary(tag => tag.TagId);
         }
 
-        private string GetTagMapKey(int tagId, int noteId)
+        private string GetTagMapNoteKey(int tagId, int noteId)
         {
             return $"{tagId}-{noteId}";
         }
 
-        private Dictionary<string, TagMap> TagMapIndexValueFactory()
+        private string GetTagMapLocationKey(int tagId, int locationId)
+        {
+            return $"{tagId}-{locationId}";
+        }
+
+        private Dictionary<string, TagMap> TagMapNoteIndexValueFactory()
         {
             var result = new Dictionary<string, TagMap>();
 
             foreach (var tagMap in TagMaps)
             {
-                string key = GetTagMapKey(tagMap.TagId, tagMap.TypeId);
-                result.Add(key, tagMap);
+                if (tagMap.NoteId != null)
+                {
+                    string key = GetTagMapNoteKey(tagMap.TagId, tagMap.NoteId.Value);
+                    result.Add(key, tagMap);
+                }
+            }
+
+            return result;
+        }
+
+        private Dictionary<string, TagMap> TagMapLocationIndexValueFactory()
+        {
+            var result = new Dictionary<string, TagMap>();
+
+            foreach (var tagMap in TagMaps)
+            {
+                if (tagMap.LocationId != null)
+                {
+                    string key = GetTagMapLocationKey(tagMap.TagId, tagMap.LocationId.Value);
+                    result.Add(key, tagMap);
+                }
             }
 
             return result;
@@ -496,14 +527,14 @@
         {
             foreach (var tagMap in TagMaps)
             {
-                if (tagMap.Type == 1)
+                if (tagMap.NoteId != null)
                 {
                     if (FindTag(tagMap.TagId) == null)
                     {
                         throw new BackupFileServicesException($"Could not find tag for tag map {tagMap.TagMapId}");
                     }
 
-                    if (FindNote(tagMap.TypeId) == null)
+                    if (FindNote(tagMap.NoteId.Value) == null)
                     {
                         throw new BackupFileServicesException($"Could not find note for tag map {tagMap.TagMapId}");
                     }
@@ -561,9 +592,10 @@
             _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);
             _locationsValueIndex = new Lazy<Dictionary<string, Location>>(LocationsByValueIndexValueFactory);
             _locationsBibleChapterIndex = new Lazy<Dictionary<string, Location>>(LocationsByBibleChapterIndexValueFactory);
-            _tagsNameIndex = new Lazy<Dictionary<string, Tag>>(TagIndexValueFactory);
+            _tagsNameIndex = new Lazy<Dictionary<TagTypeAndName, Tag>>(TagIndexValueFactory);
             _tagsIdIndex = new Lazy<Dictionary<int, Tag>>(TagIdIndexValueFactory);
-            _tagMapIndex = new Lazy<Dictionary<string, TagMap>>(TagMapIndexValueFactory);
+            _tagMapNoteIndex = new Lazy<Dictionary<string, TagMap>>(TagMapNoteIndexValueFactory);
+            _tagMapLocationIndex = new Lazy<Dictionary<string, TagMap>>(TagMapLocationIndexValueFactory);
             _blockRangesUserMarkIdIndex = new Lazy<Dictionary<int, List<BlockRange>>>(BlockRangeIndexValueFactory);
             _bookmarksIndex = new Lazy<Dictionary<string, Bookmark>>(BookmarkIndexValueFactory);
         }
@@ -596,8 +628,8 @@
             {
                 var tagMap = TagMaps[n];
 
-                if (tagMap.Type == 1 && 
-                    (FindTag(tagMap.TagId) == null || FindNote(tagMap.TypeId) == null))
+                if (tagMap.NoteId != null && 
+                    (FindTag(tagMap.TagId) == null || FindNote(tagMap.NoteId.Value) == null))
                 {
                     ++fixupCount;
                     TagMaps.RemoveAt(n);

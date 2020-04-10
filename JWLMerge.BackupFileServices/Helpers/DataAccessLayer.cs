@@ -170,6 +170,7 @@
                 TagId = ReadInt(reader, "TagId"),
                 Type = ReadInt(reader, "Type"),
                 Name = ReadString(reader, "Name"),
+                ImageFileName = ReadNullableString(reader, "ImageFilename"),    // added in db v7 April 2020
             };
         }
 
@@ -178,8 +179,17 @@
             return new TagMap
             {
                 TagMapId = ReadInt(reader, "TagMapId"),
-                Type = ReadInt(reader, "Type"),
-                TypeId = ReadInt(reader, "TypeId"),
+                
+                // removed in db v7, April 2020
+                //Type = ReadInt(reader, "Type"),
+                //TypeId = ReadInt(reader, "TypeId"),
+
+                // added in db v7, April 2020...
+                PlaylistItemId = ReadNullableInt(reader, "PlaylistItemId"),
+                LocationId = ReadNullableInt(reader, "LocationId"),
+                NoteId = ReadNullableInt(reader, "NoteId"),
+                //...
+
                 TagId = ReadInt(reader, "TagId"),
                 Position = ReadInt(reader, "Position"),
             };

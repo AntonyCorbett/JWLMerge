@@ -94,6 +94,7 @@
     <Compile Include="Models\ManifestFile\UserDataBackup.cs" />
     <Compile Include="Models\NotesImportResults.cs" />
     <Compile Include="Models\NoteTitleAndContent.cs" />
+    <Compile Include="Models\TagTypeAndName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

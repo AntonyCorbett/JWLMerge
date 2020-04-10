@@ -136,8 +136,7 @@
             {
                 TagMapId = ++_maxTagMapId,
                 TagId = tagId,
-                Type = 1,   // tag is on a note
-                TypeId = noteId,
+                NoteId = noteId,
             };
         }
 

@@ -63,9 +63,9 @@
 
             foreach (var tagMap in _database.TagMaps)
             {
-                if (tagMap.Type == 0)
+                if (tagMap.LocationId != null)
                 {
-                    result.Add(tagMap.TypeId);
+                    result.Add(tagMap.LocationId.Value);
                 }
             }
 
