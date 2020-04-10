@@ -19,7 +19,7 @@
                 DefaultExt = ".txt",
                 Title = title,
                 Filter = "Text file (*.txt)|*.txt",
-                InitialDirectory = ImportDirectory ?? GetDefaultImportFolder()
+                InitialDirectory = ImportDirectory ?? GetDefaultImportFolder(),
             };
 
             if (openFileDialog.ShowDialog() == true)
@@ -38,7 +38,7 @@
                 AddExtension = true,
                 Title = title,
                 Filter = "JW Library backup file (*.jwlibrary)|*.jwlibrary",
-                InitialDirectory = SaveDirectory ?? GetDefaultSaveFolder()
+                InitialDirectory = SaveDirectory ?? GetDefaultSaveFolder(),
             };
             
             if (saveFileDialog.ShowDialog() == true)

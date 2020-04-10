@@ -1,5 +1,13 @@
 ﻿namespace JWLMerge.BackupFileServices.Models.Database
 {
+    /// <summary>
+    /// Note that the db schema for the TagMap table was updated in db v7.
+    /// In v5 (the previous public schema) we had a Type column where
+    /// 0 = tag on a Location
+    /// 1 = tag on a Note
+    /// and a corresponding TypeId column. These are now replaced with
+    /// mutually exclusive PlaylistItemId, LocationId and NoteId columns.
+    /// </summary>
     public class TagMap
     {
         /// <summary>
@@ -22,23 +30,8 @@
         /// <summary>
         /// Note Id.
         /// </summary>
-        /// <remarks>added in in db v7, Apr 2020</remarks>
+        /// <remarks>added in in db v7, Apr 2020.</remarks>
         public int? NoteId { get; set; }
-
-        // removed in db v7
-        /// <summary>
-        /// The type of data that the tag is attached to.
-        /// 0 = tag on a Location
-        /// 1 = tag on a Note
-        /// </summary>
-        //public int Type { get; set; } 
-
-        // removed in db v7
-        /// <summary>
-        /// The identifier of the data that the tag is attached to.
-        /// Currently it looks like this always refers to Note.NoteId
-        /// </summary>
-        //public int TypeId { get; set; }
 
         /// <summary>
         /// The tag identifier.

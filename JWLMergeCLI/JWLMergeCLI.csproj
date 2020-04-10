@@ -40,6 +40,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\JWLMerge\JWLMerge.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\JWLMergeCLI.xml</DocumentationFile>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,6 +52,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\JWLMerge\JWLMerge.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Release\JWLMergeCLI.xml</DocumentationFile>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>E796D8967E7B03CBB58EDB6AEE8883890775FB2A</ManifestCertificateThumbprint>

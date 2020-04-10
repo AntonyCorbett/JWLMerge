@@ -4,9 +4,9 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using Exceptions;
     using JWLMerge.BackupFileServices;
     using JWLMerge.BackupFileServices.Events;
+    using JWLMergeCLI.Exceptions;
     using Serilog;
 
     /// <summary>

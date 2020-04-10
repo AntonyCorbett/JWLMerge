@@ -1,11 +1,10 @@
-﻿using JWLMerge.BackupFileServices.Models.Database;
-
-namespace JWLMerge.BackupFileServices
+﻿namespace JWLMerge.BackupFileServices
 {
     using System;
     using System.Collections.Generic;
-    using Events;
-    using Models;
+    using JWLMerge.BackupFileServices.Events;
+    using JWLMerge.BackupFileServices.Models;
+    using JWLMerge.BackupFileServices.Models.Database;
 
     /// <summary>
     /// The BackupFileService interface.
@@ -31,7 +30,6 @@ namespace JWLMerge.BackupFileServices
         /// <param name="files">The files.</param>
         /// <returns>Merged file</returns>
         BackupFile Merge(IReadOnlyCollection<string> files);
-            
 
         /// <summary>
         /// Merges the specified backup files.

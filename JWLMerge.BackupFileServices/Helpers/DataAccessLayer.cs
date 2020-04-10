@@ -180,15 +180,10 @@
             {
                 TagMapId = ReadInt(reader, "TagMapId"),
                 
-                // removed in db v7, April 2020
-                //Type = ReadInt(reader, "Type"),
-                //TypeId = ReadInt(reader, "TypeId"),
-
                 // added in db v7, April 2020...
                 PlaylistItemId = ReadNullableInt(reader, "PlaylistItemId"),
                 LocationId = ReadNullableInt(reader, "LocationId"),
                 NoteId = ReadNullableInt(reader, "NoteId"),
-                //...
 
                 TagId = ReadInt(reader, "TagId"),
                 Position = ReadInt(reader, "Position"),

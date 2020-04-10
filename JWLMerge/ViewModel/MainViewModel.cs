@@ -29,6 +29,7 @@ namespace JWLMerge.ViewModel
         private readonly IWindowService _windowService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
         private readonly IDialogService _dialogService;
+        private bool _isBusy;
 
         public MainViewModel(
             IDragDropService dragDropService, 
@@ -59,6 +60,58 @@ namespace JWLMerge.ViewModel
 
             GetVersionData();
         }
+
+        public ObservableCollection<JwLibraryFile> Files { get; } = new ObservableCollection<JwLibraryFile>();
+
+        public string Title { get; set; }
+
+        public bool FileListEmpty => Files.Count == 0;
+
+        public bool IsBusy
+        {
+            get => _isBusy;
+            private set
+            {
+                if (_isBusy != value)
+                {
+                    _isBusy = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(IsNotBusy));
+
+                    MergeCommand?.RaiseCanExecuteChanged();
+                    CloseCardCommand?.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        public bool IsNotBusy => !IsBusy;
+
+        public bool IsNewVersionAvailable { get; private set; }
+
+        public string MergeCommandCaption
+        {
+            get
+            {
+                int fileCount = GetMergeableFileCount();
+                if (fileCount == 1)
+                {
+                    return "SAVE AS";
+                }
+
+                return "MERGE";
+            }
+        }
+
+        // commands...
+        public RelayCommand<string> CloseCardCommand { get; set; }
+
+        public RelayCommand<string> ShowDetailsCommand { get; set; }
+
+        public RelayCommand MergeCommand { get; set; }
+
+        public RelayCommand HomepageCommand { get; set; }
+
+        public RelayCommand UpdateCommand { get; set; }
 
         private JwLibraryFile GetFile(string filePath)
         {
@@ -243,9 +296,7 @@ namespace JWLMerge.ViewModel
                     file.NotesRedacted);
             }
         }
-
-        public ObservableCollection<JwLibraryFile> Files { get; } = new ObservableCollection<JwLibraryFile>();
-
+        
         private void AddDesignTimeItems()
         {
             if (IsInDesignMode)
@@ -291,7 +342,7 @@ namespace JWLMerge.ViewModel
                     tmpFilesCollection.Add(new JwLibraryFile
                     {
                         BackupFile = backupFile,
-                        FilePath = file
+                        FilePath = file,
                     });
                 });
 
@@ -331,34 +382,7 @@ namespace JWLMerge.ViewModel
             var count = Files.Count(file => file.MergeParameters.AnyIncludes());
             return count == 1 ? 0 : count;
         }
-
-        public string Title { get; set; }
-        
-        public bool FileListEmpty => Files.Count == 0;
-
-        private bool _isBusy;
-
-        public bool IsBusy
-        {
-            get => _isBusy;
-            private set
-            {
-                if (_isBusy != value)
-                {
-                    _isBusy = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(IsNotBusy));
-
-                    MergeCommand?.RaiseCanExecuteChanged();
-                    CloseCardCommand?.RaiseCanExecuteChanged();
-                }
-            }
-        }
-
-        public bool IsNotBusy => !IsBusy;
-
-        public bool IsNewVersionAvailable { get; private set; }
-        
+       
         private void GetVersionData()
         {
             if (IsInDesignMode)
@@ -380,30 +404,5 @@ namespace JWLMerge.ViewModel
                 });
             }
         }
-        
-        public string MergeCommandCaption
-        {
-            get
-            {
-                int fileCount = GetMergeableFileCount();
-                if (fileCount == 1)
-                {
-                    return "SAVE AS";
-                }
-                
-                return "MERGE";
-            }
-        }
-
-        // commands...
-        public RelayCommand<string> CloseCardCommand { get; set; }
-
-        public RelayCommand<string> ShowDetailsCommand { get; set; }
-
-        public RelayCommand MergeCommand { get; set; }
-
-        public RelayCommand HomepageCommand { get; set; }
-
-        public RelayCommand UpdateCommand { get; set; }
     }
 }

@@ -3,7 +3,7 @@
     using System.ComponentModel;
     using System.Windows;
     using GalaSoft.MvvmLight.Messaging;
-    using Messages;
+    using JWLMerge.Messages;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml

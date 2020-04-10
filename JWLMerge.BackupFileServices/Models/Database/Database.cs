@@ -31,6 +31,27 @@
             ReinitializeIndexes();
         }
 
+        public LastModified LastModified { get; set; }
+
+        public List<Location> Locations { get; set; }
+
+        public List<Note> Notes { get; set; }
+
+        public List<Tag> Tags { get; set; }
+
+        public List<TagMap> TagMaps { get; set; }
+
+        public List<BlockRange> BlockRanges { get; set; }
+
+        public List<Bookmark> Bookmarks { get; set; }
+
+        public List<UserMark> UserMarks { get; set; }
+
+        public static string GetDateTimeUtcAsDbString(DateTime dateTime)
+        {
+            return $"{dateTime:s}Z";
+        }
+
         public void InitBlank()
         {
             LastModified = new LastModified();
@@ -68,27 +89,6 @@
             {
                 ReinitializeIndexes();
             }
-        }
-
-        public LastModified LastModified { get; set; }
-        
-        public List<Location> Locations { get; set; }
-        
-        public List<Note> Notes { get; set; }
-        
-        public List<Tag> Tags { get; set; }
-
-        public List<TagMap> TagMaps { get; set; }
-        
-        public List<BlockRange> BlockRanges { get; set; }
-
-        public List<Bookmark> Bookmarks { get; set; }
-
-        public List<UserMark> UserMarks { get; set; }
-
-        public static string GetDateTimeUtcAsDbString(DateTime dateTime)
-        {
-            return $"{dateTime:s}Z";
         }
 
         public void AddBibleNoteAndUpdateIndex(
@@ -135,7 +135,6 @@
                 {
                     blockRangeList = new List<BlockRange>();
                     _blockRangesUserMarkIdIndex.Value.Add(value.UserMarkId, blockRangeList);
-
                 }
 
                 blockRangeList.Add(value);
@@ -186,19 +185,18 @@
                 }
             }
 
-            if (_locationsBibleChapterIndex.IsValueCreated)
+            if (_locationsBibleChapterIndex.IsValueCreated && 
+                value.BookNumber != null && 
+                value.ChapterNumber != null)
             {
-                if (value.BookNumber != null && value.ChapterNumber != null)
-                {
-                    var key = GetLocationByBibleChapterKey(
-                        value.BookNumber.Value,
-                        value.ChapterNumber.Value,
-                        value.KeySymbol);
+                var key = GetLocationByBibleChapterKey(
+                    value.BookNumber.Value,
+                    value.ChapterNumber.Value,
+                    value.KeySymbol);
 
-                    if (!_locationsBibleChapterIndex.Value.ContainsKey(key))
-                    {
-                        _locationsBibleChapterIndex.Value.Add(key, value);
-                    }
+                if (!_locationsBibleChapterIndex.Value.ContainsKey(key))
+                {
+                    _locationsBibleChapterIndex.Value.Add(key, value);
                 }
             }
         }
@@ -322,7 +320,7 @@
                         {
                             BookNumber = location.BookNumber.Value,
                             ChapterNumber = location.ChapterNumber.Value,
-                            VerseNumber = note.BlockIdentifier.Value
+                            VerseNumber = note.BlockIdentifier.Value,
                         };
 
                         if (!result.TryGetValue(verseRef, out var notesOnVerse))

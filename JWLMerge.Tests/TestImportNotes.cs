@@ -47,16 +47,16 @@
 
             result.Add(new BibleNote
             {
-                BookChapterAndVerse = new BibleBookChapterAndVerse {BookNumber = 1, ChapterNumber = 1, VerseNumber = 1},
+                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 1, ChapterNumber = 1, VerseNumber = 1 },
                 NoteTitle = "A note 1",
-                NoteContent = "My notes go here"
+                NoteContent = "My notes go here",
             });
 
             result.Add(new BibleNote
             {
                 BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 2, ChapterNumber = 2, VerseNumber = 2 },
                 NoteTitle = "A note 2",
-                NoteContent = "My notes go here"
+                NoteContent = "My notes go here",
             });
 
             return result;

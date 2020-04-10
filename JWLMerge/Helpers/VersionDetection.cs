@@ -31,7 +31,6 @@
                     }
                 }
             }
-            // ReSharper disable once CatchAllClause
             catch (Exception ex)
             {
                 Log.Logger.Error(ex, "Getting latest release version");

@@ -454,15 +454,8 @@
 
             Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
 
-            {
-                var dataAccessLayer = new DataAccessLayer(originalDatabaseFilePathForSchema);
-                dataAccessLayer.CreateEmptyClone(tmpFile);
-            }
-
-            {
-                var dataAccessLayer = new DataAccessLayer(tmpFile);
-                dataAccessLayer.PopulateTables(backupDatabase);
-            }
+            new DataAccessLayer(originalDatabaseFilePathForSchema).CreateEmptyClone(tmpFile);
+            new DataAccessLayer(tmpFile).PopulateTables(backupDatabase);
 
             return tmpFile;
         }

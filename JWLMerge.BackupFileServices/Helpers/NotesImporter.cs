@@ -161,7 +161,7 @@
             // now add the block range...
             var blockRange = new BlockRange
             {
-                BlockRangeId =++_maxBlockRangeId,
+                BlockRangeId = ++_maxBlockRangeId,
                 BlockType = 2,
                 Identifier = verseNumber,
                 StartToken = startToken,

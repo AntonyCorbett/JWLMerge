@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using BackupFileServices.Models;
-    using BackupFileServices.Models.Database;
-    using BackupFileServices.Models.ManifestFile;
+    using JWLMerge.BackupFileServices.Models;
+    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.ManifestFile;
 
     public class TestBase
     {
@@ -15,7 +15,7 @@
             return new BackupFile
             {
                 Manifest = CreateMockManifest(),
-                Database = CreateMockDatabase(numRecords)
+                Database = CreateMockDatabase(numRecords),
             };
         }
 
@@ -24,9 +24,8 @@
             var result = new Database();
 
             result.Bookmarks = new List<Bookmark>();
-            result.LastModified = new LastModified();
-            result.LastModified.TimeLastModified = "2018-01-20T11:35:00Z";
-                
+            result.LastModified = new LastModified { TimeLastModified = "2018-01-20T11:35:00Z" };
+
             result.UserMarks = CreateMockUserMarks(numRecords);
             result.Locations = CreateMockLocations(numRecords);
             result.Notes = CreateMockNotes(numRecords);
@@ -54,8 +53,8 @@
                     Hash = "123",
                     DeviceName = "Test",
                     LastModifiedDate = simpleDateString,
-                    SchemaVersion = 5
-                }
+                    SchemaVersion = 5,
+                },
             };
         }
 
@@ -71,7 +70,7 @@
                     UserMarkId = n,
                     BlockType = 2,
                     EndToken = 4,
-                    Identifier = 8
+                    Identifier = 8,
                 });
             }
             
@@ -94,7 +93,7 @@
                     Content = $"Content {n}",
                     LastModified = "2018-01-20T11:35:00Z",
                     BlockType = 2,
-                    BlockIdentifier = _random.Next(1, 10)
+                    BlockIdentifier = _random.Next(1, 10),
                 });
             }
 
@@ -113,7 +112,7 @@
                     ColorIndex = 1,
                     LocationId = n,
                     UserMarkGuid = Guid.NewGuid().ToString().ToLower(),
-                    Version = 1
+                    Version = 1,
                 });
             }
 
@@ -132,7 +131,7 @@
                     Title = $"Title {n}",
                     BookNumber = _random.Next(1, 67),
                     ChapterNumber = _random.Next(1, 30),
-                    KeySymbol = "nwtsty"
+                    KeySymbol = "nwtsty",
                 });
             }
 

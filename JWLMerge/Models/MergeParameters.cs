@@ -5,6 +5,17 @@
     public class MergeParameters : ViewModelBase
     {
         private bool _includeBookmarks;
+        private bool _includeNotes;
+        private bool _includeUnderlining;
+        private bool _includeTags;
+
+        public MergeParameters()
+        {
+            IncludeBookmarks = true;
+            IncludeNotes = true;
+            IncludeUnderlining = true;
+            IncludeTags = true;
+        }
 
         public bool IncludeBookmarks
         {
@@ -19,8 +30,6 @@
             }
         }
 
-        private bool _includeNotes;
-
         public bool IncludeNotes
         {
             get => _includeNotes;
@@ -33,8 +42,6 @@
                 }
             }
         }
-
-        private bool _includeUnderlining;
 
         public bool IncludeUnderlining
         {
@@ -49,8 +56,6 @@
             }
         }
 
-        private bool _includeTags;
-
         public bool IncludeTags
         {
             get => _includeTags;
@@ -62,14 +67,6 @@
                     RaisePropertyChanged();
                 }
             }
-        }
-
-        public MergeParameters()
-        {
-            IncludeBookmarks = true;
-            IncludeNotes = true;
-            IncludeUnderlining = true;
-            IncludeTags = true;
         }
 
         public bool AnyIncludes()

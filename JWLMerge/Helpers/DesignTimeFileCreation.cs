@@ -1,9 +1,9 @@
 ﻿namespace JWLMerge.Helpers
 {
     using System;
-    using BackupFileServices;
-    using BackupFileServices.Models.ManifestFile;
-    using Models;
+    using JWLMerge.BackupFileServices;
+    using JWLMerge.BackupFileServices.Models.ManifestFile;
+    using JWLMerge.Models;
 
     internal static class DesignTimeFileCreation
     {
@@ -17,13 +17,13 @@
             file.Manifest.CreationDate = GenerateDateString(DateTime.Now.AddDays(-fileIndex));
             file.Manifest.UserDataBackup = new UserDataBackup
             {
-                DeviceName = "MYPC"
+                DeviceName = "MYPC",
             };
 
             return new JwLibraryFile
             {
                 FilePath = "c:\\temp\\myfile.jwlibrary",
-                BackupFile = file
+                BackupFile = file,
             };
         }
 

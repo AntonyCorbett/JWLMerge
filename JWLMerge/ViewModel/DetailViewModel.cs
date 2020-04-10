@@ -132,7 +132,7 @@
 
                         case JwLibraryFileDataTypes.LastModified:
                             return BackupFile != null
-                                ? new List<LastModified> {BackupFile.Database.LastModified}
+                                ? new List<LastModified> { BackupFile.Database.LastModified }
                                 : null;
 
                         case JwLibraryFileDataTypes.Tag:

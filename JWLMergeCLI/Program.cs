@@ -37,7 +37,6 @@
                 Environment.ExitCode = 0;
                 Log.Logger.Information("Finished");
             }
-            // ReSharper disable once CatchAllClause
             catch (Exception ex)
             {
                 Log.Logger.Error(ex, "Error");

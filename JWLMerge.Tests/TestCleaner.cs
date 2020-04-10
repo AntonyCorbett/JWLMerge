@@ -1,8 +1,8 @@
 ﻿namespace JWLMerge.Tests
 {
-    using BackupFileServices.Helpers;
-    using BackupFileServices.Models;
-    using BackupFileServices.Models.ManifestFile;
+    using JWLMerge.BackupFileServices.Helpers;
+    using JWLMerge.BackupFileServices.Models;
+    using JWLMerge.BackupFileServices.Models.ManifestFile;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -17,7 +17,7 @@
             Cleaner cleaner = new Cleaner(file.Database);
             int removedRows = cleaner.Clean();
             
-            Assert.AreEqual(removedRows, 0);
+            Assert.AreEqual(0, removedRows);
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@
             Cleaner cleaner = new Cleaner(file.Database);
             int removedRows = cleaner.Clean();
 
-            Assert.AreEqual(removedRows, 0);
+            Assert.AreEqual(0, removedRows);
         }
     }
 }

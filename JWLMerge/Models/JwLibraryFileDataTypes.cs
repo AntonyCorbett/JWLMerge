@@ -10,6 +10,6 @@
         Note,
         Tag,
         TagMap,
-        UserMark
+        UserMark,
     }
 }
