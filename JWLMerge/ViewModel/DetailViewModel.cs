@@ -10,7 +10,7 @@
     using JWLMerge.BackupFileServices;
     using JWLMerge.BackupFileServices.Helpers;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.BackupFileServices.Models.ManifestFile;
     using JWLMerge.Messages;
     using JWLMerge.Models;
@@ -180,7 +180,7 @@
             var favourites = BackupFile?.Database.TagMaps.Where(x => x.TagId == 1);
             if (favourites != null && 
                 favourites.Any() && 
-                await _dialogService.ShouldRemoveFavourites())
+                await _dialogService.ShouldRemoveFavouritesAsync().ConfigureAwait(true))
             {
                 DeleteFavouritesInternal();
             }
@@ -205,7 +205,7 @@
         {
             var notes = BackupFile?.Database.Notes;
             if (notes != null && 
-                await _dialogService.ShouldRedactNotes())
+                await _dialogService.ShouldRedactNotesAsync().ConfigureAwait(true))
             {
                 RedactNotesInternal(notes);
             }
@@ -254,7 +254,7 @@
 
                 userDefinedTags.Insert(0, new Tag { TagId = 0, Type = 0, Name = "** No Tag **" });
 
-                var options = await _dialogService.GetImportBibleNotesParams(userDefinedTags);
+                var options = await _dialogService.GetImportBibleNotesParamsAsync(userDefinedTags).ConfigureAwait(true);
                 if (options == null)
                 {
                     return;
@@ -281,7 +281,7 @@
                 }).ContinueWith(t =>
                 {
                     IsBusy = false;
-                });
+                }).ConfigureAwait(true);
             }
         }
 

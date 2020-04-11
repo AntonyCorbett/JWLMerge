@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using JWLMerge.BackupFileServices.Events;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
 
     /// <summary>
     /// The BackupFileService interface.

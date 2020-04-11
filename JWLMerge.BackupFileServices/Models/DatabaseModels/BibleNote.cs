@@ -1,4 +1,4 @@
-﻿namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 {
     public class BibleNote
     {

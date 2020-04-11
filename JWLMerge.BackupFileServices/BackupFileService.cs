@@ -11,7 +11,7 @@
     using JWLMerge.BackupFileServices.Exceptions;
     using JWLMerge.BackupFileServices.Helpers;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.BackupFileServices.Models.ManifestFile;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -84,6 +84,11 @@
             string newDatabaseFilePath, 
             string originalJwlibraryFilePathForSchema)
         {
+            if (backup == null)
+            {
+                throw new ArgumentNullException(nameof(backup));
+            }
+
             ProgressMessage("Writing merged database file");
             
             using (var memoryStream = new MemoryStream())
@@ -98,7 +103,9 @@
                         backup.Manifest.UserDataBackup.Hash = GenerateDatabaseHash(tmpDatabaseFileName);
 
                         var manifestEntry = archive.CreateEntry(ManifestEntryName);
+#pragma warning disable S3966 // Objects should not be disposed more than once
                         using (var entryStream = manifestEntry.Open())
+#pragma warning restore S3966 // Objects should not be disposed more than once
                         using (var streamWriter = new StreamWriter(entryStream))
                         {
                             streamWriter.Write(
@@ -132,6 +139,11 @@
         /// <inheritdoc />
         public int RemoveTags(Database database)
         {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
             // clear all but the first tag (which will be the "favourites")...
             var tagCount = database.Tags.Count;
             if (tagCount > 2)
@@ -149,6 +161,11 @@
         /// <inheritdoc />
         public int RemoveBookmarks(Database database)
         {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
             var count = database.Bookmarks.Count;
             database.Bookmarks.Clear();
             return count;
@@ -157,6 +174,11 @@
         /// <inheritdoc />
         public int RemoveNotes(Database database)
         {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
             var count = database.Notes.Count;
             database.Notes.Clear();
             return count;
@@ -165,6 +187,11 @@
         /// <inheritdoc />
         public int RemoveUnderlining(Database database)
         {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
             if (!database.Notes.Any())
             {
                 var count = database.UserMarks.Count;
@@ -198,6 +225,11 @@
         /// <inheritdoc />
         public BackupFile Merge(IReadOnlyCollection<BackupFile> files)
         {
+            if (files == null)
+            {
+                throw new ArgumentNullException(nameof(files));
+            }
+
             ProgressMessage($"Merging {files.Count} backup files");
 
             int fileNumber = 1;
@@ -220,6 +252,11 @@
         /// <inheritdoc />
         public BackupFile Merge(IReadOnlyCollection<string> files)
         {
+            if (files == null)
+            {
+                throw new ArgumentNullException(nameof(files));
+            }
+
             ProgressMessage($"Merging {files.Count} backup files");
 
             int fileNumber = 1;
@@ -250,6 +287,16 @@
             int mepsLanguageId, 
             ImportBibleNotesParams options)
         {
+            if (originalBackupFile == null)
+            {
+                throw new ArgumentNullException(nameof(originalBackupFile));
+            }
+
+            if (notes == null)
+            {
+                throw new ArgumentNullException(nameof(notes));
+            }
+            
             ProgressMessage("Importing Bible notes");
 
             var newManifest = UpdateManifest(originalBackupFile.Manifest);
@@ -262,6 +309,16 @@
             notesImporter.Import(notes);
 
             return new BackupFile { Manifest = newManifest, Database = originalBackupFile.Database };
+        }
+
+        private static bool SupportDatabaseVersion(int version)
+        {
+            return version == DatabaseVersionSupported;
+        }
+
+        private static bool SupportManifestVersion(int version)
+        {
+            return version == ManifestVersionSupported;
         }
 
         private Manifest UpdateManifest(Manifest manifestToBaseOn)
@@ -310,7 +367,7 @@
         {
             ProgressMessage($"Reading database {databaseName}");
             
-            var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(databaseName));
+            var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(databaseName, StringComparison.OrdinalIgnoreCase));
             if (databaseEntry == null)
             {
                 throw new BackupFileServicesException("Could not find database entry in jwlibrary file");
@@ -343,7 +400,7 @@
             {
                 var manifest = ReadManifest(archive);
 
-                var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName));
+                var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
                 var tmpFile = Path.GetTempFileName();
                 databaseEntry.ExtractToFile(tmpFile, overwrite: true);
 
@@ -356,7 +413,7 @@
         {
             ProgressMessage("Reading manifest");
             
-            var manifestEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(ManifestEntryName));
+            var manifestEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(ManifestEntryName, StringComparison.OrdinalIgnoreCase));
             if (manifestEntry == null)
             {
                 throw new BackupFileServicesException("Could not find manifest entry in jwlibrary file");
@@ -390,16 +447,6 @@
             }
         }
 
-        private bool SupportDatabaseVersion(int version)
-        {
-            return version == DatabaseVersionSupported;
-        }
-
-        private bool SupportManifestVersion(int version)
-        {
-            return version == ManifestVersionSupported;
-        }
-
         /// <summary>
         /// Generates the sha256 database hash that is required in the manifest.json file.
         /// </summary>
@@ -413,14 +460,14 @@
 
             using (FileStream fs = new FileStream(databaseFilePath, FileMode.Open))
             {
-                BufferedStream bs = new BufferedStream(fs);
+                using (BufferedStream bs = new BufferedStream(fs))
                 using (SHA256Managed sha1 = new SHA256Managed())
                 {
                     byte[] hash = sha1.ComputeHash(bs);
                     StringBuilder sb = new StringBuilder(2 * hash.Length);
                     foreach (byte b in hash)
                     {
-                        sb.AppendFormat("{0:x2}", b);
+                        sb.Append($"{b:x2}");
                     }
 
                     return sb.ToString();

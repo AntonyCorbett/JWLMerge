@@ -5,7 +5,7 @@
     using System.IO;
     using System.Linq;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
 
     public class BibleNotesFile
     {
@@ -137,12 +137,11 @@
             
             _notes.Add(new BibleNote
             {
-                BookChapterAndVerse = new BibleBookChapterAndVerse
-                {
-                    BookNumber = currentVerseSpec.BookNumber,
-                    ChapterNumber = currentVerseSpec.ChapterNumber,
-                    VerseNumber = currentVerseSpec.VerseNumber,
-                },
+                BookChapterAndVerse = new BibleBookChapterAndVerse(
+                    currentVerseSpec.BookNumber, 
+                    currentVerseSpec.ChapterNumber, 
+                    currentVerseSpec.VerseNumber),
+
                 NoteTitle = titleAndContent.Title,
                 NoteContent = titleAndContent.Content,
                 ColourIndex = currentVerseSpec.ColourIndex,

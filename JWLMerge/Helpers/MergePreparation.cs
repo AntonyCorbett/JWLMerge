@@ -1,7 +1,7 @@
 ﻿namespace JWLMerge.Helpers
 {
     using JWLMerge.BackupFileServices;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.Models;
 
     internal static class MergePreparation

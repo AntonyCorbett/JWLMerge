@@ -1,4 +1,4 @@
-﻿namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 {
     /// <summary>
     /// Note that the db schema for the TagMap table was updated in db v7.

@@ -23,7 +23,7 @@ namespace JWLMerge.ViewModel
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class MainViewModel : ViewModelBase
     {
-        private const string LatestReleaseUrl = "https://github.com/AntonyCorbett/JWLMerge/releases/latest";
+        private readonly string _latestReleaseUrl = Properties.Resources.LATEST_RELEASE_URL;
         private readonly IDragDropService _dragDropService;
         private readonly IBackupFileService _backupFileService;
         private readonly IWindowService _windowService;
@@ -162,12 +162,12 @@ namespace JWLMerge.ViewModel
 
         private void LaunchLatestReleasePage()
         {
-            Process.Start(LatestReleaseUrl);
+            Process.Start(_latestReleaseUrl);
         }
 
         private void LaunchHomepage()
         {
-            Process.Start("https://github.com/AntonyCorbett/JWLMerge");
+            Process.Start(Properties.Resources.HOMEPAGE);
         }
 
         private void PrepareForMerge()
@@ -394,7 +394,7 @@ namespace JWLMerge.ViewModel
             {
                 Task.Delay(2000).ContinueWith(_ =>
                 {
-                    var latestVersion = VersionDetection.GetLatestReleaseVersion(LatestReleaseUrl);
+                    var latestVersion = VersionDetection.GetLatestReleaseVersion(_latestReleaseUrl);
                     if (latestVersion != null && VersionDetection.GetCurrentVersion().CompareTo(latestVersion) < 0)
                     {
                         // there is a new version....

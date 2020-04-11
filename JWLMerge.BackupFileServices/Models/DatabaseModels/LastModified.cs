@@ -1,4 +1,4 @@
-﻿namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 {
     using Newtonsoft.Json;
 
@@ -9,5 +9,10 @@
         /// </summary>
         [JsonProperty(PropertyName = "LastModified")]
         public string TimeLastModified { get; set; }
+
+        public void Reset()
+        {
+            TimeLastModified = null;
+        }
     }
 }

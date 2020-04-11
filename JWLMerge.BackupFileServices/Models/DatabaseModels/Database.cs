@@ -1,4 +1,4 @@
-﻿namespace JWLMerge.BackupFileServices.Models.Database
+﻿namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 {
     using System;
     using System.Collections.Generic;
@@ -31,21 +31,21 @@
             ReinitializeIndexes();
         }
 
-        public LastModified LastModified { get; set; }
+        public LastModified LastModified { get; } = new LastModified();
 
-        public List<Location> Locations { get; set; }
+        public List<Location> Locations { get; } = new List<Location>();
 
-        public List<Note> Notes { get; set; }
+        public List<Note> Notes { get; } = new List<Note>();
 
-        public List<Tag> Tags { get; set; }
+        public List<Tag> Tags { get; } = new List<Tag>();
 
-        public List<TagMap> TagMaps { get; set; }
+        public List<TagMap> TagMaps { get; } = new List<TagMap>();
 
-        public List<BlockRange> BlockRanges { get; set; }
+        public List<BlockRange> BlockRanges { get; } = new List<BlockRange>();
 
-        public List<Bookmark> Bookmarks { get; set; }
+        public List<Bookmark> Bookmarks { get; } = new List<Bookmark>();
 
-        public List<UserMark> UserMarks { get; set; }
+        public List<UserMark> UserMarks { get; } = new List<UserMark>();
 
         public static string GetDateTimeUtcAsDbString(DateTime dateTime)
         {
@@ -54,14 +54,14 @@
 
         public void InitBlank()
         {
-            LastModified = new LastModified();
-            Locations = new List<Location>();
-            Notes = new List<Note>();
-            Tags = new List<Tag>();
-            TagMaps = new List<TagMap>();
-            BlockRanges = new List<BlockRange>();
-            Bookmarks = new List<Bookmark>();
-            UserMarks = new List<UserMark>();
+            LastModified.Reset();
+            Locations.Clear();
+            Notes.Clear();
+            Tags.Clear();
+            TagMaps.Clear();
+            BlockRanges.Clear();
+            Bookmarks.Clear();
+            UserMarks.Clear();
         }
 
         public void CheckValidity()
@@ -96,6 +96,11 @@
             Note value,
             TagMap tagMap)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             Notes.Add(value);
 
             if (tagMap != null)
@@ -127,6 +132,11 @@
 
         public void AddBlockRangeAndUpdateIndex(BlockRange value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             BlockRanges.Add(value);
 
             if (_blockRangesUserMarkIdIndex.IsValueCreated)
@@ -143,6 +153,11 @@
 
         public void AddUserMarkAndUpdateIndex(UserMark value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             UserMarks.Add(value);
 
             if (_userMarksGuidIndex.IsValueCreated)
@@ -169,6 +184,11 @@
 
         public void AddLocationAndUpdateIndex(Location value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             Locations.Add(value);
 
             if (_locationsIdIndex.IsValueCreated)
@@ -259,6 +279,11 @@
 
         public Location FindLocationByValues(Location locationValues)
         {
+            if (locationValues == null)
+            {
+                throw new ArgumentNullException(nameof(locationValues));
+            }
+
             var key = GetLocationByValueKey(locationValues);
             return _locationsValueIndex.Value.TryGetValue(key, out var location) ? location : null;
         }
@@ -316,12 +341,10 @@
                     var location = FindLocation(note.LocationId.Value);
                     if (location?.BookNumber != null && location.ChapterNumber != null)
                     {
-                        var verseRef = new BibleBookChapterAndVerse
-                        {
-                            BookNumber = location.BookNumber.Value,
-                            ChapterNumber = location.ChapterNumber.Value,
-                            VerseNumber = note.BlockIdentifier.Value,
-                        };
+                        var verseRef = new BibleBookChapterAndVerse(
+                            location.BookNumber.Value,
+                            location.ChapterNumber.Value, 
+                            note.BlockIdentifier.Value);
 
                         if (!result.TryGetValue(verseRef, out var notesOnVerse))
                         {

@@ -3,15 +3,15 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
-    
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+
     internal interface IDialogService
     {
-        Task<bool> ShouldRedactNotes();
+        Task<bool> ShouldRedactNotesAsync();
 
-        Task<bool> ShouldRemoveFavourites();
+        Task<bool> ShouldRemoveFavouritesAsync();
 
-        Task<ImportBibleNotesParams> GetImportBibleNotesParams(IReadOnlyCollection<Tag> databaseTags);
+        Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
         bool IsDialogVisible();
     }

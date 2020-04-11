@@ -4,7 +4,7 @@
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using MaterialDesignThemes.Wpf;
 
     // ReSharper disable once ClassNeverInstantiated.Global

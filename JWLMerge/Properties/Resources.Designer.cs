@@ -19,7 +19,7 @@ namespace JWLMerge.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,7 +61,33 @@ namespace JWLMerge.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to https://github.com/AntonyCorbett/JWLMerge.
+        /// </summary>
+        internal static string HOMEPAGE {
+            get {
+                return ResourceManager.GetString("HOMEPAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/AntonyCorbett/JWLMerge/releases/latest.
+        /// </summary>
+        internal static string LATEST_RELEASE_URL {
+            get {
+                return ResourceManager.GetString("LATEST_RELEASE_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        ///Fusce finibus tellus velit, aliquam ullamcorper orci maximus malesuada.
+        ///Fusce justo turpis, tincidunt nec odio vel, iaculis mollis massa.
+        ///Aliquam a imperdiet velit, maximus congue eros.
+        ///Cras sagittis accumsan lectus, eu faucibus justo dignissim nec.
+        ///Sed massa ipsum, dapibus maximus condimentum at, euismod at est.
+        ///Nulla nec turpis ac felis scelerisque varius quis id sapien.
+        ///Donec sed ex non metus dapibus vulputate.
+        ///Cras commodo nulla sed velit  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string LoremIpsum {
             get {

@@ -16,7 +16,7 @@
             {
                 using (var client = new HttpClient())
                 {
-                    var response = client.GetAsync(latestReleaseUrl).Result;
+                    var response = client.GetAsync(new Uri(latestReleaseUrl)).Result;
                     if (response.IsSuccessStatusCode)
                     {
                         var latestVersionUri = response.RequestMessage.RequestUri;

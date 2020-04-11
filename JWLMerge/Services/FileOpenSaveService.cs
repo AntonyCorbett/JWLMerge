@@ -7,8 +7,9 @@
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class FileOpenSaveService : IFileOpenSaveService
     {
-        private static string SaveDirectory;
-        private static string ImportDirectory;
+        private static string SaveDirectory { get; set; }
+
+        private static string ImportDirectory { get; set; }
 
         public string GetBibleNotesImportFilePath(string title)
         {

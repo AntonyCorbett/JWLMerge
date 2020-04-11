@@ -9,6 +9,6 @@
     {
         public Manifest Manifest { get; set; }
         
-        public Database.Database Database { get; set; }
+        public DatabaseModels.Database Database { get; set; }
     }
 }

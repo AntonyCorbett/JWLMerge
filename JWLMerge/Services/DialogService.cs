@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.Dialogs;
     using JWLMerge.ViewModel;
     using MaterialDesignThemes.Wpf;
@@ -13,7 +13,7 @@
     {
         private bool _isDialogVisible;
 
-        public async Task<bool> ShouldRemoveFavourites()
+        public async Task<bool> ShouldRemoveFavouritesAsync()
         {
             _isDialogVisible = true;
 
@@ -31,7 +31,7 @@
             return dc.Result;
         }
 
-        public async Task<bool> ShouldRedactNotes()
+        public async Task<bool> ShouldRedactNotesAsync()
         {
             _isDialogVisible = true;
 
@@ -49,7 +49,7 @@
             return dc.Result;
         }
 
-        public async Task<ImportBibleNotesParams> GetImportBibleNotesParams(IReadOnlyCollection<Tag> databaseTags)
+        public async Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)
         {
             _isDialogVisible = true;
 

@@ -4,7 +4,7 @@
     using System.Linq;
     using JWLMerge.BackupFileServices.Helpers;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -43,23 +43,21 @@
 
         private IEnumerable<BibleNote> CreateMockBibleNotes()
         {
-            var result = new List<BibleNote>();
-
-            result.Add(new BibleNote
+            return new List<BibleNote>
             {
-                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 1, ChapterNumber = 1, VerseNumber = 1 },
-                NoteTitle = "A note 1",
-                NoteContent = "My notes go here",
-            });
-
-            result.Add(new BibleNote
-            {
-                BookChapterAndVerse = new BibleBookChapterAndVerse { BookNumber = 2, ChapterNumber = 2, VerseNumber = 2 },
-                NoteTitle = "A note 2",
-                NoteContent = "My notes go here",
-            });
-
-            return result;
+                new BibleNote
+                {
+                    BookChapterAndVerse = new BibleBookChapterAndVerse(1, 1, 1),
+                    NoteTitle = "A note 1",
+                    NoteContent = "My notes go here",
+                },
+                new BibleNote
+                {
+                    BookChapterAndVerse = new BibleBookChapterAndVerse(2, 2, 2),
+                    NoteTitle = "A note 2",
+                    NoteContent = "My notes go here",
+                },
+            };
         }
     }
 }

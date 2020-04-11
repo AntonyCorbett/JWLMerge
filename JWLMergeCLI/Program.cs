@@ -23,7 +23,7 @@
             {
                 Log.Logger.Information("Started");
 
-                if (args.Length < 2)
+                if (args == null || args.Length < 2)
                 {
                     ShowUsage();
                 }

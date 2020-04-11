@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.Database;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
 
     internal sealed class NotesImporter
     {

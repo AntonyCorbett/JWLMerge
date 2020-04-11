@@ -40,10 +40,5 @@ namespace JWLMerge.ViewModel
 
         // NB - the guid key produces a new instance per view.
         public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>(Guid.NewGuid().ToString());
-
-        public static void Cleanup()
-        {
-            // todo: Clear the ViewModels
-        }
     }
 }
