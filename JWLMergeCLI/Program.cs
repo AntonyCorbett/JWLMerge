@@ -4,7 +4,7 @@
     using System.Diagnostics;
     using Serilog;
 
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// The main entry point.

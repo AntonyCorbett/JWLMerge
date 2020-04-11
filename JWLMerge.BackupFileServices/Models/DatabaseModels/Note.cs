@@ -12,7 +12,9 @@
         /// <summary>
         /// A Guid (that should assist in merging notes).
         /// </summary>
+#pragma warning disable CA1720 // Identifier contains type name
         public string Guid { get; set; }
+#pragma warning restore CA1720 // Identifier contains type name
 
         /// <summary>
         /// The user mark identifier (if the note is associated with user-highlighting).

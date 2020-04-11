@@ -221,9 +221,9 @@
             }
         }
 
-        public Note FindNote(string guid)
+        public Note FindNote(string noteGuid)
         {
-            return _notesGuidIndex.Value.TryGetValue(guid, out var note) ? note : null;
+            return _notesGuidIndex.Value.TryGetValue(noteGuid, out var note) ? note : null;
         }
 
         public Note FindNote(int noteId)
@@ -236,9 +236,9 @@
             return _notesVerseIndex.Value.TryGetValue(verseRef, out var notes) ? notes : null;
         }
 
-        public UserMark FindUserMark(string guid)
+        public UserMark FindUserMark(string userMarkGuid)
         {
-            return _userMarksGuidIndex.Value.TryGetValue(guid, out var userMark) ? userMark : null;
+            return _userMarksGuidIndex.Value.TryGetValue(userMarkGuid, out var userMark) ? userMark : null;
         }
 
         public UserMark FindUserMark(int userMarkId)
