@@ -328,13 +328,10 @@ namespace JWLMerge.ViewModel
         {
             if (!IsBusy)
             {
-                // ReSharper disable once StyleCop.SA1305
                 var jwLibraryFiles = _dragDropService.GetDroppedFiles(message.DragEventArgs);
 
                 var tmpFilesCollection = new ConcurrentBag<JwLibraryFile>();
 
-                // ReSharper disable once StyleCop.SA1116
-                // ReSharper disable once StyleCop.SA1115
                 Parallel.ForEach(jwLibraryFiles, file =>
                 {
                     var backupFile = _backupFileService.Load(file);
