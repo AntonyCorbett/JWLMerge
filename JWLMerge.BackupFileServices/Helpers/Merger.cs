@@ -181,42 +181,59 @@
         {
             ProgressMessage(" Tag maps");
 
-            foreach (var tagMap in source.TagMaps)
+            foreach (var sourceTagMap in source.TagMaps)
             {
-                if (tagMap.PlaylistItemId != null)
+                if (sourceTagMap.PlaylistItemId != null)
                 {
                     // we ignore playlist during merge
                     continue;
                 }
 
-                var tagId = _translatedTagIds.GetTranslatedId(tagMap.TagId);
+                var tagId = _translatedTagIds.GetTranslatedId(sourceTagMap.TagId);
                 var id = 0;
                 TagMap existingTagMap = null;
                 
-                if (tagMap.LocationId != null)
+                if (sourceTagMap.LocationId != null)
                 {
                     // a tag on a location.
-                    id = _translatedLocationIds.GetTranslatedId(tagMap.LocationId.Value);
+                    id = _translatedLocationIds.GetTranslatedId(sourceTagMap.LocationId.Value);
                     if (id == 0)
                     {
                         // must add location...
-                        var location = source.FindLocation(tagMap.LocationId.Value);
+                        var location = source.FindLocation(sourceTagMap.LocationId.Value);
                         InsertLocation(location, destination);
-                        id = _translatedLocationIds.GetTranslatedId(tagMap.LocationId.Value);
+                        id = _translatedLocationIds.GetTranslatedId(sourceTagMap.LocationId.Value);
                     }
 
                     existingTagMap = destination.FindTagMapForLocation(tagId, id);
                 }
-                else if (tagMap.NoteId != null)
+                else if (sourceTagMap.NoteId != null)
                 {
                     // a tag on a Note
-                    id = _translatedNoteIds.GetTranslatedId(tagMap.NoteId.Value);
+                    id = _translatedNoteIds.GetTranslatedId(sourceTagMap.NoteId.Value);
                     existingTagMap = destination.FindTagMapForNote(tagId, id);
                 }
 
                 if (id != 0 && existingTagMap == null)
                 {
-                    InsertTagMap(tagMap, destination);
+                    InsertTagMap(sourceTagMap, destination);
+                }
+            }
+
+            NormaliseTagMapPositions(destination.TagMaps);
+        }
+
+        private void NormaliseTagMapPositions(List<TagMap> entries)
+        {
+            // there is unique constraint on TagId, Position
+            var tmpStorage = entries.GroupBy(x => x.TagId).ToDictionary(x => x.Key);
+            
+            foreach (var item in tmpStorage)
+            {
+                var pos = 0;
+                foreach (var entry in item.Value)
+                {
+                    entry.Position = pos++;
                 }
             }
         }
@@ -243,21 +260,21 @@
         {
             ProgressMessage(" User marks");
 
-            foreach (var userMark in source.UserMarks)
+            foreach (var sourceUserMark in source.UserMarks)
             {
-                var existingUserMark = destination.FindUserMark(userMark.UserMarkGuid);
+                var existingUserMark = destination.FindUserMark(sourceUserMark.UserMarkGuid);
                 if (existingUserMark != null)
                 {
                     // user mark already exists in destination...
-                    _translatedUserMarkIds.Add(userMark.UserMarkId, existingUserMark.UserMarkId);
+                    _translatedUserMarkIds.Add(sourceUserMark.UserMarkId, existingUserMark.UserMarkId);
                 }
                 else
                 {
-                    var referencedLocation = userMark.LocationId;
+                    var referencedLocation = sourceUserMark.LocationId;
                     var location = source.FindLocation(referencedLocation);
 
                     InsertLocation(location, destination);
-                    InsertUserMark(userMark, destination);
+                    InsertUserMark(sourceUserMark, destination);
                 }
             }
         }
