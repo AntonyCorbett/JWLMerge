@@ -231,7 +231,7 @@
             foreach (var item in tmpStorage)
             {
                 var pos = 0;
-                foreach (var entry in item.Value)
+                foreach (var entry in item.Value.OrderBy(x => x.Position))
                 {
                     entry.Position = pos++;
                 }
