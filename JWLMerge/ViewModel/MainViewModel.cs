@@ -328,32 +328,50 @@ namespace JWLMerge.ViewModel
         {
             if (!IsBusy)
             {
-                var jwLibraryFiles = _dragDropService.GetDroppedFiles(message.DragEventArgs);
-
-                var tmpFilesCollection = new ConcurrentBag<JwLibraryFile>();
-
-                Parallel.ForEach(jwLibraryFiles, file =>
+                try
                 {
-                    var backupFile = _backupFileService.Load(file);
-
-                    tmpFilesCollection.Add(new JwLibraryFile
-                    {
-                        BackupFile = backupFile,
-                        FilePath = file,
-                    });
-                });
-
-                foreach (var file in tmpFilesCollection)
+                    HandleDroppedFiles(message.DragEventArgs);
+                }
+                catch (AggregateException ex)
                 {
-                    if (Files.FirstOrDefault(x => IsSameFile(file.FilePath, x.FilePath)) == null)
-                    {
-                        file.PropertyChanged += FilePropertyChanged;
-                        Files.Add(file);
-                    }
+                    Log.Logger.Information(ex, "Unable to accept file");
+
+                    _dialogService.ShowFileFormatErrorsAsync(ex);
+                }
+                catch (Exception ex)
+                {
+                    Log.Logger.Error(ex, "Unexpected error");
                 }
             }
 
             message.DragEventArgs.Handled = true;
+        }
+
+        private void HandleDroppedFiles(DragEventArgs dragEventArgs)
+        {
+            var jwLibraryFiles = _dragDropService.GetDroppedFiles(dragEventArgs);
+
+            var tmpFilesCollection = new ConcurrentBag<JwLibraryFile>();
+
+            Parallel.ForEach(jwLibraryFiles, file =>
+            {
+                var backupFile = _backupFileService.Load(file);
+
+                tmpFilesCollection.Add(new JwLibraryFile
+                {
+                    BackupFile = backupFile,
+                    FilePath = file,
+                });
+            });
+
+            foreach (var file in tmpFilesCollection)
+            {
+                if (Files.FirstOrDefault(x => IsSameFile(file.FilePath, x.FilePath)) == null)
+                {
+                    file.PropertyChanged += FilePropertyChanged;
+                    Files.Add(file);
+                }
+            }
         }
 
         private void FilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -75,6 +75,8 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Exceptions\WrongDatabaseVersionException.cs" />
+    <Compile Include="Exceptions\WrongManifestVersionException.cs" />
     <Compile Include="Helpers\BibleBookNames.cs" />
     <Compile Include="Helpers\BibleNotesFile.cs" />
     <Compile Include="Helpers\Cleaner.cs" />

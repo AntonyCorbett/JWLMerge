@@ -1,10 +1,13 @@
 ﻿namespace JWLMerge.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using JWLMerge.BackupFileServices.Exceptions;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.Dialogs;
+    using JWLMerge.Models;
     using JWLMerge.ViewModel;
     using MaterialDesignThemes.Wpf;
 
@@ -12,6 +15,45 @@
     internal class DialogService : IDialogService
     {
         private bool _isDialogVisible;
+
+        public async Task ShowFileFormatErrorsAsync(AggregateException ex)
+        {
+            _isDialogVisible = true;
+
+            var dialog = new FileFormatErrorDialog();
+            var dc = (BackupFileFormatErrorViewModel)dialog.DataContext;
+
+            dc.Errors.Clear();
+
+            foreach (var e in ex.InnerExceptions)
+            {
+                if (e is BackupFileServicesException bex)
+                {
+                    switch (e)
+                    {
+                        case WrongDatabaseVersionException dbVerEx:
+                            dc.Errors.Add(new FileFormatErrorListItem
+                                { Filename = dbVerEx.Filename, ErrorMsg = dbVerEx.Message });
+                            break;
+                        case WrongManifestVersionException mftVerEx:
+                            dc.Errors.Add(new FileFormatErrorListItem
+                                { Filename = mftVerEx.Filename, ErrorMsg = mftVerEx.Message });
+                            break;
+                        default:
+                            dc.Errors.Add(new FileFormatErrorListItem
+                                { Filename = "Error", ErrorMsg = bex.Message });
+                            break;
+                    }
+                }
+            }
+
+            await DialogHost.Show(
+                dialog,
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
+        }
 
         public async Task<bool> ShouldRemoveFavouritesAsync()
         {

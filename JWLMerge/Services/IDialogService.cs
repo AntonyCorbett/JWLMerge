@@ -1,5 +1,6 @@
 ﻿namespace JWLMerge.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using JWLMerge.BackupFileServices.Models;
@@ -7,6 +8,8 @@
 
     internal interface IDialogService
     {
+        Task ShowFileFormatErrorsAsync(AggregateException ex);
+
         Task<bool> ShouldRedactNotesAsync();
 
         Task<bool> ShouldRemoveFavouritesAsync();

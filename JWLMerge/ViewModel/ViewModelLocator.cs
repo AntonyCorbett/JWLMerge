@@ -23,6 +23,7 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IRedactService, RedactService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
 
+            SimpleIoc.Default.Register<BackupFileFormatErrorViewModel>();
             SimpleIoc.Default.Register<RedactNotesPromptViewModel>();
             SimpleIoc.Default.Register<RemoveFavouritesPromptViewModel>();
             SimpleIoc.Default.Register<ImportBibleNotesViewModel>();
@@ -37,6 +38,8 @@ namespace JWLMerge.ViewModel
         public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => ServiceLocator.Current.GetInstance<RemoveFavouritesPromptViewModel>();
 
         public ImportBibleNotesViewModel ImportBibleNotesDialog => ServiceLocator.Current.GetInstance<ImportBibleNotesViewModel>();
+
+        public BackupFileFormatErrorViewModel BackupFileFormatErrorDialog => ServiceLocator.Current.GetInstance<BackupFileFormatErrorViewModel>();
 
         // NB - the guid key produces a new instance per view.
         public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>(Guid.NewGuid().ToString());

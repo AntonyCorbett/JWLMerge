@@ -110,6 +110,9 @@
     <Compile Include="DetailWindow.xaml.cs">
       <DependentUpon>DetailWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\FileFormatErrorDialog.xaml.cs">
+      <DependentUpon>FileFormatErrorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ImportBibleNotesDialog.xaml.cs">
       <DependentUpon>ImportBibleNotesDialog.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,7 @@
     <Compile Include="Messages\MainWindowClosingMessage.cs" />
     <Compile Include="Messages\NotesRedactedMessage.cs" />
     <Compile Include="Models\DataTypeListItem.cs" />
+    <Compile Include="Models\FileFormatErrorListItem.cs" />
     <Compile Include="Models\JwLibraryFile.cs" />
     <Compile Include="Models\JwLibraryFileDataTypes.cs" />
     <Compile Include="Models\MergeParameters.cs" />
@@ -140,6 +144,7 @@
     <Compile Include="Services\IWindowService.cs" />
     <Compile Include="Services\RedactService.cs" />
     <Compile Include="Services\WindowService.cs" />
+    <Compile Include="ViewModel\BackupFileFormatErrorViewModel.cs" />
     <Compile Include="ViewModel\DetailViewModel.cs" />
     <Compile Include="ViewModel\ImportBibleNotesViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -147,6 +152,10 @@
     <Compile Include="ViewModel\RemoveFavouritesPromptViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="DetailWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\FileFormatErrorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

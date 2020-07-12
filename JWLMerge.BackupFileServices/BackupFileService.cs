@@ -21,7 +21,7 @@
     public sealed class BackupFileService : IBackupFileService
     {
         private const int ManifestVersionSupported = 1;
-        private const int DatabaseVersionSupported = 8;
+        private const int DatabaseVersionSupported = 7;
         private const string ManifestEntryName = "manifest.json";
         private const string DatabaseEntryName = "userData.db";
 
@@ -47,11 +47,12 @@
                 throw new BackupFileServicesException($"File does not exist: {backupFilePath}");
             }
 
-            ProgressMessage($"Loading {Path.GetFileName(backupFilePath)}");
+            var filename = Path.GetFileName(backupFilePath);
+            ProgressMessage($"Loading {filename}");
             
             using (var archive = new ZipArchive(File.OpenRead(backupFilePath), ZipArchiveMode.Read))
             {
-                var manifest = ReadManifest(archive);
+                var manifest = ReadManifest(filename, archive);
 
                 var database = ReadDatabase(archive, manifest.UserDataBackup.DatabaseName);
 
@@ -398,7 +399,7 @@
             
             using (var archive = new ZipArchive(File.OpenRead(jwlibraryFile), ZipArchiveMode.Read))
             {
-                var manifest = ReadManifest(archive);
+                var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
 
                 var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
                 var tmpFile = Path.GetTempFileName();
@@ -409,14 +410,14 @@
             }
         }
 
-        private Manifest ReadManifest(ZipArchive archive)
+        private Manifest ReadManifest(string filename, ZipArchive archive)
         {
             ProgressMessage("Reading manifest");
             
             var manifestEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(ManifestEntryName, StringComparison.OrdinalIgnoreCase));
             if (manifestEntry == null)
             {
-                throw new BackupFileServicesException("Could not find manifest entry in jwlibrary file");
+                throw new BackupFileServicesException($"Could not find manifest entry in jwlibrary file: {filename}");
             }
             
             using (StreamReader stream = new StreamReader(manifestEntry.Open()))
@@ -429,13 +430,13 @@
                 int manifestVersion = data.version ?? 0;
                 if (!SupportManifestVersion(manifestVersion))
                 {
-                    throw new BackupFileServicesException($"Manifest version {manifestVersion} is not supported");
+                    throw new WrongManifestVersionException(filename, ManifestVersionSupported, manifestVersion);
                 }
 
                 int databaseVersion = data.userDataBackup.schemaVersion ?? 0;
                 if (!SupportDatabaseVersion(databaseVersion))
                 {
-                    throw new BackupFileServicesException($"Database version {databaseVersion} is not supported");
+                    throw new WrongDatabaseVersionException(filename, DatabaseVersionSupported, databaseVersion);
                 }
 
                 var result = JsonConvert.DeserializeObject<Manifest>(fileContents);
