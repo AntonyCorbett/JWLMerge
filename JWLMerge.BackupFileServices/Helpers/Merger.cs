@@ -68,6 +68,7 @@
             
             MergeUserMarks(source, destination);
             MergeNotes(source, destination);
+            MergeInputFields(source, destination);
             MergeTags(source, destination);
             MergeTagMap(source, destination);
             MergeBlockRanges(source, destination);
@@ -299,6 +300,13 @@
             }
         }
 
+        private void InsertInputField(InputField inputField, int locationId, Database destination)
+        {
+            var inputFldClone = inputField.Clone();
+            inputFldClone.LocationId = locationId;
+            destination.InputFields.Add(inputFldClone);
+        }
+
         private void InsertUserMark(UserMark userMark, Database destination)
         {
             UserMark newUserMark = userMark.Clone();
@@ -375,6 +383,34 @@
 
             newRange.UserMarkId = _translatedUserMarkIds.GetTranslatedId(range.UserMarkId);
             destination.BlockRanges.Add(newRange);
+        }
+
+        private void MergeInputFields(Database source, Database destination)
+        {
+            ProgressMessage(" Input Fields");
+
+            foreach (var inputField in source.InputFields)
+            {
+                var locationId = _translatedLocationIds.GetTranslatedId(inputField.LocationId);
+
+                if (locationId == 0)
+                {
+                    // location unknown so add it...
+                    var referencedLocation = inputField.LocationId;
+                    var location = source.FindLocation(referencedLocation);
+
+                    InsertLocation(location, destination);
+
+                    locationId = location.LocationId;
+                }
+
+                var existingInputField = destination.FindInputField(inputField.LocationId, inputField.TextTag);
+                if (existingInputField == null)
+                {
+                    // not found so add
+                    InsertInputField(inputField, locationId, destination);
+                }
+            }
         }
 
         private void MergeNotes(Database source, Database destination)

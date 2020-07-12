@@ -95,6 +95,7 @@
     <Compile Include="Models\DatabaseModels\BlockRange.cs" />
     <Compile Include="Models\DatabaseModels\Bookmark.cs" />
     <Compile Include="Models\DatabaseModels\Database.cs" />
+    <Compile Include="Models\DatabaseModels\InputField.cs" />
     <Compile Include="Models\DatabaseModels\LastModified.cs" />
     <Compile Include="Models\DatabaseModels\Location.cs" />
     <Compile Include="Models\DatabaseModels\Note.cs" />

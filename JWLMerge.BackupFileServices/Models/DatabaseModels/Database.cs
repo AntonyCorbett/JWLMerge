@@ -12,6 +12,7 @@
         
         private Lazy<Dictionary<string, Note>> _notesGuidIndex;
         private Lazy<Dictionary<int, Note>> _notesIdIndex;
+        private Lazy<Dictionary<int, List<InputField>>> _inputFieldsIndex;
         private Lazy<Dictionary<BibleBookChapterAndVerse, List<Note>>> _notesVerseIndex;
         private Lazy<Dictionary<string, UserMark>> _userMarksGuidIndex;
         private Lazy<Dictionary<int, UserMark>> _userMarksIdIndex;
@@ -37,6 +38,8 @@
 
         public List<Note> Notes { get; } = new List<Note>();
 
+        public List<InputField> InputFields { get; } = new List<InputField>();
+
         public List<Tag> Tags { get; } = new List<Tag>();
 
         public List<TagMap> TagMaps { get; } = new List<TagMap>();
@@ -57,6 +60,7 @@
             LastModified.Reset();
             Locations.Clear();
             Notes.Clear();
+            InputFields.Clear();
             Tags.Clear();
             TagMaps.Clear();
             BlockRanges.Clear();
@@ -277,6 +281,16 @@
             return _locationsIdIndex.Value.TryGetValue(locationId, out var location) ? location : null;
         }
 
+        public InputField FindInputField(int locationId, string textTag)
+        {
+            if (!_inputFieldsIndex.Value.TryGetValue(locationId, out var list))
+            {
+                return null;
+            }
+
+            return list.SingleOrDefault(x => x.TextTag.Equals(textTag, StringComparison.OrdinalIgnoreCase));
+        }
+
         public Location FindLocationByValues(Location locationValues)
         {
             if (locationValues == null)
@@ -320,6 +334,24 @@
         private Dictionary<string, Note> NoteIndexValueFactory()
         {
             return Notes.ToDictionary(note => note.Guid);
+        }
+
+        private Dictionary<int, List<InputField>> InputFieldsIndexValueFactory()
+        {
+            var result = new Dictionary<int, List<InputField>>();
+
+            foreach (var fld in InputFields)
+            {
+                if (!result.TryGetValue(fld.LocationId, out var list))
+                {
+                    list = new List<InputField>();
+                    result.Add(fld.LocationId, list);
+                }
+
+                list.Add(fld);
+            }
+
+            return result;
         }
 
         private Dictionary<int, Note> NoteIdIndexValueFactory()
@@ -606,6 +638,7 @@
         {
             _notesGuidIndex = new Lazy<Dictionary<string, Note>>(NoteIndexValueFactory);
             _notesIdIndex = new Lazy<Dictionary<int, Note>>(NoteIdIndexValueFactory);
+            _inputFieldsIndex = new Lazy<Dictionary<int, List<InputField>>>(InputFieldsIndexValueFactory);
             _notesVerseIndex = new Lazy<Dictionary<BibleBookChapterAndVerse, List<Note>>>(NoteVerseIndexValueFactory);
             _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
             _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
