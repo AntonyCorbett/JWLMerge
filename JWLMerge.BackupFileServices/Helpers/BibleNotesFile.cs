@@ -215,13 +215,10 @@
                 int.TryParse(digits[3], out var startWord) && 
                 int.TryParse(digits[4], out var endWord) && 
                 endWord >= startWord && 
-                startWord >= 0)
+                startWord >= 0 && (startWord != 0 || endWord != 0))
             {
-                if (startWord != 0 || endWord != 0)
-                {
-                    result.StartWordIndex = startWord;
-                    result.EndWordIndex = endWord;
-                }
+                result.StartWordIndex = startWord;
+                result.EndWordIndex = endWord;
 
                 if (digits.Length > 5 && int.TryParse(digits[5], out var colourIndex) && colourIndex >= 0)
                 {
