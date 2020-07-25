@@ -142,8 +142,8 @@
                     currentVerseSpec.ChapterNumber, 
                     currentVerseSpec.VerseNumber),
 
-                NoteTitle = titleAndContent.Title,
-                NoteContent = titleAndContent.Content,
+                NoteTitle = titleAndContent.Title.Trim(),
+                NoteContent = titleAndContent.Content.Trim(),
                 ColourIndex = currentVerseSpec.ColourIndex,
                 StartTokenInVerse = currentVerseSpec.StartWordIndex,
                 EndTokenInVerse = currentVerseSpec.EndWordIndex,
@@ -217,8 +217,11 @@
                 endWord >= startWord && 
                 startWord >= 0)
             {
-                result.StartWordIndex = startWord;
-                result.EndWordIndex = endWord;
+                if (startWord != 0 || endWord != 0)
+                {
+                    result.StartWordIndex = startWord;
+                    result.EndWordIndex = endWord;
+                }
 
                 if (digits.Length > 5 && int.TryParse(digits[5], out var colourIndex) && colourIndex >= 0)
                 {
