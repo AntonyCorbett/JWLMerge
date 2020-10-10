@@ -16,6 +16,16 @@ https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
 Please see the wiki for further information.
 
+#### Wine
+
+If you are interested in running JWLMerge on Wine, please see this fork:
+
+https://github.com/SuperJC710e/JWLMerge
+
+And the notes here: 
+
+https://github.com/SuperJC710e/JWLMerge/wiki/Running-Under-Wine
+
 ### Important Notes
 
 Please use at your own risk! It is possible to crash JW Library by attempting to restore a corrupt backup file, and sometimes the only solution is to reinstall JW Library and reset its data. (This hasn't happened yet with a JWLMerge-generated file.)
