@@ -36,7 +36,7 @@
         public int IssueTagNumber { get; set; }
 
         /// <summary>
-        /// The JWL publication key symbol.
+        /// The JWL publication key symbol (nullable).
         /// </summary>
         public string KeySymbol { get; set; }
 
@@ -49,8 +49,8 @@
         /// The type. 
         /// 0 = standard location entry
         /// 1 = reference to a publication (see Bookmark.PublicationLocationId)
-        /// 2 = ?
-        /// 3 = ?
+        /// 2 = music or song
+        /// 3 = video
         /// </summary>
         public int Type { get; set; }
 
