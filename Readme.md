@@ -1,7 +1,5 @@
 # JWLMerge <img src="https://ci.appveyor.com/api/projects/status/2nl90i7apndaxcac?svg=true">
 
-*11 July 2020 - JWL was updated recently and JWLMerge is not yet compatible with the new backup file schema used*
-
 ### Introduction
 
 JWLMerge is a utility to merge 2 or more .jwlibrary backup files. These backup files are created using the JW Library® backup command, and contain your personal notes, highlighting, etc.
@@ -17,6 +15,16 @@ Download the JWLMergeSetup.exe file from the latest release and run it.
 https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
 Please see the wiki for further information.
+
+#### Wine
+
+If you are interested in running JWLMerge on Wine, please see this fork:
+
+https://github.com/SuperJC710e/JWLMerge
+
+And the notes here: 
+
+https://github.com/SuperJC710e/JWLMerge/wiki/Running-Under-Wine
 
 ### Important Notes
 

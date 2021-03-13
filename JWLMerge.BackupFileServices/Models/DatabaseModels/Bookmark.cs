@@ -36,8 +36,8 @@
         public string Snippet { get; set; }
 
         /// <summary>
-        /// The block type.
-        /// 0 = Bible chapter?
+        /// The block type. Compare Locations.cs > BlockType
+        /// 0 = Publication 'page' (e.g. a song in the song book)
         /// 1 = Publication paragraph
         /// 2 = Bible verse
         /// </summary>

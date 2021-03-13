@@ -9,6 +9,7 @@
 
         /// <summary>
         /// The index of the marking (highlight) color.
+        /// yellow = 1, green, blue, pink, orange, purple
         /// </summary>
         public int ColorIndex { get; set; }
 
