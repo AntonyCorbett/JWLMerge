@@ -48,6 +48,7 @@
             {
                 PopulateTable(connection, dataToUse.Locations);
                 PopulateTable(connection, dataToUse.Notes);
+                PopulateTable(connection, dataToUse.InputFields);
                 PopulateTable(connection, dataToUse.UserMarks);
                 PopulateTable(connection, dataToUse.Tags);
                 PopulateTable(connection, dataToUse.TagMaps);
@@ -76,6 +77,7 @@
                 result.BlockRanges.AddRange(ReadAllRows(connection, ReadBlockRange));
                 result.Bookmarks.AddRange(ReadAllRows(connection, ReadBookmark));
                 result.UserMarks.AddRange(ReadAllRows(connection, ReadUserMark));
+                result.InputFields.AddRange(ReadAllRows(connection, ReadInputField));
 
                 // ensure bookmarks appear in similar order to original.
                 result.Bookmarks.Sort((bookmark1, bookmark2) => bookmark1.Slot.CompareTo(bookmark2.Slot));
@@ -241,6 +243,16 @@
             };
         }
 
+        private InputField ReadInputField(SQLiteDataReader reader)
+        {
+            return new InputField
+            {
+                LocationId = ReadInt(reader, "LocationId"),
+                TextTag = ReadString(reader, "TextTag"),
+                Value = ReadString(reader, "Value"),
+            };
+        }
+
         private SQLiteConnection CreateConnection()
         {
             return CreateConnection(_databaseFilePath);
@@ -261,6 +273,7 @@
             ClearTable(connection, "UserMark");
             ClearTable(connection, "TagMap");
             ClearTable(connection, "Tag");
+            ClearTable(connection, "InputField");
             ClearTable(connection, "Note");
             ClearTable(connection, "Location");
             ClearTable(connection, "Bookmark");

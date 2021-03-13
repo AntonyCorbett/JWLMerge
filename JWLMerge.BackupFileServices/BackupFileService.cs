@@ -173,6 +173,19 @@
         }
 
         /// <inheritdoc />
+        public int RemoveInputFields(Database database)
+        {
+            if (database == null)
+            {
+                throw new ArgumentNullException(nameof(database));
+            }
+
+            var count = database.InputFields.Count;
+            database.InputFields.Clear();
+            return count;
+        }
+
+        /// <inheritdoc />
         public int RemoveNotes(Database database)
         {
             if (database == null)
@@ -499,7 +512,7 @@
             string originalDatabaseFilePathForSchema)
         {
             string tmpFile = Path.GetTempFileName();
-
+            
             Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
 
             new DataAccessLayer(originalDatabaseFilePathForSchema).CreateEmptyClone(tmpFile);

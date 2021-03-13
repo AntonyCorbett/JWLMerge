@@ -5,6 +5,7 @@
         Manifest,
         BlockRange,
         Bookmark,
+        InputField,
         LastModified,
         Location,
         Note,

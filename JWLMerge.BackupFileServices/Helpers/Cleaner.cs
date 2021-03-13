@@ -69,6 +69,11 @@
                 }
             }
 
+            foreach (var inputFld in _database.InputFields)
+            {
+                result.Add(inputFld.LocationId);
+            }
+
             Log.Logger.Debug($"Found {result.Count} location Ids in use");
             
             return result;

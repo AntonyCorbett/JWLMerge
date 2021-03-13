@@ -90,6 +90,13 @@
         int RemoveBookmarks(Database database);
 
         /// <summary>
+        /// Removes input fields from the specified database.
+        /// </summary>
+        /// <param name="database">The database.</param>
+        /// <returns>Number of items removed</returns>
+        int RemoveInputFields(Database database);
+
+        /// <summary>
         /// Removes notes from the specified database.
         /// </summary>
         /// <param name="database">The database.</param>

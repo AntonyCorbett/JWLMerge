@@ -127,6 +127,9 @@
                         case JwLibraryFileDataTypes.Bookmark:
                             return BackupFile?.Database.Bookmarks;
 
+                        case JwLibraryFileDataTypes.InputField:
+                            return BackupFile?.Database.InputFields;
+
                         case JwLibraryFileDataTypes.Note:
                             return BackupFile?.Database.Notes;
 
@@ -292,6 +295,7 @@
                 new DataTypeListItem { Caption = "Manifest", DataType = JwLibraryFileDataTypes.Manifest },
                 new DataTypeListItem { Caption = "Block Range", DataType = JwLibraryFileDataTypes.BlockRange },
                 new DataTypeListItem { Caption = "Bookmark", DataType = JwLibraryFileDataTypes.Bookmark },
+                new DataTypeListItem { Caption = "InputField", DataType = JwLibraryFileDataTypes.InputField },
                 new DataTypeListItem { Caption = "Last Modified", DataType = JwLibraryFileDataTypes.LastModified },
                 new DataTypeListItem { Caption = "Location", DataType = JwLibraryFileDataTypes.Location },
                 new DataTypeListItem { Caption = "Note", DataType = JwLibraryFileDataTypes.Note },

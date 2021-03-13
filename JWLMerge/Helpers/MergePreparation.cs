@@ -36,6 +36,11 @@
                 changeCount += backupFileService.RemoveUnderlining(database);
             }
 
+            if (!fileMergeParameters.IncludeInputFields)
+            {
+                changeCount += backupFileService.RemoveInputFields(database);
+            }
+
             return changeCount;
         }
     }

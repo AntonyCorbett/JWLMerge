@@ -8,6 +8,7 @@
         private bool _includeNotes;
         private bool _includeUnderlining;
         private bool _includeTags;
+        private bool _includeInputFields;
 
         public MergeParameters()
         {
@@ -15,6 +16,20 @@
             IncludeNotes = true;
             IncludeUnderlining = true;
             IncludeTags = true;
+            IncludeInputFields = true;
+        }
+
+        public bool IncludeInputFields
+        {
+            get => _includeInputFields;
+            set
+            {
+                if (_includeInputFields != value)
+                {
+                    _includeInputFields = value;
+                    RaisePropertyChanged();
+                }
+            }
         }
 
         public bool IncludeBookmarks
@@ -71,12 +86,12 @@
 
         public bool AnyIncludes()
         {
-            return IncludeTags || IncludeBookmarks || IncludeNotes || IncludeUnderlining;
+            return IncludeTags || IncludeBookmarks || IncludeNotes || IncludeUnderlining || IncludeInputFields;
         }
 
         public bool AnyExcludes()
         {
-            return !IncludeTags || !IncludeBookmarks || !IncludeNotes || !IncludeUnderlining;
+            return !IncludeTags || !IncludeBookmarks || !IncludeNotes || !IncludeUnderlining || !IncludeInputFields;
         }
     }
 }

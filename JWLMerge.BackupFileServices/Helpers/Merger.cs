@@ -391,24 +391,24 @@
 
             foreach (var inputField in source.InputFields)
             {
-                var locationId = _translatedLocationIds.GetTranslatedId(inputField.LocationId);
-
-                if (locationId == 0)
+                var location = source.FindLocation(inputField.LocationId);
+                if (location != null)
                 {
-                    // location unknown so add it...
-                    var referencedLocation = inputField.LocationId;
-                    var location = source.FindLocation(referencedLocation);
-
                     InsertLocation(location, destination);
-
-                    locationId = location.LocationId;
+                    
+                    var locationId = _translatedLocationIds.GetTranslatedId(inputField.LocationId);
+                    if (locationId > 0)
+                    {
+                        var existingInputField = destination.FindInputField(locationId, inputField.TextTag);
+                        if (existingInputField == null)
+                        {
+                            InsertInputField(inputField, locationId, destination);
+                        }
+                    }
                 }
-
-                var existingInputField = destination.FindInputField(inputField.LocationId, inputField.TextTag);
-                if (existingInputField == null)
+                else
                 {
-                    // not found so add
-                    InsertInputField(inputField, locationId, destination);
+                    Log.Logger.Error($"Could not find location for inputField {inputField.LocationId}, {inputField.TextTag}");
                 }
             }
         }

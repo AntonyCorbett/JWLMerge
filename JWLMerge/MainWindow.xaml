@@ -25,7 +25,7 @@
                 ToolTip="{Binding TooltipSummaryText}"
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
                 Style="{DynamicResource MaterialDesignCardFlipper}" 
-                Margin="10,10,0,0" Padding="10" Width="220" Height="215">
+                Margin="10,10,0,0" Padding="10" Width="220" Height="230">
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
                         <materialDesign:PackIcon Kind="FileOutline" 
@@ -61,6 +61,9 @@
 
                     <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeBookmarks}">Bookmarks</CheckBox>
+
+                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                              IsChecked="{Binding MergeParameters.IncludeInputFields}">Input Fields</CheckBox>
 
                     <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeUnderlining}">Underlining</CheckBox>
