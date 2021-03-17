@@ -104,9 +104,7 @@
                         backup.Manifest.UserDataBackup.Hash = GenerateDatabaseHash(tmpDatabaseFileName);
 
                         var manifestEntry = archive.CreateEntry(ManifestEntryName);
-#pragma warning disable S3966 // Objects should not be disposed more than once
                         using (var entryStream = manifestEntry.Open())
-#pragma warning restore S3966 // Objects should not be disposed more than once
                         using (var streamWriter = new StreamWriter(entryStream))
                         {
                             streamWriter.Write(
@@ -388,7 +386,9 @@
             }
 
             Database result;
+#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
             var tmpFile = Path.GetTempFileName();
+#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
             try
             {
                 Log.Logger.Debug("Extracting database to {tmpFile}", tmpFile);
@@ -415,7 +415,9 @@
                 var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
 
                 var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
+#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
                 var tmpFile = Path.GetTempFileName();
+#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
                 databaseEntry.ExtractToFile(tmpFile, overwrite: true);
 
                 Log.Logger.Information("Created temp file: {tmpDatabaseFileName}", tmpFile);
@@ -511,8 +513,10 @@
             Database backupDatabase, 
             string originalDatabaseFilePathForSchema)
         {
+#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
             string tmpFile = Path.GetTempFileName();
-            
+#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
+
             Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
 
             new DataAccessLayer(originalDatabaseFilePathForSchema).CreateEmptyClone(tmpFile);

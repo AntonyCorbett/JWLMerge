@@ -30,7 +30,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\JWLMerge\JWLMerge.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Debug\JWLMerge.BackupFileServices.xml</DocumentationFile>
-    <NoWarn>CS1591</NoWarn>
+    <NoWarn>CS1591;CA1032</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,7 +41,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\JWLMerge\JWLMerge.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>bin\Release\JWLMerge.BackupFileServices.xml</DocumentationFile>
-    <NoWarn>CS1591</NoWarn>
+    <NoWarn>CS1591;CA1032</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Tasks.v4.0" />

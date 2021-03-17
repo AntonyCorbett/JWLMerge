@@ -19,17 +19,5 @@
             
             Assert.AreEqual(0, removedRows);
         }
-
-        [TestMethod]
-        public void TestRemoveRedundantLocations()
-        {
-            BackupFile file = CreateMockBackup();
-            file.Manifest = new Manifest();
-
-            Cleaner cleaner = new Cleaner(file.Database);
-            int removedRows = cleaner.Clean();
-
-            Assert.AreEqual(0, removedRows);
-        }
     }
 }

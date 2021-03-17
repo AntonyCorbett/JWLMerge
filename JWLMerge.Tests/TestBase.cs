@@ -83,9 +83,7 @@
                 result.Add(new Note
                 {
                     NoteId = n,
-#pragma warning disable CA1304 // Specify CultureInfo
                     Guid = Guid.NewGuid().ToString().ToLower(),
-#pragma warning restore CA1304 // Specify CultureInfo
                     UserMarkId = n,
                     LocationId = n,
                     Title = $"Title {n}",
@@ -110,9 +108,7 @@
                     UserMarkId = n,
                     ColorIndex = 1,
                     LocationId = n,
-#pragma warning disable CA1304 // Specify CultureInfo
                     UserMarkGuid = Guid.NewGuid().ToString().ToLower(),
-#pragma warning restore CA1304 // Specify CultureInfo
                     Version = 1,
                 });
             }
