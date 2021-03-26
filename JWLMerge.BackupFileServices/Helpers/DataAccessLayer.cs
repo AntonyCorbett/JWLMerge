@@ -90,7 +90,7 @@
             SQLiteConnection connection,
             Func<SQLiteDataReader, TRowType> readRowFunction)
         {
-            using (SQLiteCommand cmd = connection.CreateCommand())
+            using (var cmd = connection.CreateCommand())
             {
                 var result = new List<TRowType>();
                 var tableName = typeof(TRowType).Name;

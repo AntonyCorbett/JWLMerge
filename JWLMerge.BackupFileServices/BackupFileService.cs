@@ -47,20 +47,27 @@
                 throw new BackupFileServicesException($"File does not exist: {backupFilePath}");
             }
 
-            var filename = Path.GetFileName(backupFilePath);
-            ProgressMessage($"Loading {filename}");
-            
-            using (var archive = new ZipArchive(File.OpenRead(backupFilePath), ZipArchiveMode.Read))
+            try
             {
-                var manifest = ReadManifest(filename, archive);
+                var filename = Path.GetFileName(backupFilePath);
+                ProgressMessage($"Loading {filename}");
 
-                var database = ReadDatabase(archive, manifest.UserDataBackup.DatabaseName);
-
-                return new BackupFile
+                using (var archive = new ZipArchive(File.OpenRead(backupFilePath), ZipArchiveMode.Read))
                 {
-                    Manifest = manifest,
-                    Database = database,
-                };
+                    var manifest = ReadManifest(filename, archive);
+
+                    var database = ReadDatabase(archive, manifest.UserDataBackup.DatabaseName);
+
+                    return new BackupFile
+                    {
+                        Manifest = manifest,
+                        Database = database,
+                    };
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw new BackupFileServicesException($"Unauthorized access to file: {backupFilePath}");
             }
         }
 
@@ -394,7 +401,7 @@
                 Log.Logger.Debug("Extracting database to {tmpFile}", tmpFile);
                 databaseEntry.ExtractToFile(tmpFile, overwrite: true);
 
-                DataAccessLayer dataAccessLayer = new DataAccessLayer(tmpFile);
+                var dataAccessLayer = new DataAccessLayer(tmpFile);
                 result = dataAccessLayer.ReadDatabase();
             }
             finally
