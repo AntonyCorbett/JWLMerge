@@ -83,12 +83,13 @@
         {
             var count = 0;
 
+            count += FixupLocationValidity();
             count += FixupBlockRangeValidity();
             count += FixupBookmarkValidity();
             count += FixupNoteValidity();
             count += FixupTagMapValidity();
             count += FixupUserMarkValidity();
-
+            
             if (count > 0)
             {
                 ReinitializeIndexes();
@@ -654,6 +655,46 @@
             _bookmarksIndex = new Lazy<Dictionary<string, Bookmark>>(BookmarkIndexValueFactory);
         }
 
+        private int FixupLocationValidity()
+        {
+            var fixupCount = 0;
+
+            // there is  unique index on the following Location table columns:
+            // KeySymbol, IssueTagNumber, MepsLanguage, DocumentId, Track, Type
+            // Some Locations may have been stored in the db before this constraint
+            // was added, so identify them here and remove the duplicate entries.
+            // Note that null is treated as a unique value in SQLite
+
+            var keys = new HashSet<string>();
+
+            for (var n = Locations.Count - 1; n >= 0; --n)
+            {
+                var loc = Locations[n];
+
+                if (loc.Track == null || loc.DocumentId == null)
+                {
+                    continue;
+                }
+
+                var key = $"{loc.KeySymbol}|{loc.IssueTagNumber}|{loc.MepsLanguage}|{loc.DocumentId.Value}|{loc.Track.Value}|{loc.Type}";
+
+                if (keys.Contains(key))
+                {
+                    // found a duplicate that will cause a constraint exception.
+                    ++fixupCount;
+                    Locations.RemoveAt(n);
+
+                    Log.Logger.Error($"Removed duplicate location {loc.LocationId}");
+                }
+                else
+                {
+                    keys.Add(key);
+                }
+            }
+
+            return fixupCount;
+        }
+
         private int FixupUserMarkValidity()
         {
             var fixupCount = 0;
@@ -689,6 +730,13 @@
                     TagMaps.RemoveAt(n);
 
                     Log.Logger.Error($"Removed invalid tag map {tagMap.TagMapId}");
+                }
+                else if (tagMap.LocationId != null && FindLocation(tagMap.LocationId.Value) == null)
+                {
+                    ++fixupCount;
+                    TagMaps.RemoveAt(n);
+
+                    Log.Logger.Error($"Removed invalid tag map {tagMap.TagMapId} (missing LocationId)");
                 }
             }
 
