@@ -24,7 +24,7 @@
             DispatcherHelper.Initialize();
             
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile(GetRollingFileFormat())
+                .WriteTo.File(GetRollingFileFormat())
                 .MinimumLevel.Debug()
                 .CreateLogger();
             

@@ -1,4 +1,6 @@
-﻿namespace JWLMergeCLI
+﻿using JWLMergeCLI.Args;
+
+namespace JWLMergeCLI
 {
     using System;
     using System.Diagnostics;
@@ -15,15 +17,15 @@
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile("logs\\log-{Date}.txt")
-                .MinimumLevel.Debug()
+                .ReadFrom.AppSettings()
                 .CreateLogger();
             
             try
             {
                 Log.Logger.Information("Started");
 
-                if (args == null || args.Length < 2)
+                var commandLineArgs = ArgsHelper.Parse(args);
+                if (commandLineArgs == null)
                 {
                     ShowUsage();
                 }
@@ -31,7 +33,7 @@
                 {
                     var app = new MainApp();
                     app.ProgressEvent += AppProgress;
-                    app.Run(args);
+                    app.Run(commandLineArgs);
                 }
 
                 Environment.ExitCode = 0;

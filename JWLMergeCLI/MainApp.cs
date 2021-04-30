@@ -1,4 +1,6 @@
-﻿namespace JWLMergeCLI
+﻿using JWLMergeCLI.Args;
+
+namespace JWLMergeCLI
 {
     using System;
     using System.Collections.Generic;
@@ -20,18 +22,16 @@
         /// Runs the app.
         /// </summary>
         /// <param name="args">Program arguments</param>
-        public void Run(string[] args)
+        public void Run(CommandLineArgs args)
         {
-            var files = GetInputFiles(args);
-            
             IBackupFileService backupFileService = new BackupFileService();
             backupFileService.ProgressEvent += BackupFileServiceProgress;
             
-            var backup = backupFileService.Merge(files);
-            string outputFileName = $"{backup.Manifest.Name}.jwlibrary";
-            backupFileService.WriteNewDatabase(backup, outputFileName, files.First());
+            var backup = backupFileService.Merge(args.BackupFiles);
+            string outputFileName = args.OutputFilePath ?? $"{backup.Manifest.Name}.jwlibrary";
+            backupFileService.WriteNewDatabase(backup, outputFileName, args.BackupFiles.First());
 
-            var logMessage = $"{files.Count} backup files merged to {outputFileName}";
+            var logMessage = $"{args.BackupFiles.Length} backup files merged to {outputFileName}";
             Log.Logger.Information(logMessage);
             OnProgressEvent(logMessage);
         }
