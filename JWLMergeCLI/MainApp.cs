@@ -1,6 +1,4 @@
-﻿using JWLMergeCLI.Args;
-
-namespace JWLMergeCLI
+﻿namespace JWLMergeCLI
 {
     using System;
     using System.Collections.Generic;
@@ -8,6 +6,7 @@ namespace JWLMergeCLI
     using System.Linq;
     using JWLMerge.BackupFileServices;
     using JWLMerge.BackupFileServices.Events;
+    using JWLMergeCLI.Args;
     using JWLMergeCLI.Exceptions;
     using Serilog;
 

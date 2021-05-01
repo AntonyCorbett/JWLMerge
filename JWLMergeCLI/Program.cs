@@ -64,7 +64,7 @@ namespace JWLMergeCLI
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             Console.WriteLine();
-            Console.WriteLine($" JWLMerge version {GetVersion()} ");
+            Console.WriteLine($" JWLMergeCLI version {GetVersion()} ");
             Console.WriteLine();
             Console.ResetColor();
             
@@ -79,9 +79,13 @@ namespace JWLMergeCLI
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("   Usage:");
             Console.ResetColor();
-            Console.WriteLine("    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>...");
+            Console.WriteLine("    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>... [-o output file]");
             Console.WriteLine();
-            
+            Console.WriteLine("   Note that you can optionally specify the full path and name of the merged");
+            Console.WriteLine("   file using the -o (or --output directive). If you omit it, the merged");
+            Console.WriteLine("   file is stored in the current folder.");
+            Console.WriteLine();
+
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("   An example:");
             Console.ResetColor();
