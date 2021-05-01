@@ -6,7 +6,7 @@
 #define MyAppURL "https://github.com/AntonyCorbett/JWLMerge"
 #define MyAppExeName "JWLMerge.exe"
 
-#define MyAppVersion GetFileVersion('D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\JWLMerge.exe');
+#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\JWLMerge.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\JWLMerge
 DefaultGroupName={#MyAppName}
 OutputBaseFilename=JWLMergeSetup
-SetupIconFile=D:\ProjectsPersonal\JWLMerge\JWLMerge.ico
+SetupIconFile=..\JWLMerge.ico
 Compression=lzma
 SolidCompression=yes
 AppContact=antony@corbetts.org.uk
@@ -36,25 +36,25 @@ AppMutex=JWLMergeAC
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
 [Files]
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\x64\*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\x86\*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\JWLMerge.BackupFileServices.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\JWLMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\JWLMerge.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMergeCLI\bin\Release\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMergeCLI\bin\Release\JWLMergeCLI.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\MaterialDesignColors.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\MaterialDesignThemes.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Serilog.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\Serilog.Sinks.RollingFile.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\System.Data.SQLite.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\ProjectsPersonal\JWLMerge\JWLMerge\bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\x64\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\x86\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\JWLMerge.BackupFileServices.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\JWLMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\JWLMerge.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\Release\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\Release\JWLMergeCLI.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\MaterialDesignColors.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\MaterialDesignThemes.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\Serilog.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\Serilog.Settings.AppSettings.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\System.Data.SQLite.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
