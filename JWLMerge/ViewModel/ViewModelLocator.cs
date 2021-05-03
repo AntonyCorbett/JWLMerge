@@ -4,6 +4,7 @@ namespace JWLMerge.ViewModel
     using CommonServiceLocator;
     using GalaSoft.MvvmLight.Ioc;
     using JWLMerge.BackupFileServices;
+    using JWLMerge.ExcelServices;
     using JWLMerge.Services;
 
     /// <summary>
@@ -22,6 +23,8 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IWindowService, WindowService>();
             SimpleIoc.Default.Register<IRedactService, RedactService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
+            SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
+            SimpleIoc.Default.Register<IExcelService, ExcelService>();
 
             SimpleIoc.Default.Register<BackupFileFormatErrorViewModel>();
             SimpleIoc.Default.Register<RedactNotesPromptViewModel>();

@@ -119,12 +119,15 @@
       <DependentUpon>RemoveFavouritesPromptDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DesignTimeFileCreation.cs" />
+    <Compile Include="Helpers\ExportBibleNotesHelper.cs" />
+    <Compile Include="Helpers\ImportBibleNotesHelper.cs" />
+    <Compile Include="Helpers\RedactNotesHelper.cs" />
     <Compile Include="Helpers\MergePreparation.cs" />
+    <Compile Include="Helpers\RemoveFavouritesHelper.cs" />
     <Compile Include="Helpers\VersionDetection.cs" />
     <Compile Include="Messages\DragDropMessage.cs" />
     <Compile Include="Messages\DragOverMessage.cs" />
     <Compile Include="Messages\MainWindowClosingMessage.cs" />
-    <Compile Include="Messages\NotesRedactedMessage.cs" />
     <Compile Include="Models\DataTypeListItem.cs" />
     <Compile Include="Models\FileFormatErrorListItem.cs" />
     <Compile Include="Models\JwLibraryFile.cs" />
@@ -139,6 +142,8 @@
     <Compile Include="Services\IRedactService.cs" />
     <Compile Include="Services\IWindowService.cs" />
     <Compile Include="Services\RedactService.cs" />
+    <Compile Include="Services\ISnackbarService.cs" />
+    <Compile Include="Services\SnackbarService.cs" />
     <Compile Include="Services\WindowService.cs" />
     <Compile Include="ViewModel\BackupFileFormatErrorViewModel.cs" />
     <Compile Include="ViewModel\DetailViewModel.cs" />
@@ -212,6 +217,10 @@
     <ProjectReference Include="..\JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj">
       <Project>{83446629-cdbb-43ff-b628-1b8a3a9603c3}</Project>
       <Name>JWLMerge.BackupFileServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JWLMerge.ExcelServices\JWLMerge.ExcelServices.csproj">
+      <Project>{f8d64b6c-c475-4b5e-8b32-d717380f0f36}</Project>
+      <Name>JWLMerge.ExcelServices</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

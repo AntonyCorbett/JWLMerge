@@ -16,81 +16,31 @@
         FontFamily="{StaticResource MaterialDesignFont}"
         Title="{Binding WindowTitle}" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
     <materialDesign:DialogHost Identifier="DetailDialogHost">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="60"/>
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="175"/>
+                <ColumnDefinition Width="373*"/>
+            </Grid.ColumnDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="175"/>
-            <ColumnDefinition Width="373*"/>
-        </Grid.ColumnDefinitions>
-
-        <GroupBox Grid.Row="0" Grid.Column="0" Header="Data Type" Margin="10,10,5,10">
-            <ListBox ItemsSource="{Binding ListItems}" DisplayMemberPath="Caption" 
+            <GroupBox Grid.Column="0" Header="Data Type" Margin="10,10,5,10">
+                <ListBox ItemsSource="{Binding ListItems}" DisplayMemberPath="Caption" 
                      SelectedItem="{Binding SelectedDataType, Mode=TwoWay}">
-            </ListBox>
-        </GroupBox>
+                </ListBox>
+            </GroupBox>
 
-        <GroupBox Grid.Row="0" Grid.Column="1" Header="Data" Margin="5,10,10,10">
+            <GroupBox Grid.Column="1" Header="Data" Margin="5,10,10,10">
 
-            <DataGrid ItemsSource="{Binding DataItemsSource}"
+                <DataGrid ItemsSource="{Binding DataItemsSource}"
                       IsReadOnly="True"
                       CanUserSortColumns="True"
                       CanUserAddRows="False"
                       materialDesign:DataGridAssist.CellPadding="4 2 2 2"
                       materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
-            </DataGrid>
-            
-        </GroupBox>
+                </DataGrid>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="1">
-        <Button
-            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-            Command="{Binding ImportBibleNotesCommand}"
-            HorizontalAlignment="Left"
-            Margin="10,0,0,10"
-            ToolTip="Import Bible Notes">
-            <materialDesign:PackIcon
-                Kind="Import"
-                Height="24"
-                Width="24" />
-        </Button>
+            </GroupBox>
 
-        <Button
-            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-            Command="{Binding RedactNotesCommand}"
-            HorizontalAlignment="Left"
-            Margin="10,0,0,10"
-            IsEnabled="{Binding NotesNotRedacted}"
-            ToolTip="Redact Notes">
-            <materialDesign:PackIcon
-                Kind="SwordCross"
-                Height="24"
-                Width="24" />
-        </Button>
-
-        <Button
-            Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
-            Command="{Binding DeleteFavouritesCommand}"
-            HorizontalAlignment="Left"
-            Margin="10,0,0,10"
-            IsEnabled="{Binding FavouritesExist}"
-            ToolTip="Delete Favourites">
-            <materialDesign:PackIcon
-                Kind="DeleteForever"
-                Height="24"
-                Width="24" />
-        </Button>
-
-    </StackPanel>
-
-        <ProgressBar Grid.Row="1" Grid.Column="1" 
-                     Margin="10"
-                     Visibility="{Binding Path=IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-                     Height="20" IsIndeterminate="True" />
-    </Grid>
+        </Grid>
         <materialDesign:DialogHost.DialogContent>
             <StackPanel Margin="16">
             </StackPanel>

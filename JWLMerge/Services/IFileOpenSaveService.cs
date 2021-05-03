@@ -5,5 +5,7 @@
         string GetSaveFilePath(string title);
 
         string GetBibleNotesImportFilePath(string title);
+
+        string GetBibleNotesExportFilePath(string title);
     }
 }

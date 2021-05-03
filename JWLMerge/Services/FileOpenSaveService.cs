@@ -11,6 +11,28 @@
 
         private static string ImportDirectory { get; set; }
 
+        private static string ExportDirectory { get; set; }
+
+        public string GetBibleNotesExportFilePath(string title)
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                AddExtension = true,
+                Title = title,
+                Filter = "Excel file (*.xlsx)|*.xlsx",
+                InitialDirectory = ExportDirectory ?? GetDefaultExportFolder(),
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                ExportDirectory = Path.GetDirectoryName(saveFileDialog.FileName);
+                return saveFileDialog.FileName;
+            }
+
+            return null;
+
+        }
+
         public string GetBibleNotesImportFilePath(string title)
         {
             var openFileDialog = new OpenFileDialog
@@ -51,7 +73,7 @@
             return null;
         }
 
-        private string GetDefaultSaveFolder()
+        private string GetJWLMergeDocsFolder()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMerge");
             if (!Directory.Exists(folder))
@@ -60,6 +82,16 @@
             }
 
             return folder;
+        }
+
+        private string GetDefaultSaveFolder()
+        {
+            return GetJWLMergeDocsFolder();
+        }
+
+        private string GetDefaultExportFolder()
+        {
+            return GetJWLMergeDocsFolder();
         }
 
         private string GetDefaultImportFolder()

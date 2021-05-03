@@ -14,10 +14,13 @@ namespace JWLMerge.ViewModel
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
     using JWLMerge.BackupFileServices;
+    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using JWLMerge.ExcelServices;
     using JWLMerge.Helpers;
     using JWLMerge.Messages;
     using JWLMerge.Models;
     using JWLMerge.Services;
+    using MaterialDesignThemes.Wpf;
     using Serilog;
 
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -29,6 +32,9 @@ namespace JWLMerge.ViewModel
         private readonly IWindowService _windowService;
         private readonly IFileOpenSaveService _fileOpenSaveService;
         private readonly IDialogService _dialogService;
+        private readonly ISnackbarService _snackbarService;
+        private readonly IRedactService _redactService;
+        private readonly IExcelService _excelService;
         private bool _isBusy;
 
         public MainViewModel(
@@ -36,13 +42,19 @@ namespace JWLMerge.ViewModel
             IBackupFileService backupFileService,
             IWindowService windowService,
             IFileOpenSaveService fileOpenSaveService,
-            IDialogService dialogService)
+            IDialogService dialogService,
+            ISnackbarService snackbarService,
+            IRedactService redactService,
+            IExcelService excelService)
         {
             _dragDropService = dragDropService;
             _backupFileService = backupFileService;
             _windowService = windowService;
             _fileOpenSaveService = fileOpenSaveService;
             _dialogService = dialogService;
+            _snackbarService = snackbarService;
+            _redactService = redactService;
+            _excelService = excelService;
 
             Files.CollectionChanged += FilesCollectionChanged;
 
@@ -52,8 +64,7 @@ namespace JWLMerge.ViewModel
             Messenger.Default.Register<DragOverMessage>(this, OnDragOver);
             Messenger.Default.Register<DragDropMessage>(this, OnDragDrop);
             Messenger.Default.Register<MainWindowClosingMessage>(this, OnMainWindowClosing);
-            Messenger.Default.Register<NotesRedactedMessage>(this, OnNotesRedacted);
-
+            
             AddDesignTimeItems();
 
             InitCommands();
@@ -102,6 +113,8 @@ namespace JWLMerge.ViewModel
             }
         }
 
+        public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
+
         // commands...
         public RelayCommand<string> CloseCardCommand { get; set; }
 
@@ -113,6 +126,14 @@ namespace JWLMerge.ViewModel
 
         public RelayCommand UpdateCommand { get; set; }
 
+        public RelayCommand<string> RemoveFavouritesCommand { get; set; }
+
+        public RelayCommand<string> RedactNotesCommand { get; set; }
+
+        public RelayCommand<string> ImportBibleNotesCommand { get; set; }
+
+        public RelayCommand<string> ExportBibleNotesCommand { get; set; }
+
         private JwLibraryFile GetFile(string filePath)
         {
             var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
@@ -122,15 +143,6 @@ namespace JWLMerge.ViewModel
             }
 
             return file;
-        }
-
-        private void OnNotesRedacted(NotesRedactedMessage message)
-        {
-            var file = GetFile(message.FilePath);
-            if (file != null)
-            {
-                file.NotesRedacted = true;
-            }
         }
 
         private void OnMainWindowClosing(MainWindowClosingMessage message)
@@ -158,6 +170,151 @@ namespace JWLMerge.ViewModel
             MergeCommand = new RelayCommand(MergeFiles, () => GetMergeableFileCount() > 0 && !IsBusy && !_dialogService.IsDialogVisible());
             HomepageCommand = new RelayCommand(LaunchHomepage);
             UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
+
+            RemoveFavouritesCommand = new RelayCommand<string>(async (filePath) => await RemoveFavouritesAsync(filePath), filePath => !IsBusy);
+            RedactNotesCommand = new RelayCommand<string>(async (filePath) => await RedactNotesAsync(filePath), filePath => !IsBusy);
+            ImportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ImportBibleNotesAsync(filePath), filePath => !IsBusy);
+            ExportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ExportBibleNotesAsync(filePath), filePath => !IsBusy);
+        }
+
+        private async Task ExportBibleNotesAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+
+            var bibleNotesExportFilePath = _fileOpenSaveService.GetBibleNotesExportFilePath("Bible Notes File");
+            if (string.IsNullOrWhiteSpace(bibleNotesExportFilePath))
+            {
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                await ExportBibleNotesHelper.ExecuteAsync(
+                    file.BackupFile, _backupFileService, bibleNotesExportFilePath, _excelService);
+                _snackbarService.Enqueue("Bible notes exported successfully");
+            }
+            catch (Exception ex)
+            {
+                _snackbarService.Enqueue("Error exporting Bible notes!");
+                Log.Logger.Error(ex, "Could not export Bible notes from file: {filePath}", file.FilePath);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task ImportBibleNotesAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+
+            var bibleNotesImportFilePath = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");
+            if (string.IsNullOrWhiteSpace(bibleNotesImportFilePath))
+            {
+                return;
+            }
+
+            var userDefinedTags = file.BackupFile.Database.Tags.Where(x => x.Type != 0)
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            userDefinedTags.Insert(0, new Tag { TagId = 0, Type = 0, Name = "** No Tag **" });
+
+            var options = await _dialogService.GetImportBibleNotesParamsAsync(userDefinedTags).ConfigureAwait(true);
+            if (options == null)
+            {
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                await ImportBibleNotesHelper.ExecuteAsync(
+                    file.BackupFile, _backupFileService, file.FilePath, bibleNotesImportFilePath, options);
+                _windowService.Close(filePath);
+                _snackbarService.Enqueue("Bible notes imported successfully");
+            }
+            catch (Exception ex)
+            {
+                _snackbarService.Enqueue("Error importing Bible notes!");
+                Log.Logger.Error(ex, "Could not import Bible notes from file: {filePath}", bibleNotesImportFilePath);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task RedactNotesAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+
+            var notes = file.BackupFile?.Database.Notes;
+            if (notes == null || !notes.Any())
+            {
+                _snackbarService.Enqueue("No notes found");
+                return;
+            }
+
+            if (file.NotesRedacted)
+            {
+                _snackbarService.Enqueue("Notes already redacted");
+                return;
+            }
+
+            if (await _dialogService.ShouldRedactNotesAsync().ConfigureAwait(true))
+            {
+                IsBusy = true;
+                try
+                {
+                    await RedactNotesHelper.ExecuteAsync(notes, _redactService, file.BackupFile, _backupFileService, filePath);
+                    _windowService.Close(filePath);
+                    file.NotesRedacted = true;
+                    _snackbarService.Enqueue("Notes redacted successfully");
+                }
+                catch (Exception ex)
+                {
+                    _snackbarService.Enqueue("Error redacting notes!");
+                    Log.Logger.Error(ex, "Could not redact notes from file: {filePath}", filePath);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+            }
+        }
+
+        private async Task RemoveFavouritesAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+            
+            var favourites = file.BackupFile?.Database.TagMaps.Where(x => x.TagId == 1);
+            if (favourites == null || !favourites.Any())
+            {
+                _snackbarService.Enqueue("No favourites found");
+                return;
+            }
+
+            if (await _dialogService.ShouldRemoveFavouritesAsync().ConfigureAwait(true))
+            {
+                IsBusy = true;
+                try
+                {
+                    await RemoveFavouritesHelper.ExecuteAsync(file.BackupFile, _backupFileService, file.FilePath);
+                    _snackbarService.Enqueue("Favourites removed successfully");
+                    _windowService.Close(filePath);
+                }
+                catch (Exception ex)
+                {
+                    _snackbarService.Enqueue("Error removing favourites!");
+                    Log.Logger.Error(ex, "Could not remove favourites from file: {filePath}", filePath);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+            }
         }
 
         private void LaunchLatestReleasePage()

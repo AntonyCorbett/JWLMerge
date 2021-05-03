@@ -5,6 +5,7 @@
     using JWLMerge.BackupFileServices.Events;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using JWLMerge.ExcelServices;
 
     /// <summary>
     /// The BackupFileService interface.
@@ -63,6 +64,8 @@
             string bibleKeySymbol,
             int mepsLanguageId, 
             ImportBibleNotesParams options);
+
+        void ExportBibleNotesToExcel(BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService);
 
         /// <summary>
         /// Writes the specified backup to a "jwlibrary" file.

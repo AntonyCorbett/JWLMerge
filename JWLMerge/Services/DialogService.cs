@@ -64,7 +64,7 @@
 
             await DialogHost.Show(
                 dialog,
-                "DetailDialogHost",
+                "MainDialogHost",
                 (object sender, DialogClosingEventArgs args) =>
                 {
                     _isDialogVisible = false;
@@ -82,7 +82,7 @@
 
             await DialogHost.Show(
                 dialog, 
-                "DetailDialogHost",
+                "MainDialogHost",
                 (object sender, DialogClosingEventArgs args) =>
                 {
                     _isDialogVisible = false;
@@ -103,7 +103,7 @@
 
             await DialogHost.Show(
                 dialog,
-                "DetailDialogHost",
+                "MainDialogHost",
                 (object sender, DialogClosingEventArgs args) =>
                 {
                     _isDialogVisible = false;

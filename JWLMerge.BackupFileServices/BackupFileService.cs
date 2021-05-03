@@ -13,6 +13,7 @@
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.BackupFileServices.Models.ManifestFile;
+    using JWLMerge.ExcelServices;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Serialization;
@@ -328,6 +329,98 @@
             notesImporter.Import(notes);
 
             return new BackupFile { Manifest = newManifest, Database = originalBackupFile.Database };
+        }
+
+        public void ExportBibleNotesToExcel(
+            BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService)
+        {
+            File.Delete(bibleNotesExportFilePath);
+            if (File.Exists(bibleNotesExportFilePath))
+            {
+                throw new BackupFileServicesException(
+                    $"Could not delete existing Excel file: {bibleNotesExportFilePath}");
+            }
+
+            var notesToWrite = new List<ExcelServices.Models.BibleNote>();
+
+            var tags = backupFile.Database.TagMaps.Where(x => x.NoteId != null).ToLookup(map => map.NoteId, map => map);
+
+            foreach (var note in backupFile.Database.Notes)
+            {
+                if (note.LocationId == null)
+                {
+                    continue;
+                }
+
+                var location = backupFile.Database.FindLocation(note.LocationId.Value);
+                if (location == null)
+                {
+                    continue;
+                }
+
+                if (location.BookNumber == null)
+                {
+                    continue;
+                }
+
+                int? colorCode = null;
+                if (note.UserMarkId != null)
+                {
+                    var userMark = backupFile.Database.FindUserMark(note.UserMarkId.Value);
+                    if (userMark != null)
+                    {
+                        colorCode = userMark.ColorIndex;
+                    }
+                }
+                
+                notesToWrite.Add(new ExcelServices.Models.BibleNote
+                {
+                    BookNumber = location.BookNumber.Value,
+                    BookName = BibleBookNames.GetName(location.BookNumber.Value),
+                    ChapterNumber = location.ChapterNumber,
+                    VerseNumber = note.BlockIdentifier,
+                    NoteTitle = note.Title?.Trim(),
+                    NoteContent = note.Content?.Trim(),
+                    PubSymbol = location.KeySymbol,
+                    ColorCode = colorCode,
+                    TagsCsv = GetTagsAsCsv(tags, note.NoteId, backupFile.Database),
+                });
+            }
+
+            notesToWrite.Sort(SortBibleNotes);
+
+            excelService.AppendToBibleNotesFile(bibleNotesExportFilePath, notesToWrite, 0, bibleNotesExportFilePath);
+        }
+
+        private int SortBibleNotes(ExcelServices.Models.BibleNote x, ExcelServices.Models.BibleNote y)
+        {
+            if (x.BookNumber != y.BookNumber)
+            {
+                return x.BookNumber.CompareTo(y.BookNumber);
+            }
+
+            if (x.ChapterNumber != y.ChapterNumber)
+            {
+                return x.ChapterNumber ?? 0.CompareTo(y.ChapterNumber ?? 0);
+            }
+
+            if (x.VerseNumber != y.VerseNumber)
+            {
+                return x.VerseNumber ?? 0.CompareTo(y.VerseNumber ?? 0);
+            }
+
+            return 0;
+        }
+
+        private string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
+        {
+            var t = tags[noteId]?.ToArray();
+            if (t == null || !t.Any())
+            {
+                return string.Empty;
+            }
+
+            return string.Join(", ", t.Select(x => database.FindTag(x.TagId).Name));
         }
 
         private static bool SupportDatabaseVersion(int version)

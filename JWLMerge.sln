@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.Tests", "JWLMerge.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge", "JWLMerge\JWLMerge.csproj", "{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.ExcelServices", "JWLMerge.ExcelServices\JWLMerge.ExcelServices.csproj", "{F8D64B6C-C475-4B5E-8B32-D717380F0F36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
