@@ -7,13 +7,13 @@
         xmlns:local="clr-namespace:JWLMerge"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.Foreground="{StaticResource MaterialDesignBody}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}"
+        Background="{StaticResource MaterialDesignPaper}"
+        FontFamily="{StaticResource MaterialDesignFont}"
         Title="{Binding WindowTitle}" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
     <materialDesign:DialogHost Identifier="DetailDialogHost">
     <Grid>

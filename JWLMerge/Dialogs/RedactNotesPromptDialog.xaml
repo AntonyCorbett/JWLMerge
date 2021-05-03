@@ -6,13 +6,13 @@
              mc:Ignorable="d"
              Height="217" Width="367"
              DataContext="{Binding RedactNotesPromptDialog, Source={StaticResource Locator}}"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.Foreground="{StaticResource MaterialDesignBody}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
-             Background="{DynamicResource MaterialDesignPaper}"
-             FontFamily="{DynamicResource MaterialDesignFont}">
+             Background="{StaticResource MaterialDesignPaper}"
+             FontFamily="{StaticResource MaterialDesignFont}">
 
     <UserControl.Resources>
         <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
@@ -26,7 +26,7 @@
 
     <Border Padding="20">
             <StackPanel Orientation="Vertical" Margin="0,0,0,10">
-                <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+                <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                            Margin="0,0,0,10"
                            Text="Redacting Notes" />
 
@@ -37,7 +37,7 @@
                     Text="Are you sure you want to redact notes?" />
 
             <TextBlock 
-                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                Style="{StaticResource MaterialDesignCaptionTextBlock}"
                 TextWrapping="Wrap"
                 Text="This function is typically used to redact confidential notes. It will replace your existing notes with 'Lorem Ipsum' text and automatically overwrite the backup file." />
                 <StackPanel Orientation="Horizontal" 

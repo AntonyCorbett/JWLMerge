@@ -10,22 +10,21 @@
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:models="clr-namespace:JWLMerge.Models"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.Foreground="{StaticResource MaterialDesignBody}"
         TextElement.FontWeight="Medium"
         TextElement.FontSize="14"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="Auto"
         MinWidth="400"
         MinHeight="400"
-        Background="{DynamicResource MaterialDesignPaper}"
-        FontFamily="{DynamicResource MaterialDesignFont}">
+        Background="{StaticResource MaterialDesignPaper}"
+        FontFamily="{StaticResource MaterialDesignFont}">
     <Window.Resources>
         
         <DataTemplate DataType="{x:Type models:JwLibraryFile}">
             <materialDesign:Card 
                 ToolTip="{Binding TooltipSummaryText}"
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
-                Style="{DynamicResource MaterialDesignCard}" 
                 Margin="10,10,0,0" Padding="10" Width="220" Height="230">
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
@@ -34,7 +33,7 @@
                                                  Height="22"
                                                  ToolTip="{Binding BackupFile.Manifest.Name}"
                                                  DockPanel.Dock="Left"/>
-                        <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" 
+                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
                                    DockPanel.Dock="Left"
                                    ToolTip="{Binding BackupFile.Manifest.Name}"
                                    Text="{Binding BackupFile.Manifest.CreationDate}" />
@@ -43,7 +42,7 @@
                                 DockPanel.Dock="Right" HorizontalAlignment="Right"
                                 Command="{Binding Path=DataContext.CloseCardCommand, ElementName=JwlMergeWindow}"
                                 CommandParameter="{Binding FilePath}"
-                                Style="{DynamicResource MaterialDesignFlatButton}"
+                                Style="{StaticResource MaterialDesignFlatButton}"
                                 materialDesign:ShadowAssist.ShadowDepth="Depth0">
                             <materialDesign:PackIcon
                                 HorizontalAlignment="Center"
@@ -51,27 +50,27 @@
                         </Button>
                     </DockPanel>
 
-                    <TextBlock Style="{DynamicResource MaterialDesignSubheadingTextBlock}" 
-                               Margin="0,5,0,5"
+                    <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
+                               Margin="0,5,0,0"
                                TextTrimming="CharacterEllipsis"
                                ToolTip="{Binding BackupFile.Manifest.Name}"
                                Text="{Binding BackupFile.Manifest.UserDataBackup.DeviceName}"/>
 
                     <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,0,0,-4"/>
 
-                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}" 
+                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}" 
                               IsChecked="{Binding MergeParameters.IncludeNotes}">Notes</CheckBox>
 
-                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeBookmarks}">Bookmarks</CheckBox>
 
-                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeInputFields}">Input Fields</CheckBox>
 
-                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeUnderlining}">Underlining</CheckBox>
 
-                    <CheckBox Style="{DynamicResource MaterialDesignCheckBox}"
+                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
                               IsChecked="{Binding MergeParameters.IncludeTags}">Tags</CheckBox>
 
                     <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,-4,0,0"/>
@@ -82,8 +81,9 @@
                             <ColumnDefinition Width="55" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                                 Grid.Column="0"
+                                ToolTip="Display more details"
                                 Margin="0,5,0,0"
                                 Content="DETAILS"
                                 Command="{Binding Path=DataContext.ShowDetailsCommand, ElementName=JwlMergeWindow}"
@@ -91,12 +91,13 @@
 
                         <materialDesign:PopupBox
                             Grid.Column="1"
+                            ToolTip="Commands"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Right"
                             Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
                             PlacementMode="BottomAndAlignCentres"
-                            Height="40"
-                            Width="40"
+                            Height="31"
+                            Width="31"
                             ToolTipService.Placement="Right">
                             <StackPanel>
                                 <Button
@@ -132,7 +133,7 @@
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Margin="10" 
                    Visibility="{Binding Path=FileListEmpty, Converter={StaticResource BoolToVis}, Mode=OneWay}"
-                   Style="{DynamicResource MaterialDesignBody1TextBlock}">
+                   Style="{StaticResource MaterialDesignBody1TextBlock}">
             Drag and drop .jwlibrary files here
         </TextBlock>
 
@@ -157,9 +158,9 @@
             <DockPanel>
                 <Button DockPanel.Dock="Left" Command="{Binding MergeCommand}" 
                         Width="110" Margin="0,0,10,0" Content="{Binding MergeCommandCaption}" />
-                <Button Style="{DynamicResource MaterialDesignFlatButton}" Width="110" 
+                    <Button Style="{StaticResource MaterialDesignFlatButton}" Width="110" 
                         Command="{Binding HomepageCommand}" Margin="0,0,10,0">HOMEPAGE</Button>
-                <Button Style="{DynamicResource MaterialDesignRaisedAccentButton}" 
+                    <Button Style="{StaticResource MaterialDesignRaisedAccentButton}" 
                         Width="110"
                         Command="{Binding UpdateCommand}" 
                         ToolTip="New version available!"
@@ -169,7 +170,7 @@
                     DockPanel.Dock="Right"
                     HorizontalAlignment="Right"
                     Visibility="{Binding Path=IsBusy, Converter={StaticResource BoolToVis}, Mode=OneWay}"
-                    Style="{DynamicResource MaterialDesignCircularProgressBar}"
+                    Style="{StaticResource MaterialDesignCircularProgressBar}"
                     Value="0"
                     IsIndeterminate="True" />
             </DockPanel>

@@ -8,13 +8,13 @@
              Width="500" Height =" 313"
              d:DesignHeight="313.247" d:DesignWidth="530.273"
              DataContext="{Binding BackupFileFormatErrorDialog, Source={StaticResource Locator}}"
-             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.Foreground="{StaticResource MaterialDesignBody}"
              TextElement.FontWeight="Medium"
              TextElement.FontSize="14"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
-             Background="{DynamicResource MaterialDesignPaper}"
-             FontFamily="{DynamicResource MaterialDesignFont}">
+             Background="{StaticResource MaterialDesignPaper}"
+             FontFamily="{StaticResource MaterialDesignFont}">
 
     <UserControl.Resources>
         <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
@@ -24,7 +24,7 @@
 
     <Border Padding="20,20,20,10">
         <StackPanel Orientation="Vertical" Margin="0,0,0,10">
-            <TextBlock Style="{StaticResource MaterialDesignHeadlineTextBlock}"
+            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                        Margin="0,0,0,10"
                        Text="Backup File Format Error" />
 
@@ -45,10 +45,10 @@
                                     <RowDefinition Height="4*" />
                                 </Grid.RowDefinitions>
                                 <TextBlock 
-                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                     Grid.Row="0" Text="{Binding Filename}" FontWeight="Bold" />
                                 <TextBlock 
-                                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
                                     TextWrapping="Wrap"
                                     Grid.Row="1" Text="{Binding ErrorMsg}" />
                             </Grid>

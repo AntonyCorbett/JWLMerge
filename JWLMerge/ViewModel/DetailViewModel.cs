@@ -93,7 +93,7 @@
 
         public bool NotesNotRedacted => !NotesRedacted;
 
-        public bool FavouritesExists
+        public bool FavouritesExist
         {
             get
             {
