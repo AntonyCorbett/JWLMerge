@@ -33,7 +33,6 @@
                 
                 var viewModel = (DetailViewModel)window.DataContext;
                 viewModel.SelectedDataType = viewModel.ListItems.FirstOrDefault();
-
                 window.Show();
             }
         }

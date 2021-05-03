@@ -26,6 +26,8 @@
         private bool _isBusy;
         private DataTypeListItem _selectedDataType;
         private bool _notesRedacted;
+        private string _windowTitle;
+        private BackupFile _backupFile;
 
         public DetailViewModel(
             IBackupFileService backupFileService, 
@@ -39,7 +41,7 @@
             _redactService = redactService;
 
             ListItems = CreateListItems();
-
+            
             ImportBibleNotesCommand = new RelayCommand(async () => await ImportBibleNotes().ConfigureAwait(true));
             RedactNotesCommand = new RelayCommand(async () => await RedactNotes().ConfigureAwait(true));
             DeleteFavouritesCommand = new RelayCommand(async () => await DeleteFavourites().ConfigureAwait(true));
@@ -47,7 +49,19 @@
 
         public string FilePath { get; set; }
 
-        public BackupFile BackupFile { get; set; }
+        public BackupFile BackupFile
+        {
+            get => _backupFile;
+            set
+            {
+                if (_backupFile != value)
+                {
+                    Set(ref _backupFile, value);
+                    var deviceName = BackupFile?.Manifest.UserDataBackup.DeviceName;
+                    WindowTitle = $"Details - {deviceName}";
+                }
+            }
+        }
 
         public RelayCommand ImportBibleNotesCommand { get; set; }
 
@@ -56,6 +70,12 @@
         public RelayCommand DeleteFavouritesCommand { get; set; }
 
         public List<DataTypeListItem> ListItems { get; }
+
+        public string WindowTitle
+        {
+            get => _windowTitle;
+            set => Set(ref _windowTitle, value);
+        }
 
         public bool NotesRedacted
         {

@@ -14,7 +14,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="DetailWindow" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
+        Title="{Binding WindowTitle}" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
     <materialDesign:DialogHost Identifier="DetailDialogHost">
     <Grid>
         <Grid.RowDefinitions>

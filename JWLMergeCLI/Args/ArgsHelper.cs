@@ -60,7 +60,7 @@
             return ext.Equals(".jwlibrary", StringComparison.OrdinalIgnoreCase);
         }
         
-        enum State
+        private enum State
         {
             Unknown,
             AwaitingOutput,

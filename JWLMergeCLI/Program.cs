@@ -1,9 +1,8 @@
-﻿using JWLMergeCLI.Args;
-
-namespace JWLMergeCLI
+﻿namespace JWLMergeCLI
 {
     using System;
     using System.Diagnostics;
+    using JWLMergeCLI.Args;
     using Serilog;
 
     public static class Program
