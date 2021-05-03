@@ -1,4 +1,6 @@
-﻿namespace JWLMergeCLI
+﻿using JWLMergeCLI.Args;
+
+namespace JWLMergeCLI
 {
     using System;
     using System.Diagnostics;
@@ -15,15 +17,15 @@
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile("logs\\log-{Date}.txt")
-                .MinimumLevel.Debug()
+                .ReadFrom.AppSettings()
                 .CreateLogger();
             
             try
             {
                 Log.Logger.Information("Started");
 
-                if (args == null || args.Length < 2)
+                var commandLineArgs = ArgsHelper.Parse(args);
+                if (commandLineArgs == null)
                 {
                     ShowUsage();
                 }
@@ -31,7 +33,7 @@
                 {
                     var app = new MainApp();
                     app.ProgressEvent += AppProgress;
-                    app.Run(args);
+                    app.Run(commandLineArgs);
                 }
 
                 Environment.ExitCode = 0;
@@ -62,7 +64,7 @@
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             Console.WriteLine();
-            Console.WriteLine($" JWLMerge version {GetVersion()} ");
+            Console.WriteLine($" JWLMergeCLI version {GetVersion()} ");
             Console.WriteLine();
             Console.ResetColor();
             
@@ -77,9 +79,13 @@
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("   Usage:");
             Console.ResetColor();
-            Console.WriteLine("    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>...");
+            Console.WriteLine("    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>... [-o output file]");
             Console.WriteLine();
-            
+            Console.WriteLine("   Note that you can optionally specify the full path and name of the merged");
+            Console.WriteLine("   file using the -o (or --output directive). If you omit it, the merged");
+            Console.WriteLine("   file is stored in the current folder.");
+            Console.WriteLine();
+
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("   An example:");
             Console.ResetColor();

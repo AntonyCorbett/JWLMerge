@@ -24,8 +24,8 @@
             DispatcherHelper.Initialize();
             
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.RollingFile(GetRollingFileFormat())
-                .MinimumLevel.Debug()
+                .WriteTo.File(GetRollingFileFormat())
+                .ReadFrom.AppSettings()
                 .CreateLogger();
             
             Log.Logger.Information("JWLMerge Launched");
@@ -76,7 +76,7 @@
                 Directory.CreateDirectory(folder);
             }
 
-            return string.Concat(folder, "\\log-{Date}.txt");
+            return string.Concat(folder, "\\log.txt");
         }
 
         private bool AnotherInstanceRunning()
