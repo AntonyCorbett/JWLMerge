@@ -6,6 +6,12 @@
 
     internal static class ArgsHelper
     {
+        private enum State
+        {
+            Unknown,
+            AwaitingOutput,
+        }
+
         public static CommandLineArgs Parse(string[] args)
         {
             if (args == null || args.Length < 2)
@@ -58,12 +64,6 @@
         {
             var ext = Path.GetExtension(filePath);
             return ext.Equals(".jwlibrary", StringComparison.OrdinalIgnoreCase);
-        }
-        
-        private enum State
-        {
-            Unknown,
-            AwaitingOutput,
         }
     }
 }

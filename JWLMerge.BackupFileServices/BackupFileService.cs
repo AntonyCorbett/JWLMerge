@@ -353,12 +353,8 @@
                 }
 
                 var location = backupFile.Database.FindLocation(note.LocationId.Value);
-                if (location == null)
-                {
-                    continue;
-                }
 
-                if (location.BookNumber == null)
+                if (location?.BookNumber == null)
                 {
                     continue;
                 }
@@ -392,7 +388,7 @@
             excelService.AppendToBibleNotesFile(bibleNotesExportFilePath, notesToWrite, 0, bibleNotesExportFilePath);
         }
 
-        private int SortBibleNotes(ExcelServices.Models.BibleNote x, ExcelServices.Models.BibleNote y)
+        private static int SortBibleNotes(ExcelServices.Models.BibleNote x, ExcelServices.Models.BibleNote y)
         {
             if (x.BookNumber != y.BookNumber)
             {
@@ -412,7 +408,7 @@
             return 0;
         }
 
-        private string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
+        private static string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
         {
             var t = tags[noteId]?.ToArray();
             if (t == null || !t.Any())

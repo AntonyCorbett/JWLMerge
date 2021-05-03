@@ -30,7 +30,6 @@
             }
 
             return null;
-
         }
 
         public string GetBibleNotesImportFilePath(string title)

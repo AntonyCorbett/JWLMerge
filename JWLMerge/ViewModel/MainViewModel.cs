@@ -343,48 +343,45 @@ namespace JWLMerge.ViewModel
         private void MergeFiles()
         {
             var destPath = _fileOpenSaveService.GetSaveFilePath(GetSaveDialogTitle());
-            if (!string.IsNullOrWhiteSpace(destPath))
+            if (string.IsNullOrWhiteSpace(destPath))
             {
-                IsBusy = true;
-                
-                Task.Run(() =>
-                {
-                    DebugSleep();
-                    PrepareForMerge();
-                    try
-                    {
-                        var schemaFilePath = GetSuitableFilePathForSchema();
-
-                        if (schemaFilePath != null)
-                        {
-                            var mergedFile = _backupFileService.Merge(Files.Select(x => x.BackupFile).ToArray());
-                            _backupFileService.WriteNewDatabase(mergedFile, destPath, schemaFilePath);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Logger.Error(ex, "Could not merge");
-                    }
-                    finally
-                    {
-                        // we need to ensure the files are back to normal after 
-                        // applying any merge parameters.
-                        ReloadFiles();
-                    }
-                }).ContinueWith(previousTask =>
-                {
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                    {
-                        IsBusy = false;
-                    });
-                });
+                return;
             }
-        }
+            
+            IsBusy = true;
+            
+            Task.Run(() =>
+            {
+                PrepareForMerge();
+                try
+                {
+                    var schemaFilePath = GetSuitableFilePathForSchema();
 
-        [Conditional("DEBUG")]
-        private void DebugSleep()
-        {
-            Thread.Sleep(4000);
+                    if (schemaFilePath != null)
+                    {
+                        var mergedFile = _backupFileService.Merge(Files.Select(x => x.BackupFile).ToArray());
+                        _backupFileService.WriteNewDatabase(mergedFile, destPath, schemaFilePath);
+                        _snackbarService.Enqueue("Merged successfully");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _snackbarService.Enqueue("Could not merge. See log file for more information");
+                    Log.Logger.Error(ex, "Could not merge");
+                }
+                finally
+                {
+                    // we need to ensure the files are back to normal after 
+                    // applying any merge parameters.
+                    ReloadFiles();
+                }
+            }).ContinueWith(previousTask =>
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    IsBusy = false;
+                });
+            });
         }
 
         private void ApplyMergeParameters()

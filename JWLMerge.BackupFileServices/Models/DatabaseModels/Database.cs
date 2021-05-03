@@ -664,7 +664,6 @@
             // Some Locations may have been stored in the db before this constraint
             // was added, so identify them here and remove the duplicate entries.
             // Note that null is treated as a unique value in SQLite
-
             var keys = new HashSet<string>();
 
             for (var n = Locations.Count - 1; n >= 0; --n)
