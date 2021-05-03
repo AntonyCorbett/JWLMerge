@@ -24,16 +24,18 @@
             <materialDesign:Card 
                 ToolTip="{Binding TooltipSummaryText}"
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
-                Style="{DynamicResource MaterialDesignCardFlipper}" 
+                Style="{DynamicResource MaterialDesignCard}" 
                 Margin="10,10,0,0" Padding="10" Width="220" Height="230">
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
                         <materialDesign:PackIcon Kind="FileOutline" 
                                                  Width="22"
                                                  Height="22"
+                                                 ToolTip="{Binding BackupFile.Manifest.Name}"
                                                  DockPanel.Dock="Left"/>
                         <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" 
                                    DockPanel.Dock="Left"
+                                   ToolTip="{Binding BackupFile.Manifest.Name}"
                                    Text="{Binding BackupFile.Manifest.CreationDate}">
 
                         </TextBlock>
@@ -52,6 +54,7 @@
                     <TextBlock Style="{DynamicResource MaterialDesignSubheadingTextBlock}" 
                                Margin="0,5,0,5"
                                TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding BackupFile.Manifest.Name}"
                                Text="{Binding BackupFile.Manifest.UserDataBackup.DeviceName}"/>
 
                     <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,0,0,-4"/>
