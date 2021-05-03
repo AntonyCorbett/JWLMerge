@@ -20,6 +20,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}">
     <Window.Resources>
+        
         <DataTemplate DataType="{x:Type models:JwLibraryFile}">
             <materialDesign:Card 
                 ToolTip="{Binding TooltipSummaryText}"
@@ -36,9 +37,8 @@
                         <TextBlock Style="{DynamicResource MaterialDesignTitleTextBlock}" 
                                    DockPanel.Dock="Left"
                                    ToolTip="{Binding BackupFile.Manifest.Name}"
-                                   Text="{Binding BackupFile.Manifest.CreationDate}">
-
-                        </TextBlock>
+                                   Text="{Binding BackupFile.Manifest.CreationDate}" />
+                        
                         <Button Height="24" Width="24" Padding="0" 
                                 DockPanel.Dock="Right" HorizontalAlignment="Right"
                                 Command="{Binding Path=DataContext.CloseCardCommand, ElementName=JwlMergeWindow}"
@@ -76,13 +76,46 @@
 
                     <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,-4,0,0"/>
 
-                    <Button Style="{DynamicResource MaterialDesignFlatButton}"
-                            Margin="0,5,0,0"
-                            Command="{Binding Path=DataContext.ShowDetailsCommand, ElementName=JwlMergeWindow}"
-                            CommandParameter="{Binding FilePath}">
-                        DETAILS
-                    </Button>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="55" />
+                        </Grid.ColumnDefinitions>
 
+                        <Button Style="{DynamicResource MaterialDesignFlatButton}"
+                                Grid.Column="0"
+                                Margin="0,5,0,0"
+                                Content="DETAILS"
+                                Command="{Binding Path=DataContext.ShowDetailsCommand, ElementName=JwlMergeWindow}"
+                                CommandParameter="{Binding FilePath}"/>
+
+                        <materialDesign:PopupBox
+                            Grid.Column="1"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                            PlacementMode="BottomAndAlignCentres"
+                            Height="40"
+                            Width="40"
+                            ToolTipService.Placement="Right">
+                            <StackPanel>
+                                <Button
+                                    ToolTip="One with custom opacity"
+                                    Opacity="0.5">
+                                    1
+                                </Button>
+                                <Button
+                                    ToolTip="Two">
+                                    2
+                                </Button>
+                                <Button
+                                    ToolTip="Three">
+                                    3
+                                </Button>
+                            </StackPanel>
+                        </materialDesign:PopupBox>
+                    </Grid>
+                    
                 </StackPanel>
             </materialDesign:Card>
         </DataTemplate>
