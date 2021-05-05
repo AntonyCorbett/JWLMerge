@@ -39,7 +39,7 @@
             <TextBlock 
                 Style="{StaticResource MaterialDesignCaptionTextBlock}"
                 TextWrapping="Wrap"
-                Text="This function is typically used to redact confidential notes. It will replace your existing notes with 'Lorem Ipsum' text and automatically overwrite the backup file." />
+                Text="This function is typically used to redact confidential notes. It will replace your existing notes with 'Lorem Ipsum' text and automatically overwrite the original backup file." />
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Center" 
                             Margin="0,20,0,0" >

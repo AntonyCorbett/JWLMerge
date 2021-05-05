@@ -16,6 +16,8 @@
 
         Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
+        Task<int[]> GetTagSelectionForNotesRemovalAsync(Tag[] tags);
+
         bool IsDialogVisible();
     }
 }

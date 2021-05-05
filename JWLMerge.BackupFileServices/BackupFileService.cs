@@ -87,6 +87,15 @@
             };
         }
 
+        public void WriteNewDatabaseWithClean(
+            BackupFile backup,
+            string newDatabaseFilePath,
+            string originalJwlibraryFilePathForSchema)
+        {
+            Clean(backup);
+            WriteNewDatabase(backup, newDatabaseFilePath, originalJwlibraryFilePathForSchema);
+        }
+
         /// <inheritdoc />
         public void WriteNewDatabase(
             BackupFile backup, 

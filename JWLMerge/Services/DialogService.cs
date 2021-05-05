@@ -91,6 +91,35 @@
             return dc.Result;
         }
 
+        public async Task<int[]> GetTagSelectionForNotesRemovalAsync(Tag[] tags)
+        {
+            _isDialogVisible = true;
+
+            var dialog = new RemoveNotesByTagDialog();
+            var dc = (RemoveNotesByTagViewModel)dialog.DataContext;
+
+            dc.TagItems.Clear();
+
+            foreach (var tag in tags)
+            {
+                dc.TagItems.Add(new TagListItem
+                {
+                    Id = tag.TagId,
+                    Name = tag.Name,
+                });
+            }
+
+            await DialogHost.Show(
+                dialog,
+                "MainDialogHost",
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
+
+            return dc.Result;
+        }
+
         public async Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)
         {
             _isDialogVisible = true;

@@ -134,6 +134,8 @@ namespace JWLMerge.ViewModel
 
         public RelayCommand<string> ExportBibleNotesCommand { get; set; }
 
+        public RelayCommand<string> RemoveNotesByTagCommand { get; set; }
+
         private JwLibraryFile GetFile(string filePath)
         {
             var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
@@ -175,6 +177,7 @@ namespace JWLMerge.ViewModel
             RedactNotesCommand = new RelayCommand<string>(async (filePath) => await RedactNotesAsync(filePath), filePath => !IsBusy);
             ImportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ImportBibleNotesAsync(filePath), filePath => !IsBusy);
             ExportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ExportBibleNotesAsync(filePath), filePath => !IsBusy);
+            RemoveNotesByTagCommand = new RelayCommand<string>(async (filePath) => await RemoveNotesByTagAsync(filePath), filePath => !IsBusy);
         }
 
         private async Task ExportBibleNotesAsync(string filePath)
@@ -234,11 +237,48 @@ namespace JWLMerge.ViewModel
                     file.BackupFile, _backupFileService, file.FilePath, bibleNotesImportFilePath, options);
                 _windowService.Close(filePath);
                 _snackbarService.Enqueue("Bible notes imported successfully");
+
+                file.RefreshTooltipSummary();
             }
             catch (Exception ex)
             {
                 _snackbarService.Enqueue("Error importing Bible notes!");
                 Log.Logger.Error(ex, "Could not import Bible notes from file: {filePath}", bibleNotesImportFilePath);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task RemoveNotesByTagAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+
+            var tags = file.BackupFile.Database.Tags.Where(x => x.Type == 1).OrderBy(x => x.Name).ToArray();
+
+            var tagIds = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags);
+            if (tagIds == null || !tagIds.Any())
+            {
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var notesRemoved = await RemoveNotesByTagHelper.ExecuteAsync(file.BackupFile, _backupFileService, filePath, tagIds);
+                _windowService.Close(filePath);
+
+                _snackbarService.Enqueue(notesRemoved == 0 
+                    ? "There were no notes to remove!"
+                    : $"{notesRemoved} notes removed successfully");
+
+                file.RefreshTooltipSummary();
+            }
+            catch (Exception ex)
+            {
+                _snackbarService.Enqueue("Error removing notes by Tag!");
+                Log.Logger.Error(ex, "Could not remove notes by Tag from file: {filePath}", file.FilePath);
             }
             finally
             {
@@ -304,6 +344,8 @@ namespace JWLMerge.ViewModel
                     await RemoveFavouritesHelper.ExecuteAsync(file.BackupFile, _backupFileService, file.FilePath);
                     _snackbarService.Enqueue("Favourites removed successfully");
                     _windowService.Close(filePath);
+
+                    file.RefreshTooltipSummary();
                 }
                 catch (Exception ex)
                 {

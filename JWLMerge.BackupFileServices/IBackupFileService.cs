@@ -68,6 +68,17 @@
         void ExportBibleNotesToExcel(BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService);
 
         /// <summary>
+        /// Cleans the database, then writes the specified backup to a "jwlibrary" file.
+        /// </summary>
+        /// <param name="backup">The backup data.</param>
+        /// <param name="newDatabaseFilePath">The new database file path.</param>
+        /// <param name="originalJwlibraryFilePathForSchema">The original jwlibrary file path on which to base the new schema.</param>
+        void WriteNewDatabaseWithClean(
+            BackupFile backup,
+            string newDatabaseFilePath,
+            string originalJwlibraryFilePathForSchema);
+
+        /// <summary>
         /// Writes the specified backup to a "jwlibrary" file.
         /// </summary>
         /// <param name="backup">The backup data.</param>

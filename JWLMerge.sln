@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JWL Database Schemas", "JWL
 	ProjectSection(SolutionItems) = preProject
 		readme.txt = readme.txt
 		Version005.txt = Version005.txt
+		Version007.txt = Version007.txt
+		Version008.txt = Version008.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMergeCLI", "JWLMergeCLI\JWLMergeCLI.csproj", "{2CBBA1C2-72C9-4287-A262-EC1D2A2F6E56}"

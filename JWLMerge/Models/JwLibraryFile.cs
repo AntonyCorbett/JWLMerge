@@ -35,6 +35,11 @@
             }
         }
 
+        public void RefreshTooltipSummary()
+        {
+            RaisePropertyChanged(nameof(TooltipSummaryText));
+        }
+
         private void MergeParametersPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(MergeParameters));

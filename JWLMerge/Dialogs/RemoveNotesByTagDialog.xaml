@@ -1,0 +1,81 @@
+﻿<UserControl x:Class="JWLMerge.Dialogs.RemoveNotesByTagDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JWLMerge.Dialogs"
+             mc:Ignorable="d" 
+             DataContext="{Binding RemoveNotesByTagDialog, Source={StaticResource Locator}}"
+             TextElement.Foreground="{StaticResource MaterialDesignBody}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Width="600"
+             Height="500"
+             Background="{StaticResource MaterialDesignPaper}"
+             FontFamily="{StaticResource MaterialDesignFont}">
+
+    <UserControl.Resources>
+        <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
+            <Setter Property="Width" Value="125"/>
+        </Style>
+        <Style x:Key="OkBtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Width" Value="125"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Padding="20,20,20,10">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                       Margin="0,0,0,10"
+                       Text="Removing Notes by Tag" />
+
+            <TextBlock 
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Margin="0,0,0,10"
+                TextWrapping="Wrap"
+                Text="Remove all notes associated with one or more of the chosen Tags" />
+
+            <TextBlock 
+                Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                TextWrapping="Wrap"
+                Margin="0,0,0,10"
+                Text="This function is typically used to remove confidential notes. It removes all notes that are associated with one or more of the Tags selected from the following list and then overwrites the original backup file." />
+
+            <Border Height="300" 
+                    Padding="10,0,0,0"
+                    BorderBrush="{StaticResource MaterialDesignChipBackground}" BorderThickness="1">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding TagItems}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,20,0,0" >
+
+                <Button Style="{StaticResource OkBtnStyle}"
+                        Command="{Binding OkCommand}"
+                        Content="OK">
+                </Button>
+
+                <Button Style="{StaticResource BtnStyle}" 
+                        HorizontalAlignment="Right"
+                        IsDefault="true" 
+                        Command="{Binding CancelCommand}"
+                        IsCancel="true" 
+                        Content="CANCEL">
+                </Button>
+
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

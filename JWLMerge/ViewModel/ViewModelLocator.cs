@@ -29,6 +29,7 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<BackupFileFormatErrorViewModel>();
             SimpleIoc.Default.Register<RedactNotesPromptViewModel>();
             SimpleIoc.Default.Register<RemoveFavouritesPromptViewModel>();
+            SimpleIoc.Default.Register<RemoveNotesByTagViewModel>();
             SimpleIoc.Default.Register<ImportBibleNotesViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DetailViewModel>();
@@ -37,6 +38,8 @@ namespace JWLMerge.ViewModel
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
 
         public RedactNotesPromptViewModel RedactNotesPromptDialog => ServiceLocator.Current.GetInstance<RedactNotesPromptViewModel>();
+
+        public RemoveNotesByTagViewModel RemoveNotesByTagDialog => ServiceLocator.Current.GetInstance<RemoveNotesByTagViewModel>();
 
         public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => ServiceLocator.Current.GetInstance<RemoveFavouritesPromptViewModel>();
 

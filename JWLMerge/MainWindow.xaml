@@ -23,9 +23,12 @@
         
         <DataTemplate DataType="{x:Type models:JwLibraryFile}">
             <materialDesign:Card 
-                ToolTip="{Binding TooltipSummaryText}"
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
                 Margin="10,10,0,0" Padding="10" Width="220" Height="230">
+                <materialDesign:Card.ToolTip>
+                    <ToolTip Content="{Binding TooltipSummaryText}" 
+                             Placement="Right"/>
+                </materialDesign:Card.ToolTip>
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
                         <materialDesign:PackIcon Kind="FileOutline" 
@@ -116,6 +119,16 @@
                                     <MenuItem.Icon>
                                         <materialDesign:PackIcon
                                             Kind="EyeOffOutline" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+
+                                <MenuItem
+                                    Header="Remove Notes by Tag"
+                                    Command="{Binding Path=DataContext.RemoveNotesByTagCommand, ElementName=JwlMergeWindow}"
+                                    CommandParameter="{Binding FilePath}">
+                                    <MenuItem.Icon>
+                                        <materialDesign:PackIcon
+                                            Kind="NotebookRemoveOutline" />
                                     </MenuItem.Icon>
                                 </MenuItem>
 
