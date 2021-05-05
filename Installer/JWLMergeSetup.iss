@@ -38,11 +38,15 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\JWLMerge\bin\Release\x64\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\x86\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\ClosedXML.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\DocumentFormat.OpenXml.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\ExcelNumberFormat.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\JWLMerge.BackupFileServices.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\JWLMerge.ExcelServices.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\JWLMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMerge\bin\Release\JWLMerge.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMergeCLI\bin\Release\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion

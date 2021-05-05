@@ -659,7 +659,7 @@
         {
             var fixupCount = 0;
 
-            // there is  unique index on the following Location table columns:
+            // there is a unique index on the following Location table columns:
             // KeySymbol, IssueTagNumber, MepsLanguage, DocumentId, Track, Type
             // Some Locations may have been stored in the db before this constraint
             // was added, so identify them here and remove the duplicate entries.
