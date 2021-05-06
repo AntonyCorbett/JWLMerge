@@ -22,6 +22,7 @@
             {
                 var tagMapIdsToRemove = new HashSet<int>();
                 var noteIdsToRemove = new HashSet<int>();
+                var userMarksToRemove = new HashSet<int>();
 
                 foreach (var tagMap in backupFile.Database.TagMaps)
                 {
@@ -29,11 +30,20 @@
                     {
                         tagMapIdsToRemove.Add(tagMap.TagMapId);
                         noteIdsToRemove.Add(tagMap.NoteId.Value);
+
+                        var note = backupFile.Database.FindNote(tagMap.NoteId.Value);
+                        if (note?.UserMarkId != null)
+                        {
+                            userMarksToRemove.Add(note.UserMarkId.Value);
+                        }
                     }
                 }
 
                 backupFile.Database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
                 backupFile.Database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
+                backupFile.Database.UserMarks.RemoveAll(x => userMarksToRemove.Contains(x.UserMarkId));
+
+                // Note that redundant block ranges are cleaned automatically by Cleaner.
 
                 if (noteIdsToRemove.Count > 0 || tagMapIdsToRemove.Count > 0)
                 {
