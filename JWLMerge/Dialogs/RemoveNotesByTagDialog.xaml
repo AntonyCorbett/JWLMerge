@@ -64,6 +64,7 @@
 
                 <Button Style="{StaticResource OkBtnStyle}"
                         Command="{Binding OkCommand}"
+                        IsEnabled="{Binding SelectionMade}"
                         Content="OK">
                 </Button>
 
