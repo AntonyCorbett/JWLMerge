@@ -100,6 +100,12 @@
 
             dc.TagItems.Clear();
 
+            dc.TagItems.Add(new TagListItem
+            {
+                Id = -1,
+                Name = "** Not Tagged **",
+            });
+
             foreach (var tag in tags)
             {
                 dc.TagItems.Add(new TagListItem

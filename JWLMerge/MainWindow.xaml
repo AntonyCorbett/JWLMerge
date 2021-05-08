@@ -106,50 +106,30 @@
                                     Header="Remove Favourites"
                                     Command="{Binding Path=DataContext.RemoveFavouritesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon
-                                            Kind="HeartRemoveOutline" />
-                                    </MenuItem.Icon>
                                 </MenuItem>
 
                                 <MenuItem
-                                    Header="Redact Notes"
+                                    Header="Redact Notes..."
                                     Command="{Binding Path=DataContext.RedactNotesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon
-                                            Kind="EyeOffOutline" />
-                                    </MenuItem.Icon>
                                 </MenuItem>
 
                                 <MenuItem
-                                    Header="Remove Notes by Tag"
+                                    Header="Remove Notes by Tag..."
                                     Command="{Binding Path=DataContext.RemoveNotesByTagCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon
-                                            Kind="NotebookRemoveOutline" />
-                                    </MenuItem.Icon>
                                 </MenuItem>
 
                                 <MenuItem
-                                    Header="Import Bible Notes"
+                                    Header="Import Bible Notes..."
                                     Command="{Binding Path=DataContext.ImportBibleNotesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon
-                                            Kind="Import" />
-                                    </MenuItem.Icon>
                                 </MenuItem>
 
                                 <MenuItem
-                                    Header="Export Bible Notes"
+                                    Header="Export Bible Notes..."
                                     Command="{Binding Path=DataContext.ExportBibleNotesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
-                                    <MenuItem.Icon>
-                                        <materialDesign:PackIcon
-                                            Kind="Export" />
-                                    </MenuItem.Icon>
                                 </MenuItem>
 
                             </StackPanel>
