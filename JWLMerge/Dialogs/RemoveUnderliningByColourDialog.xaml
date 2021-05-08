@@ -47,11 +47,17 @@
             <Border Height="160" 
                     Padding="10,0,0,0"
                     BorderBrush="{StaticResource MaterialDesignChipBackground}" BorderThickness="1">
-                <ScrollViewer>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding ColourItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding}"/>
+                                <Border Margin="0,4,10,0">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="{Binding Color}"></SolidColorBrush>
+                                    </Border.Background>
+                                    
+                                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding}"/>
+                                </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
