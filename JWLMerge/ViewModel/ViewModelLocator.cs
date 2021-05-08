@@ -1,3 +1,5 @@
+using JWLMerge.Dialogs;
+
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -30,6 +32,7 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<RedactNotesPromptViewModel>();
             SimpleIoc.Default.Register<RemoveFavouritesPromptViewModel>();
             SimpleIoc.Default.Register<RemoveNotesByTagViewModel>();
+            SimpleIoc.Default.Register<RemoveUnderliningByColourViewModel>();
             SimpleIoc.Default.Register<ImportBibleNotesViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DetailViewModel>();
@@ -40,6 +43,8 @@ namespace JWLMerge.ViewModel
         public RedactNotesPromptViewModel RedactNotesPromptDialog => ServiceLocator.Current.GetInstance<RedactNotesPromptViewModel>();
 
         public RemoveNotesByTagViewModel RemoveNotesByTagDialog => ServiceLocator.Current.GetInstance<RemoveNotesByTagViewModel>();
+
+        public RemoveUnderliningByColourViewModel RemoveUnderliningByColourDialog => ServiceLocator.Current.GetInstance<RemoveUnderliningByColourViewModel>();
 
         public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => ServiceLocator.Current.GetInstance<RemoveFavouritesPromptViewModel>();
 

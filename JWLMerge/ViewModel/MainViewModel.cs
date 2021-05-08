@@ -136,6 +136,8 @@ namespace JWLMerge.ViewModel
 
         public RelayCommand<string> RemoveNotesByTagCommand { get; set; }
 
+        public RelayCommand<string> RemoveUnderliningByColourCommand { get; set; }
+
         private JwLibraryFile GetFile(string filePath)
         {
             var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
@@ -178,6 +180,7 @@ namespace JWLMerge.ViewModel
             ImportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ImportBibleNotesAsync(filePath), filePath => !IsBusy);
             ExportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ExportBibleNotesAsync(filePath), filePath => !IsBusy);
             RemoveNotesByTagCommand = new RelayCommand<string>(async (filePath) => await RemoveNotesByTagAsync(filePath), filePath => !IsBusy);
+            RemoveUnderliningByColourCommand = new RelayCommand<string>(async (filePath) => await RemoveUnderliningByColourAsync(filePath), filePath => !IsBusy);
         }
 
         private async Task ExportBibleNotesAsync(string filePath)
@@ -251,14 +254,14 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task RemoveNotesByTagAsync(string filePath)
+        private async Task RemoveUnderliningByColourAsync(string filePath)
         {
             var file = GetFile(filePath);
 
-            var tags = file.BackupFile.Database.Tags.Where(x => x.Type == 1).OrderBy(x => x.Name).ToArray();
-
-            var tagIds = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags);
-            if (tagIds == null || !tagIds.Any())
+            var colors = ColourHelper.GetHighlighterColours();
+            
+            var result = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
+            if (result.colourIndexes == null || !result.colourIndexes.Any())
             {
                 return;
             }
@@ -266,7 +269,46 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
-                var notesRemoved = await RemoveNotesByTagHelper.ExecuteAsync(file.BackupFile, _backupFileService, filePath, tagIds);
+                var notesRemoved = await RemoveUnderliningByColorHelper.ExecuteAsync(
+                    file.BackupFile, _backupFileService, filePath, result.colourIndexes, result.removeNotes);
+
+                _windowService.Close(filePath);
+
+                _snackbarService.Enqueue(notesRemoved == 0
+                    ? "There was no underlining to remove!"
+                    : $"{notesRemoved} items of underlining removed successfully");
+
+                file.RefreshTooltipSummary();
+            }
+            catch (Exception ex)
+            {
+                _snackbarService.Enqueue("Error removing underlining by Colour!");
+                Log.Logger.Error(ex, "Could not remove underlining by Colour from file: {filePath}", file.FilePath);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private async Task RemoveNotesByTagAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+
+            var tags = file.BackupFile.Database.Tags.Where(x => x.Type == 1).OrderBy(x => x.Name).ToArray();
+
+            var result = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags);
+            if (result.tagIds == null || !result.tagIds.Any())
+            {
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var notesRemoved = await RemoveNotesByTagHelper.ExecuteAsync(
+                    file.BackupFile, _backupFileService, filePath, result.tagIds, result.removeUnderlining);
+
                 _windowService.Close(filePath);
 
                 _snackbarService.Enqueue(notesRemoved == 0 

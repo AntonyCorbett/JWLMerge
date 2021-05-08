@@ -121,6 +121,10 @@
     <Compile Include="Dialogs\RemoveNotesByTagDialog.xaml.cs">
       <DependentUpon>RemoveNotesByTagDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\RemoveUnderliningByColourDialog.xaml.cs">
+      <DependentUpon>RemoveUnderliningByColourDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\ColourHelper.cs" />
     <Compile Include="Helpers\DesignTimeFileCreation.cs" />
     <Compile Include="Helpers\ExportBibleNotesHelper.cs" />
     <Compile Include="Helpers\ImportBibleNotesHelper.cs" />
@@ -128,10 +132,13 @@
     <Compile Include="Helpers\MergePreparation.cs" />
     <Compile Include="Helpers\RemoveFavouritesHelper.cs" />
     <Compile Include="Helpers\RemoveNotesByTagHelper.cs" />
+    <Compile Include="Helpers\RemoveUnderliningByColorHelper.cs" />
     <Compile Include="Helpers\VersionDetection.cs" />
     <Compile Include="Messages\DragDropMessage.cs" />
     <Compile Include="Messages\DragOverMessage.cs" />
     <Compile Include="Messages\MainWindowClosingMessage.cs" />
+    <Compile Include="Models\ColourDef.cs" />
+    <Compile Include="Models\ColourListItem.cs" />
     <Compile Include="Models\DataTypeListItem.cs" />
     <Compile Include="Models\FileFormatErrorListItem.cs" />
     <Compile Include="Models\JwLibraryFile.cs" />
@@ -157,6 +164,7 @@
     <Compile Include="ViewModel\RedactNotesPromptViewModel.cs" />
     <Compile Include="ViewModel\RemoveFavouritesPromptViewModel.cs" />
     <Compile Include="ViewModel\RemoveNotesByTagViewModel.cs" />
+    <Compile Include="ViewModel\RemoveUnderliningByColourViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="DetailWindow.xaml">
       <SubType>Designer</SubType>
@@ -179,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RemoveNotesByTagDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RemoveUnderliningByColourDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

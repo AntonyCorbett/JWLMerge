@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using JWLMerge.Models;
 
     internal interface IDialogService
     {
@@ -16,7 +17,9 @@
 
         Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
-        Task<int[]> GetTagSelectionForNotesRemovalAsync(Tag[] tags);
+        Task<(int[] tagIds, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags);
+
+        Task<(int[] colourIndexes, bool removeNotes)> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
 
         bool IsDialogVisible();
     }

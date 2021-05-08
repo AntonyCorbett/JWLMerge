@@ -1,6 +1,4 @@
-﻿using JWLMerge.BackupFileServices.Models.DatabaseModels;
-
-namespace JWLMerge.Helpers
+﻿namespace JWLMerge.Helpers
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -11,7 +9,7 @@ namespace JWLMerge.Helpers
     internal static class RemoveNotesByTagHelper
     {
         public static async Task<int> ExecuteAsync(
-            BackupFile backupFile, IBackupFileService backupFileService, string filePath, int[] tagIds)
+            BackupFile backupFile, IBackupFileService backupFileService, string filePath, int[] tagIds, bool removeAssociatedUnderlining)
         {
             if (backupFile == null)
             {
@@ -54,17 +52,20 @@ namespace JWLMerge.Helpers
                 backupFile.Database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
                 backupFile.Database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
 
-                foreach (var note in backupFile.Database.Notes)
+                if (removeAssociatedUnderlining)
                 {
-                    if (note.UserMarkId != null && candidateUserMarks.Contains(note.UserMarkId.Value))
+                    foreach (var note in backupFile.Database.Notes)
                     {
-                        // we can't delete this user mark because it is still in use (a user mark
-                        // may have multiple associated notes.
-                        candidateUserMarks.Remove(note.UserMarkId.Value);
+                        if (note.UserMarkId != null && candidateUserMarks.Contains(note.UserMarkId.Value))
+                        {
+                            // we can't delete this user mark because it is still in use (a user mark
+                            // may have multiple associated notes.
+                            candidateUserMarks.Remove(note.UserMarkId.Value);
+                        }
                     }
-                }
 
-                backupFile.Database.UserMarks.RemoveAll(x => candidateUserMarks.Contains(x.UserMarkId));
+                    backupFile.Database.UserMarks.RemoveAll(x => candidateUserMarks.Contains(x.UserMarkId));
+                }
 
                 // Note that redundant block ranges are cleaned automatically by Cleaner.
 

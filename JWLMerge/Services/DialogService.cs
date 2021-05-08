@@ -91,13 +91,14 @@
             return dc.Result;
         }
 
-        public async Task<int[]> GetTagSelectionForNotesRemovalAsync(Tag[] tags)
+        public async Task<(int[] tagIds, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags)
         {
             _isDialogVisible = true;
 
             var dialog = new RemoveNotesByTagDialog();
             var dc = (RemoveNotesByTagViewModel)dialog.DataContext;
 
+            dc.RemoveAssociatedUnderlining = true;
             dc.TagItems.Clear();
 
             dc.TagItems.Add(new TagListItem
@@ -123,9 +124,40 @@
                     _isDialogVisible = false;
                 }).ConfigureAwait(false);
 
-            return dc.Result;
+            return (dc.Result, dc.RemoveAssociatedUnderlining);
         }
 
+        public async Task<(int[] colourIndexes, bool removeNotes)> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours)
+        {
+            _isDialogVisible = true;
+
+            var dialog = new RemoveUnderliningByColourDialog();
+            var dc = (RemoveUnderliningByColourViewModel)dialog.DataContext;
+
+            dc.RemoveAssociatedNotes = true;
+            dc.ColourItems.Clear();
+
+            foreach (var c in colours)
+            {
+                dc.ColourItems.Add(new ColourListItem
+                {
+                    Id = c.ColourIndex,
+                    Name = c.Name,
+                    Color = c.Color,
+                });
+            }
+
+            await DialogHost.Show(
+                dialog,
+                "MainDialogHost",
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
+
+            return (dc.Result, dc.RemoveAssociatedNotes);
+        }
+        
         public async Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)
         {
             _isDialogVisible = true;

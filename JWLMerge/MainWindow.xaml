@@ -121,6 +121,12 @@
                                 </MenuItem>
 
                                 <MenuItem
+                                    Header="Remove Underlining by Colour..."
+                                    Command="{Binding Path=DataContext.RemoveUnderliningByColourCommand, ElementName=JwlMergeWindow}"
+                                    CommandParameter="{Binding FilePath}">
+                                </MenuItem>
+
+                                <MenuItem
                                     Header="Import Bible Notes..."
                                     Command="{Binding Path=DataContext.ImportBibleNotesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">

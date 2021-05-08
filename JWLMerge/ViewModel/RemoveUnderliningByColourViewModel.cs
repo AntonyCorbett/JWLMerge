@@ -8,23 +8,23 @@
     using JWLMerge.Models;
     using MaterialDesignThemes.Wpf;
 
-    internal class RemoveNotesByTagViewModel : ViewModelBase
+    internal class RemoveUnderliningByColourViewModel : ViewModelBase
     {
-        private bool _removeAssociatedUnderlining;
+        private bool _removeAssociatedNotes;
 
-        public RemoveNotesByTagViewModel()
+        public RemoveUnderliningByColourViewModel()
         {
             OkCommand = new RelayCommand(Ok);
             CancelCommand = new RelayCommand(Cancel);
 
-            TagItems.CollectionChanged += TagItemsCollectionChanged;
+            ColourItems.CollectionChanged += ItemsCollectionChanged;
         }
 
-        private void TagItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                foreach (TagListItem item in e.NewItems)
+                foreach (ColourListItem item in e.NewItems)
                 {
                     item.PropertyChanged += ItemPropertyChanged;
                 }
@@ -40,18 +40,18 @@
 
         public RelayCommand CancelCommand { get; set; }
 
+        public ObservableCollection<ColourListItem> ColourItems { get; } = new ObservableCollection<ColourListItem>();
+
+        public bool SelectionMade => ColourItems.Any(x => x.IsChecked);
+
         public int[] Result { get; private set; }
 
-        public ObservableCollection<TagListItem> TagItems { get; } = new ObservableCollection<TagListItem>();
-
-        public bool SelectionMade => TagItems.Any(x => x.IsChecked);
-
-        public bool RemoveAssociatedUnderlining
+        public bool RemoveAssociatedNotes
         {
-            get => _removeAssociatedUnderlining;
-            set => Set(ref _removeAssociatedUnderlining, value);
+            get => _removeAssociatedNotes;
+            set => Set(ref _removeAssociatedNotes, value);
         }
-        
+
         private void Cancel()
         {
             Result = null;
@@ -60,7 +60,7 @@
 
         private void Ok()
         {
-            Result = TagItems.Where(x => x.IsChecked).Select(x => x.Id).ToArray();
+            Result = ColourItems.Where(x => x.IsChecked).Select(x => x.Id).ToArray();
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
