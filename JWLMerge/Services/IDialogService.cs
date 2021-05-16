@@ -17,9 +17,11 @@
 
         Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
-        Task<(int[] tagIds, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags);
+        Task<(int[] tagIds, bool removeUntaggedNotes, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes);
 
         Task<(int[] colourIndexes, bool removeNotes)> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
+
+        Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors);
 
         bool IsDialogVisible();
     }

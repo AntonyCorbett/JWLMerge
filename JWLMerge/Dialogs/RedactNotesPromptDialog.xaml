@@ -28,18 +28,18 @@
             <StackPanel Orientation="Vertical" Margin="0,0,0,10">
                 <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
                            Margin="0,0,0,10"
-                           Text="Redacting Notes" />
+                           Text="Obfuscating Notes" />
 
                 <TextBlock 
                     Style="{StaticResource MaterialDesignBody2TextBlock}"
                     Margin="0,0,0,10"
                     TextWrapping="Wrap"
-                    Text="Are you sure you want to redact notes?" />
+                    Text="Are you sure you want to obfuscate notes?" />
 
             <TextBlock 
                 Style="{StaticResource MaterialDesignCaptionTextBlock}"
                 TextWrapping="Wrap"
-                Text="This function is typically used to redact confidential notes. It will replace your existing notes with 'Lorem Ipsum' text and automatically overwrite the original backup file." />
+                Text="This function is typically used to obfuscate confidential notes. It will replace your existing notes with 'Lorem Ipsum' text and automatically overwrite the original backup file." />
                 <StackPanel Orientation="Horizontal" 
                             HorizontalAlignment="Center" 
                             Margin="0,20,0,0" >

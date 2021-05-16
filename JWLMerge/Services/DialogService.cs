@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using JWLMerge.BackupFileServices.Exceptions;
     using JWLMerge.BackupFileServices.Models;
@@ -14,6 +15,7 @@
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class DialogService : IDialogService
     {
+        private const int UntaggedItemId = -1;
         private bool _isDialogVisible;
 
         public async Task ShowFileFormatErrorsAsync(AggregateException ex)
@@ -91,7 +93,7 @@
             return dc.Result;
         }
 
-        public async Task<(int[] tagIds, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags)
+        public async Task<(int[] tagIds, bool removeUntaggedNotes, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes)
         {
             _isDialogVisible = true;
 
@@ -101,11 +103,14 @@
             dc.RemoveAssociatedUnderlining = true;
             dc.TagItems.Clear();
 
-            dc.TagItems.Add(new TagListItem
+            if (includeUntaggedNotes)
             {
-                Id = -1,
-                Name = "** Not Tagged **",
-            });
+                dc.TagItems.Add(new TagListItem
+                {
+                    Id = UntaggedItemId,
+                    Name = "** Not Tagged **",
+                });
+            }
 
             foreach (var tag in tags)
             {
@@ -124,7 +129,9 @@
                     _isDialogVisible = false;
                 }).ConfigureAwait(false);
 
-            return (dc.Result, dc.RemoveAssociatedUnderlining);
+            var removeUntaggedNotes = dc.Result.Contains(UntaggedItemId);
+            var tagsIdsResult = dc.Result.Where(x => x != UntaggedItemId).ToArray();
+            return (tagsIdsResult, removeUntaggedNotes, dc.RemoveAssociatedUnderlining);
         }
 
         public async Task<(int[] colourIndexes, bool removeNotes)> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours)
@@ -157,7 +164,13 @@
 
             return (dc.Result, dc.RemoveAssociatedNotes);
         }
-        
+
+        public Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors)
+        {
+            // todo:
+            throw new NotImplementedException();
+        }
+
         public async Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)
         {
             _isDialogVisible = true;

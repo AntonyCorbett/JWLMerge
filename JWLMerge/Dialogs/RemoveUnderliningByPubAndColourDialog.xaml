@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="JWLMerge.Dialogs.RemoveUnderliningByPubAndColourDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:JWLMerge.Dialogs"
+             mc:Ignorable="d" 
+             DataContext="{Binding RemoveUnderliningByPubAndColourDialog, Source={StaticResource Locator}}"
+             TextElement.Foreground="{StaticResource MaterialDesignBody}"
+             TextElement.FontWeight="Medium"
+             TextElement.FontSize="14"
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="Auto"
+             Width="600"
+             Height="390"
+             Background="{StaticResource MaterialDesignPaper}"
+             FontFamily="{StaticResource MaterialDesignFont}">
+    <Grid>
+            
+    </Grid>
+</UserControl>

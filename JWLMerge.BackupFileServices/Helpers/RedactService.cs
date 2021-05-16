@@ -1,10 +1,10 @@
-﻿namespace JWLMerge.Services
+﻿namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
     using System.Text;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RedactService : IRedactService
+    internal class RedactService
     {
         private readonly Lazy<string[]> _loremIpsumLines;
         private readonly Random _random = new Random();

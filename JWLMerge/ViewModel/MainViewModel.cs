@@ -6,7 +6,6 @@ namespace JWLMerge.ViewModel
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using GalaSoft.MvvmLight;
@@ -14,6 +13,7 @@ namespace JWLMerge.ViewModel
     using GalaSoft.MvvmLight.Messaging;
     using GalaSoft.MvvmLight.Threading;
     using JWLMerge.BackupFileServices;
+    using JWLMerge.BackupFileServices.Helpers;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.ExcelServices;
     using JWLMerge.Helpers;
@@ -33,7 +33,6 @@ namespace JWLMerge.ViewModel
         private readonly IFileOpenSaveService _fileOpenSaveService;
         private readonly IDialogService _dialogService;
         private readonly ISnackbarService _snackbarService;
-        private readonly IRedactService _redactService;
         private readonly IExcelService _excelService;
         private bool _isBusy;
 
@@ -44,7 +43,6 @@ namespace JWLMerge.ViewModel
             IFileOpenSaveService fileOpenSaveService,
             IDialogService dialogService,
             ISnackbarService snackbarService,
-            IRedactService redactService,
             IExcelService excelService)
         {
             _dragDropService = dragDropService;
@@ -53,7 +51,6 @@ namespace JWLMerge.ViewModel
             _fileOpenSaveService = fileOpenSaveService;
             _dialogService = dialogService;
             _snackbarService = snackbarService;
-            _redactService = redactService;
             _excelService = excelService;
 
             Files.CollectionChanged += FilesCollectionChanged;
@@ -138,6 +135,8 @@ namespace JWLMerge.ViewModel
 
         public RelayCommand<string> RemoveUnderliningByColourCommand { get; set; }
 
+        public RelayCommand<string> RemoveUnderliningByPubAndColourCommand { get; set; }
+
         private JwLibraryFile GetFile(string filePath)
         {
             var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
@@ -181,8 +180,9 @@ namespace JWLMerge.ViewModel
             ExportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ExportBibleNotesAsync(filePath), filePath => !IsBusy);
             RemoveNotesByTagCommand = new RelayCommand<string>(async (filePath) => await RemoveNotesByTagAsync(filePath), filePath => !IsBusy);
             RemoveUnderliningByColourCommand = new RelayCommand<string>(async (filePath) => await RemoveUnderliningByColourAsync(filePath), filePath => !IsBusy);
+            RemoveUnderliningByPubAndColourCommand = new RelayCommand<string>(async (filePath) => await RemoveUnderliningByPubAndColourAsync(filePath), filePath => !IsBusy);
         }
-
+        
         private async Task ExportBibleNotesAsync(string filePath)
         {
             var file = GetFile(filePath);
@@ -196,8 +196,14 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
-                await ExportBibleNotesHelper.ExecuteAsync(
-                    file.BackupFile, _backupFileService, bibleNotesExportFilePath, _excelService);
+                await Task.Run(() =>
+                {
+                    _backupFileService.ExportBibleNotesToExcel(
+                        file.BackupFile,
+                        bibleNotesExportFilePath,
+                        _excelService);
+                });
+
                 _snackbarService.Enqueue("Bible notes exported successfully");
             }
             catch (Exception ex)
@@ -236,8 +242,20 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
-                await ImportBibleNotesHelper.ExecuteAsync(
-                    file.BackupFile, _backupFileService, file.FilePath, bibleNotesImportFilePath, options);
+                await Task.Run(() =>
+                {
+                    var notesFile = new BibleNotesFile(bibleNotesImportFilePath);
+
+                    _backupFileService.ImportBibleNotes(
+                        file.BackupFile,
+                        notesFile.GetNotes(),
+                        notesFile.GetBibleKeySymbol(),
+                        notesFile.GetMepsLanguageId(),
+                        options);
+
+                    _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, file.FilePath, file.FilePath);
+                });
+
                 _windowService.Close(filePath);
                 _snackbarService.Enqueue("Bible notes imported successfully");
 
@@ -254,12 +272,65 @@ namespace JWLMerge.ViewModel
             }
         }
 
+        private async Task RemoveUnderliningByPubAndColourAsync(string filePath)
+        {
+            var file = GetFile(filePath);
+            
+            var colors = ColourHelper.GetHighlighterColours();
+            var pubs = PublicationHelper.GetPublications(file.BackupFile.Database.Locations, file.BackupFile.Database.UserMarks);
+
+            var result = await _dialogService.GetPubAndColourSelectionForUnderlineRemovalAsync(pubs, colors);
+            if (result == null || result.IsInvalid)
+            {
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var underliningRemoved = 0;
+                await Task.Run(() =>
+                {
+                    underliningRemoved = _backupFileService.RemoveUnderliningByPubAndColor(
+                        file.BackupFile, result.ColorIndex, result.AnyColor, result.PublicationSymbol, result.AnyPublication, result.RemoveAssociatedNotes);
+
+                    if (underliningRemoved > 0)
+                    {
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath, filePath);
+                    }
+                });
+
+                _windowService.Close(filePath);
+
+                _snackbarService.Enqueue(underliningRemoved == 0
+                    ? "There was no underlining to remove!"
+                    : $"{underliningRemoved} items of underlining removed successfully");
+
+                file.RefreshTooltipSummary();
+            }
+            catch (Exception ex)
+            {
+                _snackbarService.Enqueue("Error removing underlining by Publication/Colour!");
+                Log.Logger.Error(ex, "Could not remove underlining by Publication/Colour from file: {filePath}", file.FilePath);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         private async Task RemoveUnderliningByColourAsync(string filePath)
         {
             var file = GetFile(filePath);
-
-            var colors = ColourHelper.GetHighlighterColours();
             
+            if (!file.BackupFile.Database.UserMarks.Any())
+            {
+                _snackbarService.Enqueue("There is no underlining in the backup file!");
+                return;
+            }
+            
+            var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks);
+
             var result = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
             if (result.colourIndexes == null || !result.colourIndexes.Any())
             {
@@ -269,14 +340,24 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
-                var notesRemoved = await RemoveUnderliningByColorHelper.ExecuteAsync(
-                    file.BackupFile, _backupFileService, filePath, result.colourIndexes, result.removeNotes);
+                var underliningRemoved = 0;
+
+                await Task.Run(() =>
+                {
+                    underliningRemoved = _backupFileService.RemoveUnderliningByColourAsync(
+                        file.BackupFile, result.colourIndexes, result.removeNotes);
+
+                    if (underliningRemoved > 0)
+                    {
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath, filePath);
+                    }
+                });
 
                 _windowService.Close(filePath);
 
-                _snackbarService.Enqueue(notesRemoved == 0
+                _snackbarService.Enqueue(underliningRemoved == 0
                     ? "There was no underlining to remove!"
-                    : $"{notesRemoved} items of underlining removed successfully");
+                    : $"{underliningRemoved} items of underlining removed successfully");
 
                 file.RefreshTooltipSummary();
             }
@@ -295,9 +376,11 @@ namespace JWLMerge.ViewModel
         {
             var file = GetFile(filePath);
 
-            var tags = file.BackupFile.Database.Tags.Where(x => x.Type == 1).OrderBy(x => x.Name).ToArray();
+            var tags = TagHelper.GetTagsInUseByNotes(file.BackupFile.Database);
 
-            var result = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags);
+            var includeUntaggedNotes = TagHelper.AnyNotesHaveNoTag(file.BackupFile.Database);
+
+            var result = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags, includeUntaggedNotes);
             if (result.tagIds == null || !result.tagIds.Any())
             {
                 return;
@@ -306,14 +389,24 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
-                var notesRemoved = await RemoveNotesByTagHelper.ExecuteAsync(
-                    file.BackupFile, _backupFileService, filePath, result.tagIds, result.removeUnderlining);
+                var notesRemovedCount = 0;
+
+                await Task.Run(() =>
+                {
+                    notesRemovedCount = _backupFileService.RemoveNotesByTag(
+                        file.BackupFile, result.tagIds, result.removeUntaggedNotes, result.removeUnderlining);
+
+                    if (notesRemovedCount > 0)
+                    {
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath, filePath);
+                    }
+                });
 
                 _windowService.Close(filePath);
 
-                _snackbarService.Enqueue(notesRemoved == 0 
+                _snackbarService.Enqueue(notesRemovedCount == 0 
                     ? "There were no notes to remove!"
-                    : $"{notesRemoved} notes removed successfully");
+                    : $"{notesRemovedCount} notes removed successfully");
 
                 file.RefreshTooltipSummary();
             }
@@ -341,7 +434,7 @@ namespace JWLMerge.ViewModel
 
             if (file.NotesRedacted)
             {
-                _snackbarService.Enqueue("Notes already redacted");
+                _snackbarService.Enqueue("Notes already obfuscated");
                 return;
             }
 
@@ -350,15 +443,21 @@ namespace JWLMerge.ViewModel
                 IsBusy = true;
                 try
                 {
-                    await RedactNotesHelper.ExecuteAsync(notes, _redactService, file.BackupFile, _backupFileService, filePath);
+                    var count = 0;
+                    await Task.Run(() =>
+                    {
+                        count = _backupFileService.RedactNotes(file.BackupFile);
+                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath, filePath);
+                    });
+                    
                     _windowService.Close(filePath);
                     file.NotesRedacted = true;
-                    _snackbarService.Enqueue("Notes redacted successfully");
+                    _snackbarService.Enqueue($"{count} Notes obfuscated successfully");
                 }
                 catch (Exception ex)
                 {
-                    _snackbarService.Enqueue("Error redacting notes!");
-                    Log.Logger.Error(ex, "Could not redact notes from file: {filePath}", filePath);
+                    _snackbarService.Enqueue("Error obfuscating notes!");
+                    Log.Logger.Error(ex, "Could not obfuscate notes from file: {filePath}", filePath);
                 }
                 finally
                 {
@@ -383,7 +482,12 @@ namespace JWLMerge.ViewModel
                 IsBusy = true;
                 try
                 {
-                    await RemoveFavouritesHelper.ExecuteAsync(file.BackupFile, _backupFileService, file.FilePath);
+                    await Task.Run(() =>
+                    {
+                        _backupFileService.RemoveFavourites(file.BackupFile);
+                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath, filePath);
+                    });
+
                     _snackbarService.Enqueue("Favourites removed successfully");
                     _windowService.Close(filePath);
 

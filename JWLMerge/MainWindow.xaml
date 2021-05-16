@@ -1,4 +1,4 @@
-﻿<Window x:Class="JWLMerge.MainWindow"
+﻿    <Window x:Class="JWLMerge.MainWindow"
         x:Name="JwlMergeWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -109,12 +109,6 @@
                                 </MenuItem>
 
                                 <MenuItem
-                                    Header="Redact Notes..."
-                                    Command="{Binding Path=DataContext.RedactNotesCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
-
-                                <MenuItem
                                     Header="Remove Notes by Tag..."
                                     Command="{Binding Path=DataContext.RemoveNotesByTagCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
@@ -127,6 +121,12 @@
                                 </MenuItem>
 
                                 <MenuItem
+                                    Header="Remove Underlining by Publication/Colour..."
+                                    Command="{Binding Path=DataContext.RemoveUnderliningByPubAndColourCommand, ElementName=JwlMergeWindow}"
+                                    CommandParameter="{Binding FilePath}">
+                                </MenuItem>
+
+                                <MenuItem
                                     Header="Import Bible Notes..."
                                     Command="{Binding Path=DataContext.ImportBibleNotesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
@@ -135,6 +135,12 @@
                                 <MenuItem
                                     Header="Export Bible Notes..."
                                     Command="{Binding Path=DataContext.ExportBibleNotesCommand, ElementName=JwlMergeWindow}"
+                                    CommandParameter="{Binding FilePath}">
+                                </MenuItem>
+
+                                <MenuItem
+                                    Header="Obfuscate Notes..."
+                                    Command="{Binding Path=DataContext.RedactNotesCommand, ElementName=JwlMergeWindow}"
                                     CommandParameter="{Binding FilePath}">
                                 </MenuItem>
 

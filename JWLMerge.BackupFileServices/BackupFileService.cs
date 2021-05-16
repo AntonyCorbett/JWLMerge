@@ -87,6 +87,199 @@
             };
         }
 
+        /// <inheritdoc />
+        public void RemoveFavourites(BackupFile backup)
+        {
+            if (backup == null)
+            {
+                throw new ArgumentNullException(nameof(backup));
+            }
+
+            backup.Database.TagMaps.RemoveAll(x => x.TagId == 1);
+        }
+
+        /// <inheritdoc />
+        public int RedactNotes(BackupFile backup)
+        {
+            if (backup == null)
+            {
+                throw new ArgumentNullException(nameof(backup));
+            }
+
+            var redactService = new RedactService();
+
+            var count = 0;
+            foreach (var note in backup.Database.Notes)
+            {
+                var redacted = false;
+
+                if (!string.IsNullOrEmpty(note.Title))
+                {
+                    note.Title = redactService.GetNoteTitle(note.Title.Length);
+                    redacted = true;
+                }
+
+                if (!string.IsNullOrEmpty(note.Content))
+                {
+                    note.Content = redactService.GenerateNoteContent(note.Content.Length);
+                    redacted = true;
+                }
+
+                if (redacted)
+                {
+                    ++count;
+                }
+            }
+
+            return count;
+        }
+
+        /// <inheritdoc />
+        public int RemoveNotesByTag(BackupFile backup, int[] tagIds, bool removeUntaggedNotes, bool removeAssociatedUnderlining)
+        {
+            if (backup == null)
+            {
+                throw new ArgumentNullException(nameof(backup));
+            }
+
+            if (tagIds == null)
+            {
+                tagIds = Array.Empty<int>();
+            }
+
+            var tagIdsHash = tagIds.ToHashSet();
+
+            var tagMapIdsToRemove = new HashSet<int>();
+            var noteIdsToRemove = new HashSet<int>();
+            var candidateUserMarks = new HashSet<int>();
+
+            if (removeUntaggedNotes)
+            {
+                // notes without a tag
+                var notesWithoutTag = GetNotesWithNoTag(backup).ToArray();
+                foreach (var i in notesWithoutTag)
+                {
+                    noteIdsToRemove.Add(i);
+                }
+            }
+
+            foreach (var tagMap in backup.Database.TagMaps)
+            {
+                if (tagIdsHash.Contains(tagMap.TagId) && tagMap.NoteId != null && tagMap.NoteId > 0)
+                {
+                    tagMapIdsToRemove.Add(tagMap.TagMapId);
+                    noteIdsToRemove.Add(tagMap.NoteId.Value);
+
+                    var note = backup.Database.FindNote(tagMap.NoteId.Value);
+                    if (note?.UserMarkId != null)
+                    {
+                        candidateUserMarks.Add(note.UserMarkId.Value);
+                    }
+                }
+            }
+
+            backup.Database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
+            backup.Database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
+
+            if (removeAssociatedUnderlining)
+            {
+                foreach (var note in backup.Database.Notes)
+                {
+                    if (note.UserMarkId != null && candidateUserMarks.Contains(note.UserMarkId.Value))
+                    {
+                        // we can't delete this user mark because it is still in use (a user mark
+                        // may have multiple associated notes.
+                        candidateUserMarks.Remove(note.UserMarkId.Value);
+                    }
+                }
+
+                backup.Database.UserMarks.RemoveAll(x => candidateUserMarks.Contains(x.UserMarkId));
+            }
+            
+            return noteIdsToRemove.Count;
+        }
+
+        /// <inheritdoc />
+        public int RemoveUnderliningByColourAsync(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes)
+        {
+            if (backup == null)
+            {
+                throw new ArgumentNullException(nameof(backup));
+            }
+
+            if (colorIndexes == null)
+            {
+                colorIndexes = Array.Empty<int>();
+            }
+
+            var userMarkIdsToRemove = new HashSet<int>();
+            var noteIdsToRemove = new HashSet<int>();
+            var tagMapIdsToRemove = new HashSet<int>();
+
+            foreach (var mark in backup.Database.UserMarks)
+            {
+                if (colorIndexes.Contains(mark.ColorIndex))
+                {
+                    userMarkIdsToRemove.Add(mark.UserMarkId);
+                }
+            }
+
+            if (userMarkIdsToRemove.Any())
+            {
+                foreach (var note in backup.Database.Notes)
+                {
+                    if (note.UserMarkId == null)
+                    {
+                        continue;
+                    }
+
+                    if (userMarkIdsToRemove.Contains(note.UserMarkId.Value))
+                    {
+                        if (removeAssociatedNotes)
+                        {
+                            noteIdsToRemove.Add(note.NoteId);
+                        }
+                        else
+                        {
+                            note.UserMarkId = null;
+                        }
+                    }
+                }
+
+                foreach (var tagMap in backup.Database.TagMaps)
+                {
+                    if (tagMap.NoteId == null)
+                    {
+                        continue;
+                    }
+
+                    if (noteIdsToRemove.Contains(tagMap.NoteId.Value))
+                    {
+                        tagMapIdsToRemove.Add(tagMap.TagMapId);
+                    }
+                }
+            }
+
+            backup.Database.UserMarks.RemoveAll(x => userMarkIdsToRemove.Contains(x.UserMarkId));
+            backup.Database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
+            backup.Database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
+
+            return userMarkIdsToRemove.Count;
+        }
+
+        /// <inheritdoc />
+        public int RemoveUnderliningByPubAndColor(
+            BackupFile backup, 
+            int colorIndex, 
+            bool anyColor, 
+            string publicationSymbol,
+            bool anyPublication, 
+            bool removeAssociatedNotes)
+        {
+            // todo:
+            throw new NotImplementedException();
+        }
+
         public void WriteNewDatabaseWithClean(
             BackupFile backup,
             string newDatabaseFilePath,
@@ -644,6 +837,19 @@
         {
             Log.Logger.Information(logMessage);
             OnProgressEvent(logMessage);
+        }
+
+        private IEnumerable<int> GetNotesWithNoTag(BackupFile backup)
+        {
+            var notesWithTags = backup.Database.TagMaps.Select(x => x.NoteId).ToHashSet();
+
+            foreach (var note in backup.Database.Notes)
+            {
+                if (!notesWithTags.Contains(note.NoteId))
+                {
+                    yield return note.NoteId;
+                }
+            }
         }
     }
 }

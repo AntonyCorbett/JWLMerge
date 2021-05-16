@@ -1,5 +1,3 @@
-using JWLMerge.Dialogs;
-
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -23,7 +21,6 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<IBackupFileService, BackupFileService>();
             SimpleIoc.Default.Register<IFileOpenSaveService, FileOpenSaveService>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
-            SimpleIoc.Default.Register<IRedactService, RedactService>();
             SimpleIoc.Default.Register<IDialogService, DialogService>();
             SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
             SimpleIoc.Default.Register<IExcelService, ExcelService>();
@@ -33,6 +30,7 @@ namespace JWLMerge.ViewModel
             SimpleIoc.Default.Register<RemoveFavouritesPromptViewModel>();
             SimpleIoc.Default.Register<RemoveNotesByTagViewModel>();
             SimpleIoc.Default.Register<RemoveUnderliningByColourViewModel>();
+            SimpleIoc.Default.Register<RemoveUnderliningByPubAndColourViewModel>();
             SimpleIoc.Default.Register<ImportBibleNotesViewModel>();
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<DetailViewModel>();
@@ -45,6 +43,8 @@ namespace JWLMerge.ViewModel
         public RemoveNotesByTagViewModel RemoveNotesByTagDialog => ServiceLocator.Current.GetInstance<RemoveNotesByTagViewModel>();
 
         public RemoveUnderliningByColourViewModel RemoveUnderliningByColourDialog => ServiceLocator.Current.GetInstance<RemoveUnderliningByColourViewModel>();
+
+        public RemoveUnderliningByPubAndColourViewModel RemoveUnderliningByPubAndColourDialog => ServiceLocator.Current.GetInstance<RemoveUnderliningByPubAndColourViewModel>();
 
         public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => ServiceLocator.Current.GetInstance<RemoveFavouritesPromptViewModel>();
 

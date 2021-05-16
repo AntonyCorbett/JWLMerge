@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JWLMerge.Properties {
+namespace JWLMerge.BackupFileServices.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace JWLMerge.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JWLMerge.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JWLMerge.BackupFileServices.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,19 @@ namespace JWLMerge.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to https://github.com/AntonyCorbett/JWLMerge.
+        ///   Looks up a localized string similar to Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        ///Fusce finibus tellus velit, aliquam ullamcorper orci maximus malesuada.
+        ///Fusce justo turpis, tincidunt nec odio vel, iaculis mollis massa.
+        ///Aliquam a imperdiet velit, maximus congue eros.
+        ///Cras sagittis accumsan lectus, eu faucibus justo dignissim nec.
+        ///Sed massa ipsum, dapibus maximus condimentum at, euismod at est.
+        ///Nulla nec turpis ac felis scelerisque varius quis id sapien.
+        ///Donec sed ex non metus dapibus vulputate.
+        ///Cras commodo nulla sed velit  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string HOMEPAGE {
+        internal static string LoremIpsum {
             get {
-                return ResourceManager.GetString("HOMEPAGE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://github.com/AntonyCorbett/JWLMerge/releases/latest.
-        /// </summary>
-        internal static string LATEST_RELEASE_URL {
-            get {
-                return ResourceManager.GetString("LATEST_RELEASE_URL", resourceCulture);
+                return ResourceManager.GetString("LoremIpsum", resourceCulture);
             }
         }
     }

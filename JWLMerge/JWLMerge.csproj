@@ -124,15 +124,14 @@
     <Compile Include="Dialogs\RemoveUnderliningByColourDialog.xaml.cs">
       <DependentUpon>RemoveUnderliningByColourDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\RemoveUnderliningByPubAndColourDialog.xaml.cs">
+      <DependentUpon>RemoveUnderliningByPubAndColourDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\ColourHelper.cs" />
     <Compile Include="Helpers\DesignTimeFileCreation.cs" />
-    <Compile Include="Helpers\ExportBibleNotesHelper.cs" />
-    <Compile Include="Helpers\ImportBibleNotesHelper.cs" />
-    <Compile Include="Helpers\RedactNotesHelper.cs" />
+    <Compile Include="Helpers\PublicationHelper.cs" />
     <Compile Include="Helpers\MergePreparation.cs" />
-    <Compile Include="Helpers\RemoveFavouritesHelper.cs" />
-    <Compile Include="Helpers\RemoveNotesByTagHelper.cs" />
-    <Compile Include="Helpers\RemoveUnderliningByColorHelper.cs" />
+    <Compile Include="Helpers\TagHelper.cs" />
     <Compile Include="Helpers\VersionDetection.cs" />
     <Compile Include="Messages\DragDropMessage.cs" />
     <Compile Include="Messages\DragOverMessage.cs" />
@@ -144,6 +143,8 @@
     <Compile Include="Models\JwLibraryFile.cs" />
     <Compile Include="Models\JwLibraryFileDataTypes.cs" />
     <Compile Include="Models\MergeParameters.cs" />
+    <Compile Include="Models\PubColourResult.cs" />
+    <Compile Include="Models\PublicationDef.cs" />
     <Compile Include="Models\TagListItem.cs" />
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\DragDropService.cs" />
@@ -151,9 +152,7 @@
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\IDragDropService.cs" />
     <Compile Include="Services\IFileOpenSaveService.cs" />
-    <Compile Include="Services\IRedactService.cs" />
     <Compile Include="Services\IWindowService.cs" />
-    <Compile Include="Services\RedactService.cs" />
     <Compile Include="Services\ISnackbarService.cs" />
     <Compile Include="Services\SnackbarService.cs" />
     <Compile Include="Services\WindowService.cs" />
@@ -165,6 +164,7 @@
     <Compile Include="ViewModel\RemoveFavouritesPromptViewModel.cs" />
     <Compile Include="ViewModel\RemoveNotesByTagViewModel.cs" />
     <Compile Include="ViewModel\RemoveUnderliningByColourViewModel.cs" />
+    <Compile Include="ViewModel\RemoveUnderliningByPubAndColourViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="DetailWindow.xaml">
       <SubType>Designer</SubType>
@@ -191,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RemoveUnderliningByColourDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RemoveUnderliningByPubAndColourDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -251,9 +255,6 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\LoremIpsum.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
