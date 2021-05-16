@@ -17,6 +17,7 @@
         private int _maxLocationId;
         private int _maxUserMarkId;
         private int _maxBlockRangeId;
+        private int _tagMapPositionToUse;
 
         public NotesImporter(
             Database targetDatabase, 
@@ -48,6 +49,15 @@
             _maxBlockRangeId = !_targetDatabase.BlockRanges.Any()
                 ? 0
                 : _targetDatabase.BlockRanges.Max(x => x.BlockRangeId);
+
+            if (_options.TagId > 0)
+            {
+                var tagEntries = _targetDatabase.TagMaps.Where(x => x.TagId == _options.TagId).ToArray();
+                if (tagEntries.Any())
+                {
+                    _tagMapPositionToUse = tagEntries.Max(x => x.Position) + 1;
+                }
+            }
         }
 
         public NotesImportResults Import(IEnumerable<BibleNote> notes)
@@ -122,7 +132,7 @@
 
             var newTagMapEntry = _options.TagId == 0
                 ? null
-                : CreateTagMapEntryForImportedBibleNote(newNote.NoteId, _options.TagId);
+                : CreateTagMapEntryForImportedBibleNote(newNote.NoteId, _options.TagId, _tagMapPositionToUse++);
 
             _targetDatabase.AddBibleNoteAndUpdateIndex(
                 note.BookChapterAndVerse, 
@@ -130,13 +140,14 @@
                 newTagMapEntry);
         }
 
-        private TagMap CreateTagMapEntryForImportedBibleNote(int noteId, int tagId)
+        private TagMap CreateTagMapEntryForImportedBibleNote(int noteId, int tagId, int position)
         {
             return new TagMap
             {
                 TagMapId = ++_maxTagMapId,
                 TagId = tagId,
                 NoteId = noteId,
+                Position = position,
             };
         }
 
