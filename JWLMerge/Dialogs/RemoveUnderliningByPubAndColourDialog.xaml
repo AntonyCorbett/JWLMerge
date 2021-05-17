@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:JWLMerge.Dialogs"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              DataContext="{Binding RemoveUnderliningByPubAndColourDialog, Source={StaticResource Locator}}"
              TextElement.Foreground="{StaticResource MaterialDesignBody}"
@@ -11,11 +12,87 @@
              TextElement.FontSize="14"
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
-             Width="600"
+             Width="460"
              Height="390"
              Background="{StaticResource MaterialDesignPaper}"
              FontFamily="{StaticResource MaterialDesignFont}">
-    <Grid>
-            
-    </Grid>
+
+    <UserControl.Resources>
+        <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
+            <Setter Property="Width" Value="125"/>
+        </Style>
+        <Style x:Key="OkBtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Width" Value="125"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Padding="20,20,20,10">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                       Margin="0,0,0,10"
+                       Text="Removing Underlining by Publication/Colour" />
+
+            <TextBlock 
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Margin="0,0,0,10"
+                TextWrapping="Wrap"
+                Text="Remove all underlining associated with the chosen Publication and Colour" />
+
+            <TextBlock 
+                Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                TextWrapping="Wrap"
+                Margin="0,0,0,10"
+                Text="Removes all underlining that is associated with the selected Publication and Colour and then overwrites the original backup file." />
+
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+
+                <ComboBox ItemsSource="{Binding PublicationList}" 
+                              Margin="10,10,10,5"
+                              Width="250"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              materialDesign:HintAssist.Hint="Publication"
+                              DisplayMemberPath="KeySymbol"
+                              materialDesign:ComboBoxAssist.ClassicMode="true"
+                              SelectedItem="{Binding SelectedPublication}" />
+
+                <ComboBox ItemsSource="{Binding ColourItems}" 
+                              Margin="10,10,10,0"
+                              Width="250"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              materialDesign:HintAssist.Hint="Colour"
+                              DisplayMemberPath="Name"
+                              materialDesign:ComboBoxAssist.ClassicMode="true"
+                              SelectedItem="{Binding SelectedColour}" />
+
+                <CheckBox
+                    Margin="10,30,0,0"
+                    IsChecked="{Binding RemoveAssociatedNotes}"
+                    Style="{StaticResource MaterialDesignCheckBox}">
+                    Remove associated notes
+                </CheckBox>
+
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,40,0,0" >
+
+                <Button Style="{StaticResource OkBtnStyle}"
+                        Command="{Binding OkCommand}"
+                        IsEnabled="{Binding SelectionMade}"
+                        Content="OK">
+                </Button>
+
+                <Button Style="{StaticResource BtnStyle}" 
+                        HorizontalAlignment="Right"
+                        IsDefault="true" 
+                        Command="{Binding CancelCommand}"
+                        IsCancel="true" 
+                        Content="CANCEL">
+                </Button>
+
+            </StackPanel>
+        </StackPanel>
+    </Border>
 </UserControl>

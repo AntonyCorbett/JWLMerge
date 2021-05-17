@@ -276,9 +276,9 @@ namespace JWLMerge.ViewModel
         {
             var file = GetFile(filePath);
             
-            var colors = ColourHelper.GetHighlighterColours();
-            var pubs = PublicationHelper.GetPublications(file.BackupFile.Database.Locations, file.BackupFile.Database.UserMarks);
-
+            var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks, true);
+            var pubs = PublicationHelper.GetPublications(file.BackupFile.Database.Locations, file.BackupFile.Database.UserMarks, true);
+            
             var result = await _dialogService.GetPubAndColourSelectionForUnderlineRemovalAsync(pubs, colors);
             if (result == null || result.IsInvalid)
             {
@@ -329,7 +329,7 @@ namespace JWLMerge.ViewModel
                 return;
             }
             
-            var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks);
+            var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks, false);
 
             var result = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
             if (result.colourIndexes == null || !result.colourIndexes.Any())

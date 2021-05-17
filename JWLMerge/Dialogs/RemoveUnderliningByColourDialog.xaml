@@ -36,7 +36,7 @@
                 Style="{StaticResource MaterialDesignBody2TextBlock}"
                 Margin="0,0,0,10"
                 TextWrapping="Wrap"
-                Text="Remove all underlining associated with the chosen Colors" />
+                Text="Remove all underlining associated with the chosen Colours" />
 
             <TextBlock 
                 Style="{StaticResource MaterialDesignCaptionTextBlock}"

@@ -129,8 +129,8 @@
                     _isDialogVisible = false;
                 }).ConfigureAwait(false);
 
-            var removeUntaggedNotes = dc.Result.Contains(UntaggedItemId);
-            var tagsIdsResult = dc.Result.Where(x => x != UntaggedItemId).ToArray();
+            var removeUntaggedNotes = dc.Result != null && dc.Result.Contains(UntaggedItemId);
+            var tagsIdsResult = dc.Result?.Where(x => x != UntaggedItemId).ToArray();
             return (tagsIdsResult, removeUntaggedNotes, dc.RemoveAssociatedUnderlining);
         }
 

@@ -7,17 +7,28 @@
 
     internal class PublicationHelper
     {
-        public static PublicationDef[] GetPublications(List<Location> locations, List<UserMark> userMarks)
+        public static PublicationDef[] GetPublications(List<Location> locations, List<UserMark> userMarks, bool includeAllPublicationsItem)
         {
             var locationsThatAreMarked = userMarks.Select(x => x.LocationId).ToHashSet();
 
-            return locations
+            var result = locations
                 .Where(x => locationsThatAreMarked.Contains(x.LocationId))
                 .Select(x => x.KeySymbol).Distinct().Select(
                     x => new PublicationDef
                     {
                         KeySymbol = x,
-                    }).OrderBy(x => x.KeySymbol).ToArray();
+                    }).OrderBy(x => x.KeySymbol).ToList();
+
+            if (includeAllPublicationsItem)
+            {
+                result.Insert(0, new PublicationDef
+                {
+                    IsAllPublicationsSymbol = true,
+                    KeySymbol = "All Publications",
+                });
+            }
+
+            return result.ToArray();
         }
     }
 }
