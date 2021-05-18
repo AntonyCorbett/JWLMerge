@@ -40,31 +40,6 @@
             OnProgressEvent(e);
         }
 
-        private IReadOnlyCollection<string> GetInputFiles(string[] args)
-        {
-            OnProgressEvent("Checking files exist");
-            
-            var result = new List<string>();
-            
-            foreach (var arg in args)
-            {
-                if (!File.Exists(arg))
-                {
-                    throw new JwlMergeCmdLineException($"File does not exist: {arg}");
-                }
-                
-                Log.Logger.Debug("Found file: {file}", arg);
-                result.Add(arg);
-            }
-
-            if (result.Count < 2)
-            {
-                throw new JwlMergeCmdLineException("Specify at least 2 files to merge");
-            }
-
-            return result;
-        }
-
         private void OnProgressEvent(ProgressEventArgs e)
         {
             ProgressEvent?.Invoke(this, e);

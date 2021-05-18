@@ -21,22 +21,6 @@
             ColourItems.CollectionChanged += ItemsCollectionChanged;
         }
 
-        private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (ColourListItem item in e.NewItems)
-                {
-                    item.PropertyChanged += ItemPropertyChanged;
-                }
-            }
-        }
-
-        private void ItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            RaisePropertyChanged(nameof(SelectionMade));
-        }
-
         public RelayCommand OkCommand { get; set; }
 
         public RelayCommand CancelCommand { get; set; }
@@ -51,6 +35,22 @@
         {
             get => _removeAssociatedNotes;
             set => Set(ref _removeAssociatedNotes, value);
+        }
+
+        private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (ColourListItem item in e.NewItems)
+                {
+                    item.PropertyChanged += ItemPropertyChanged;
+                }
+            }
+        }
+
+        private void ItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(SelectionMade));
         }
 
         private void Cancel()

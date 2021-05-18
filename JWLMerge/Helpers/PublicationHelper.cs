@@ -5,7 +5,7 @@
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.Models;
 
-    internal class PublicationHelper
+    internal static class PublicationHelper
     {
         public static PublicationDef[] GetPublications(List<Location> locations, List<UserMark> userMarks, bool includeAllPublicationsItem)
         {

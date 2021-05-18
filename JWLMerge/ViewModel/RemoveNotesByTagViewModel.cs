@@ -8,6 +8,7 @@
     using JWLMerge.Models;
     using MaterialDesignThemes.Wpf;
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class RemoveNotesByTagViewModel : ViewModelBase
     {
         private bool _removeAssociatedUnderlining;
@@ -18,6 +19,22 @@
             CancelCommand = new RelayCommand(Cancel);
 
             TagItems.CollectionChanged += TagItemsCollectionChanged;
+        }
+
+        public RelayCommand OkCommand { get; set; }
+
+        public RelayCommand CancelCommand { get; set; }
+
+        public int[] Result { get; private set; }
+
+        public ObservableCollection<TagListItem> TagItems { get; } = new ObservableCollection<TagListItem>();
+
+        public bool SelectionMade => TagItems.Any(x => x.IsChecked);
+
+        public bool RemoveAssociatedUnderlining
+        {
+            get => _removeAssociatedUnderlining;
+            set => Set(ref _removeAssociatedUnderlining, value);
         }
 
         private void TagItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -36,22 +53,6 @@
             RaisePropertyChanged(nameof(SelectionMade));
         }
 
-        public RelayCommand OkCommand { get; set; }
-
-        public RelayCommand CancelCommand { get; set; }
-
-        public int[] Result { get; private set; }
-
-        public ObservableCollection<TagListItem> TagItems { get; } = new ObservableCollection<TagListItem>();
-
-        public bool SelectionMade => TagItems.Any(x => x.IsChecked);
-
-        public bool RemoveAssociatedUnderlining
-        {
-            get => _removeAssociatedUnderlining;
-            set => Set(ref _removeAssociatedUnderlining, value);
-        }
-        
         private void Cancel()
         {
             Result = null;

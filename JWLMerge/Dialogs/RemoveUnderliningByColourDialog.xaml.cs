@@ -1,7 +1,7 @@
-﻿using System.Windows.Controls;
-
-namespace JWLMerge.Dialogs
+﻿namespace JWLMerge.Dialogs
 {
+    using System.Windows.Controls;
+
     /// <summary>
     /// Interaction logic for RemoveUnderliningByColourDialog.xaml
     /// </summary>

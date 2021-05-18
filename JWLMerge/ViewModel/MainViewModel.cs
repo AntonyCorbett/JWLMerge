@@ -331,8 +331,8 @@ namespace JWLMerge.ViewModel
             
             var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks, false);
 
-            var result = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
-            if (result.colourIndexes == null || !result.colourIndexes.Any())
+            var (colourIndexes, removeNotes) = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
+            if (colourIndexes == null || !colourIndexes.Any())
             {
                 return;
             }
@@ -345,7 +345,7 @@ namespace JWLMerge.ViewModel
                 await Task.Run(() =>
                 {
                     underliningRemoved = _backupFileService.RemoveUnderliningByColourAsync(
-                        file.BackupFile, result.colourIndexes, result.removeNotes);
+                        file.BackupFile, colourIndexes, removeNotes);
 
                     if (underliningRemoved > 0)
                     {
@@ -380,8 +380,10 @@ namespace JWLMerge.ViewModel
 
             var includeUntaggedNotes = TagHelper.AnyNotesHaveNoTag(file.BackupFile.Database);
 
-            var result = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags, includeUntaggedNotes);
-            if (result.tagIds == null || !result.tagIds.Any())
+            var (tagIds, removeUntaggedNotes, removeUnderlining) = 
+                await _dialogService.GetTagSelectionForNotesRemovalAsync(tags, includeUntaggedNotes);
+
+            if (tagIds == null || !tagIds.Any())
             {
                 return;
             }
@@ -394,7 +396,7 @@ namespace JWLMerge.ViewModel
                 await Task.Run(() =>
                 {
                     notesRemovedCount = _backupFileService.RemoveNotesByTag(
-                        file.BackupFile, result.tagIds, result.removeUntaggedNotes, result.removeUnderlining);
+                        file.BackupFile, tagIds, removeUntaggedNotes, removeUnderlining);
 
                     if (notesRemovedCount > 0)
                     {
