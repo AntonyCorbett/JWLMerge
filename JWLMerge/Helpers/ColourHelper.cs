@@ -32,14 +32,9 @@
 
         public static ColourDef[] GetHighlighterColoursInUse(List<UserMark> userMarks, bool includeAllColoursItem)
         {
-            var colorsInUse = userMarks.Select(x => x.ColorIndex).Distinct().ToArray();
-            if (!colorsInUse.Any())
-            {
-                return Array.Empty<ColourDef>();
-            }
-
             var allColors = GetHighlighterColours(includeAllColoursItem);
-            return allColors.Where(x => colorsInUse.Contains(x.ColourIndex)).ToArray();
+            var colorsInUse = userMarks.Select(x => x.ColorIndex).Distinct().ToArray();
+            return allColors.Where(x => colorsInUse.Contains(x.ColourIndex) || x.ColourIndex == 0).ToArray();
         }
     }
 }

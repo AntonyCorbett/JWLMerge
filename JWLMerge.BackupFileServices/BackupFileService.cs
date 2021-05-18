@@ -213,9 +213,7 @@
             }
 
             var userMarkIdsToRemove = new HashSet<int>();
-            var noteIdsToRemove = new HashSet<int>();
-            var tagMapIdsToRemove = new HashSet<int>();
-
+            
             foreach (var mark in backup.Database.UserMarks)
             {
                 if (colorIndexes.Contains(mark.ColorIndex))
@@ -224,47 +222,7 @@
                 }
             }
 
-            if (userMarkIdsToRemove.Any())
-            {
-                foreach (var note in backup.Database.Notes)
-                {
-                    if (note.UserMarkId == null)
-                    {
-                        continue;
-                    }
-
-                    if (userMarkIdsToRemove.Contains(note.UserMarkId.Value))
-                    {
-                        if (removeAssociatedNotes)
-                        {
-                            noteIdsToRemove.Add(note.NoteId);
-                        }
-                        else
-                        {
-                            note.UserMarkId = null;
-                        }
-                    }
-                }
-
-                foreach (var tagMap in backup.Database.TagMaps)
-                {
-                    if (tagMap.NoteId == null)
-                    {
-                        continue;
-                    }
-
-                    if (noteIdsToRemove.Contains(tagMap.NoteId.Value))
-                    {
-                        tagMapIdsToRemove.Add(tagMap.TagMapId);
-                    }
-                }
-            }
-
-            backup.Database.UserMarks.RemoveAll(x => userMarkIdsToRemove.Contains(x.UserMarkId));
-            backup.Database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
-            backup.Database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
-
-            return userMarkIdsToRemove.Count;
+            return RemoveUnderlining(backup.Database, userMarkIdsToRemove, removeAssociatedNotes);
         }
 
         /// <inheritdoc />
@@ -276,8 +234,27 @@
             bool anyPublication, 
             bool removeAssociatedNotes)
         {
-            // todo:
-            throw new NotImplementedException();
+            if (backup == null)
+            {
+                throw new ArgumentNullException(nameof(backup));
+            }
+
+            if (string.IsNullOrEmpty(publicationSymbol) && !anyPublication)
+            {
+                throw new ArgumentNullException(nameof(publicationSymbol));
+            }
+
+            var userMarkIdsToRemove = new HashSet<int>();
+            
+            foreach (var mark in backup.Database.UserMarks)
+            {
+                if (ShouldRemoveUnderlining(mark, backup.Database, colorIndex, anyColor, publicationSymbol, anyPublication))
+                {
+                    userMarkIdsToRemove.Add(mark.UserMarkId);
+                }
+            }
+
+            return RemoveUnderlining(backup.Database, userMarkIdsToRemove, removeAssociatedNotes);
         }
 
         public void WriteNewDatabaseWithClean(
@@ -850,6 +827,71 @@
                     yield return note.NoteId;
                 }
             }
+        }
+
+        private bool ShouldRemoveUnderlining(
+            UserMark mark, Database database, int colorIndex, bool anyColor, string publicationSymbol, bool anyPublication)
+        {
+            if (!anyColor && mark.ColorIndex != colorIndex)
+            {
+                return false;
+            }
+
+            if (anyPublication)
+            {
+                return true;
+            }
+
+            var location = database.FindLocation(mark.LocationId);
+            return location.KeySymbol == publicationSymbol;
+        }
+
+        private int RemoveUnderlining(Database database, HashSet<int> userMarkIdsToRemove, bool removeAssociatedNotes)
+        {
+            var noteIdsToRemove = new HashSet<int>();
+            var tagMapIdsToRemove = new HashSet<int>();
+
+            if (userMarkIdsToRemove.Any())
+            {
+                foreach (var note in database.Notes)
+                {
+                    if (note.UserMarkId == null)
+                    {
+                        continue;
+                    }
+
+                    if (userMarkIdsToRemove.Contains(note.UserMarkId.Value))
+                    {
+                        if (removeAssociatedNotes)
+                        {
+                            noteIdsToRemove.Add(note.NoteId);
+                        }
+                        else
+                        {
+                            note.UserMarkId = null;
+                        }
+                    }
+                }
+
+                foreach (var tagMap in database.TagMaps)
+                {
+                    if (tagMap.NoteId == null)
+                    {
+                        continue;
+                    }
+
+                    if (noteIdsToRemove.Contains(tagMap.NoteId.Value))
+                    {
+                        tagMapIdsToRemove.Add(tagMap.TagMapId);
+                    }
+                }
+            }
+
+            database.UserMarks.RemoveAll(x => userMarkIdsToRemove.Contains(x.UserMarkId));
+            database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
+            database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
+
+            return userMarkIdsToRemove.Count;
         }
     }
 }

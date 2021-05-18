@@ -8,6 +8,7 @@
     using JWLMerge.Models;
     using MaterialDesignThemes.Wpf;
 
+    // ReSharper disable once ClassNeverInstantiated.Global
     internal class RemoveUnderliningByColourViewModel : ViewModelBase
     {
         private bool _removeAssociatedNotes;

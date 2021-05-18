@@ -13,7 +13,7 @@
              TextOptions.TextFormattingMode="Ideal"
              TextOptions.TextRenderingMode="Auto"
              Width="460"
-             Height="390"
+             Height="370"
              Background="{StaticResource MaterialDesignPaper}"
              FontFamily="{StaticResource MaterialDesignFont}">
 
@@ -37,7 +37,7 @@
                 Style="{StaticResource MaterialDesignBody2TextBlock}"
                 Margin="0,0,0,10"
                 TextWrapping="Wrap"
-                Text="Remove all underlining associated with the chosen Publication and Colour" />
+                Text="Remove all underlining associated with a Publication and Colour" />
 
             <TextBlock 
                 Style="{StaticResource MaterialDesignCaptionTextBlock}"
@@ -48,22 +48,41 @@
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
 
                 <ComboBox ItemsSource="{Binding PublicationList}" 
-                              Margin="10,10,10,5"
+                              Margin="10,10,10,10"
                               Width="250"
-                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              Style="{StaticResource MaterialDesignComboBox}"
                               materialDesign:HintAssist.Hint="Publication"
                               DisplayMemberPath="KeySymbol"
                               materialDesign:ComboBoxAssist.ClassicMode="true"
                               SelectedItem="{Binding SelectedPublication}" />
-
+                
                 <ComboBox ItemsSource="{Binding ColourItems}" 
                               Margin="10,10,10,0"
                               Width="250"
-                              Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                              Style="{StaticResource MaterialDesignComboBox}"
                               materialDesign:HintAssist.Hint="Colour"
-                              DisplayMemberPath="Name"
                               materialDesign:ComboBoxAssist.ClassicMode="true"
-                              SelectedItem="{Binding SelectedColour}" />
+                              SelectedItem="{Binding SelectedColour}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="22"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Width="14" HorizontalAlignment="Left" Height="14" BorderBrush="Gray" BorderThickness="0.5">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="{Binding Color}" />
+                                    </Border.Background>
+                                </Border>
+
+                                <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                    
+                </ComboBox>
 
                 <CheckBox
                     Margin="10,30,0,0"
@@ -76,7 +95,7 @@
 
             <StackPanel Orientation="Horizontal" 
                         HorizontalAlignment="Center" 
-                        Margin="0,40,0,0" >
+                        Margin="0,60,0,0" >
 
                 <Button Style="{StaticResource OkBtnStyle}"
                         Command="{Binding OkCommand}"

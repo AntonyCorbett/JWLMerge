@@ -165,10 +165,41 @@
             return (dc.Result, dc.RemoveAssociatedNotes);
         }
 
-        public Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors)
+        public async Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors)
         {
-            // todo:
-            throw new NotImplementedException();
+            _isDialogVisible = true;
+
+            var dialog = new RemoveUnderliningByPubAndColourDialog();
+            var dc = (RemoveUnderliningByPubAndColourViewModel)dialog.DataContext;
+
+            dc.RemoveAssociatedNotes = true;
+            dc.ColourItems.Clear();
+            dc.PublicationList.Clear();
+
+            foreach (var c in colors)
+            {
+                dc.ColourItems.Add(new ColourListItem
+                {
+                    Id = c.ColourIndex,
+                    Name = c.Name,
+                    Color = c.Color,
+                });
+            }
+
+            foreach (var p in pubs)
+            {
+                dc.PublicationList.Add(p);
+            }
+
+            await DialogHost.Show(
+                dialog,
+                "MainDialogHost",
+                (object sender, DialogClosingEventArgs args) =>
+                {
+                    _isDialogVisible = false;
+                }).ConfigureAwait(false);
+
+            return dc.Result;
         }
 
         public async Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)

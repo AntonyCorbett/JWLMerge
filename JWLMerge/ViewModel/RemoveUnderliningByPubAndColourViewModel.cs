@@ -9,6 +9,8 @@
     internal class RemoveUnderliningByPubAndColourViewModel : ViewModelBase
     {
         private bool _removeAssociatedNotes;
+        private PublicationDef _selectedPublication;
+        private ColourListItem _selectedColour;
 
         public RemoveUnderliningByPubAndColourViewModel()
         {
@@ -22,13 +24,39 @@
 
         public ObservableCollection<PublicationDef> PublicationList { get; } = new ObservableCollection<PublicationDef>();
 
-        public ObservableCollection<ColourDef> ColourItems { get; } = new ObservableCollection<ColourDef>();
+        public ObservableCollection<ColourListItem> ColourItems { get; } = new ObservableCollection<ColourListItem>();
 
-        public PublicationDef SelectedPublication { get; set; }
+        public PublicationDef SelectedPublication
+        {
+            get => _selectedPublication;
+            set
+            {
+                if (_selectedPublication != value)
+                {
+                    _selectedPublication = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(SelectionMade));
+                }
+            }
+        }
 
-        public ColourDef SelectedColour { get; set; }
+        public ColourListItem SelectedColour
+        {
+            get => _selectedColour;
+            set
+            {
+                if (_selectedColour != value)
+                {
+                    _selectedColour = value;
+                    RaisePropertyChanged();
+                    RaisePropertyChanged(nameof(SelectionMade));
+                }
+            }
+        }
 
         public bool SelectionMade => SelectedPublication != null && SelectedColour != null;
+
+        public PubColourResult Result { get; private set; }
 
         public bool RemoveAssociatedNotes
         {
@@ -38,11 +66,21 @@
 
         private void Cancel()
         {
+            Result = null;
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
         private void Ok()
         {
+            Result = new PubColourResult
+            {
+                PublicationSymbol = SelectedPublication?.KeySymbol,
+                AnyPublication = SelectedPublication?.IsAllPublicationsSymbol ?? false,
+                ColorIndex = SelectedColour?.Id ?? 0,
+                AnyColor = SelectedColour?.Id == 0,
+                RemoveAssociatedNotes = RemoveAssociatedNotes,
+            };
+
             DialogHost.CloseDialogCommand.Execute(null, null);
         }
     }
