@@ -14,7 +14,9 @@ Download the JWLMergeSetup.exe file from the latest release and run it.
 
 https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
-Please see the wiki for further information.
+**Please see the wiki for further information:**
+
+https://github.com/AntonyCorbett/JWLMerge/wiki
 
 #### Wine
 
