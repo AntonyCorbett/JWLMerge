@@ -143,6 +143,7 @@
     <Compile Include="Models\JwLibraryFile.cs" />
     <Compile Include="Models\JwLibraryFileDataTypes.cs" />
     <Compile Include="Models\MergeParameters.cs" />
+    <Compile Include="Models\ColorResult.cs" />
     <Compile Include="Models\PubColourResult.cs" />
     <Compile Include="Models\PublicationDef.cs" />
     <Compile Include="Models\TagListItem.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Services\IFileOpenSaveService.cs" />
     <Compile Include="Services\IWindowService.cs" />
     <Compile Include="Services\ISnackbarService.cs" />
+    <Compile Include="Services\NotesByTagResult.cs" />
     <Compile Include="Services\SnackbarService.cs" />
     <Compile Include="Services\WindowService.cs" />
     <Compile Include="ViewModel\BackupFileFormatErrorViewModel.cs" />

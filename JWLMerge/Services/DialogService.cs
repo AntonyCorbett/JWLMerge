@@ -15,7 +15,9 @@
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class DialogService : IDialogService
     {
-        private const int UntaggedItemId = -1;
+        public const int UntaggedItemId = -1;
+        private const string NotTaggedString = "** Not Tagged **";
+
         private bool _isDialogVisible;
 
         public async Task ShowFileFormatErrorsAsync(AggregateException ex)
@@ -67,10 +69,7 @@
             await DialogHost.Show(
                 dialog,
                 "MainDialogHost",
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
 
             return dc.Result;
         }
@@ -85,15 +84,12 @@
             await DialogHost.Show(
                 dialog, 
                 "MainDialogHost",
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
 
             return dc.Result;
         }
 
-        public async Task<(int[] tagIds, bool removeUntaggedNotes, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes)
+        public async Task<NotesByTagResult> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes)
         {
             _isDialogVisible = true;
 
@@ -101,6 +97,7 @@
             var dc = (RemoveNotesByTagViewModel)dialog.DataContext;
 
             dc.RemoveAssociatedUnderlining = true;
+            dc.RemoveAssociatedTags = false;
             dc.TagItems.Clear();
 
             if (includeUntaggedNotes)
@@ -108,7 +105,7 @@
                 dc.TagItems.Add(new TagListItem
                 {
                     Id = UntaggedItemId,
-                    Name = "** Not Tagged **",
+                    Name = NotTaggedString,
                 });
             }
 
@@ -124,17 +121,21 @@
             await DialogHost.Show(
                 dialog,
                 "MainDialogHost",
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
 
             var removeUntaggedNotes = dc.Result != null && dc.Result.Contains(UntaggedItemId);
             var tagsIdsResult = dc.Result?.Where(x => x != UntaggedItemId).ToArray();
-            return (tagsIdsResult, removeUntaggedNotes, dc.RemoveAssociatedUnderlining);
+
+            return new NotesByTagResult
+            {
+                TagIds = tagsIdsResult,
+                RemoveUntaggedNotes = removeUntaggedNotes,
+                RemoveAssociatedUnderlining = dc.RemoveAssociatedUnderlining,
+                RemoveAssociatedTags = dc.RemoveAssociatedTags,
+            };
         }
 
-        public async Task<(int[] colourIndexes, bool removeNotes)> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours)
+        public async Task<ColorResult> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours)
         {
             _isDialogVisible = true;
 
@@ -157,12 +158,13 @@
             await DialogHost.Show(
                 dialog,
                 "MainDialogHost",
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
 
-            return (dc.Result, dc.RemoveAssociatedNotes);
+            return new ColorResult
+            {
+                ColourIndexes = dc.Result,
+                RemoveNotes = dc.RemoveAssociatedNotes,
+            };
         }
 
         public async Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors)
@@ -194,10 +196,7 @@
             await DialogHost.Show(
                 dialog,
                 "MainDialogHost",
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
 
             return dc.Result;
         }
@@ -215,10 +214,7 @@
             await DialogHost.Show(
                 dialog,
                 "MainDialogHost",
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
 
             return dc.Result;
         }

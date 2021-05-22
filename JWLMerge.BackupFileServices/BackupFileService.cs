@@ -135,7 +135,12 @@
         }
 
         /// <inheritdoc />
-        public int RemoveNotesByTag(BackupFile backup, int[] tagIds, bool removeUntaggedNotes, bool removeAssociatedUnderlining)
+        public int RemoveNotesByTag(
+            BackupFile backup, 
+            int[] tagIds, 
+            bool removeUntaggedNotes, 
+            bool removeAssociatedUnderlining,
+            bool removeAssociatedTags)
         {
             if (backup == null)
             {
@@ -156,8 +161,7 @@
             if (removeUntaggedNotes)
             {
                 // notes without a tag
-                var notesWithoutTag = GetNotesWithNoTag(backup).ToArray();
-                foreach (var i in notesWithoutTag)
+                foreach (var i in GetNotesWithNoTag(backup))
                 {
                     noteIdsToRemove.Add(i);
                 }
@@ -183,24 +187,19 @@
 
             if (removeAssociatedUnderlining)
             {
-                foreach (var note in backup.Database.Notes)
-                {
-                    if (note.UserMarkId != null && candidateUserMarks.Contains(note.UserMarkId.Value))
-                    {
-                        // we can't delete this user mark because it is still in use (a user mark
-                        // may have multiple associated notes.
-                        candidateUserMarks.Remove(note.UserMarkId.Value);
-                    }
-                }
+                RemoveUnderlining(backup.Database, candidateUserMarks);
+            }
 
-                backup.Database.UserMarks.RemoveAll(x => candidateUserMarks.Contains(x.UserMarkId));
+            if (removeAssociatedTags)
+            {
+                RemoveSelectedTags(backup.Database, tagIdsHash);
             }
             
             return noteIdsToRemove.Count;
         }
 
         /// <inheritdoc />
-        public int RemoveUnderliningByColourAsync(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes)
+        public int RemoveUnderliningByColour(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes)
         {
             if (backup == null)
             {
@@ -567,24 +566,9 @@
             excelService.AppendToBibleNotesFile(bibleNotesExportFilePath, notesToWrite, 0, bibleNotesExportFilePath);
         }
 
-        private static int SortBibleNotes(ExcelServices.Models.BibleNote x, ExcelServices.Models.BibleNote y)
+        private static void RemoveSelectedTags(Database database, HashSet<int> tagIds)
         {
-            if (x.BookNumber != y.BookNumber)
-            {
-                return x.BookNumber.CompareTo(y.BookNumber);
-            }
-
-            if (x.ChapterNumber != y.ChapterNumber)
-            {
-                return x.ChapterNumber ?? 0.CompareTo(y.ChapterNumber ?? 0);
-            }
-
-            if (x.VerseNumber != y.VerseNumber)
-            {
-                return x.VerseNumber ?? 0.CompareTo(y.VerseNumber ?? 0);
-            }
-
-            return 0;
+            database.Tags.RemoveAll(x => tagIds.Contains(x.TagId));
         }
 
         private static string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
@@ -608,15 +592,31 @@
             return version == ManifestVersionSupported;
         }
 
-        private Manifest UpdateManifest(Manifest manifestToBaseOn)
+        private static string CreateTemporaryDatabaseFile(
+            Database backupDatabase,
+            string originalDatabaseFilePathForSchema)
+        {
+#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
+            string tmpFile = Path.GetTempFileName();
+#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
+
+            Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
+
+            new DataAccessLayer(originalDatabaseFilePathForSchema).CreateEmptyClone(tmpFile);
+            new DataAccessLayer(tmpFile).PopulateTables(backupDatabase);
+
+            return tmpFile;
+        }
+
+        private static Manifest UpdateManifest(Manifest manifestToBaseOn)
         {
             Log.Logger.Debug("Updating manifest");
-            
+
             Manifest result = manifestToBaseOn.Clone();
 
             DateTime now = DateTime.Now;
             string simpleDateString = $"{now.Year}-{now.Month:D2}-{now.Day:D2}";
-                
+
             result.Name = $"merged_{simpleDateString}";
             result.CreationDate = simpleDateString;
             result.UserDataBackup.DeviceName = "JWLMerge";
@@ -625,6 +625,119 @@
             Log.Logger.Debug("Updated manifest");
 
             return result;
+        }
+
+        private static IEnumerable<int> GetNotesWithNoTag(BackupFile backup)
+        {
+            var notesWithTags = backup.Database.TagMaps.Select(x => x.NoteId).ToHashSet();
+
+            foreach (var note in backup.Database.Notes)
+            {
+                if (!notesWithTags.Contains(note.NoteId))
+                {
+                    yield return note.NoteId;
+                }
+            }
+        }
+
+        private static bool ShouldRemoveUnderlining(
+            UserMark mark, Database database, int colorIndex, bool anyColor, string publicationSymbol, bool anyPublication)
+        {
+            if (!anyColor && mark.ColorIndex != colorIndex)
+            {
+                return false;
+            }
+
+            if (anyPublication)
+            {
+                return true;
+            }
+
+            var location = database.FindLocation(mark.LocationId);
+            return location.KeySymbol == publicationSymbol;
+        }
+
+        private static int RemoveUnderlining(Database database, HashSet<int> userMarkIdsToRemove, bool removeAssociatedNotes)
+        {
+            var noteIdsToRemove = new HashSet<int>();
+            var tagMapIdsToRemove = new HashSet<int>();
+
+            if (userMarkIdsToRemove.Any())
+            {
+                foreach (var note in database.Notes)
+                {
+                    if (note.UserMarkId == null)
+                    {
+                        continue;
+                    }
+
+                    if (userMarkIdsToRemove.Contains(note.UserMarkId.Value))
+                    {
+                        if (removeAssociatedNotes)
+                        {
+                            noteIdsToRemove.Add(note.NoteId);
+                        }
+                        else
+                        {
+                            note.UserMarkId = null;
+                        }
+                    }
+                }
+
+                foreach (var tagMap in database.TagMaps)
+                {
+                    if (tagMap.NoteId == null)
+                    {
+                        continue;
+                    }
+
+                    if (noteIdsToRemove.Contains(tagMap.NoteId.Value))
+                    {
+                        tagMapIdsToRemove.Add(tagMap.TagMapId);
+                    }
+                }
+            }
+
+            database.UserMarks.RemoveAll(x => userMarkIdsToRemove.Contains(x.UserMarkId));
+            database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
+            database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
+
+            return userMarkIdsToRemove.Count;
+        }
+
+        private static void RemoveUnderlining(Database database, HashSet<int> userMarksToRemove)
+        {
+            foreach (var note in database.Notes)
+            {
+                if (note.UserMarkId != null && userMarksToRemove.Contains(note.UserMarkId.Value))
+                {
+                    // we can't delete this user mark because it is still in use (a user mark
+                    // may have multiple associated notes).
+                    userMarksToRemove.Remove(note.UserMarkId.Value);
+                }
+            }
+
+            database.UserMarks.RemoveAll(x => userMarksToRemove.Contains(x.UserMarkId));
+        }
+
+        private int SortBibleNotes(ExcelServices.Models.BibleNote x, ExcelServices.Models.BibleNote y)
+        {
+            if (x.BookNumber != y.BookNumber)
+            {
+                return x.BookNumber.CompareTo(y.BookNumber);
+            }
+
+            if (x.ChapterNumber != y.ChapterNumber)
+            {
+                return x.ChapterNumber ?? 0.CompareTo(y.ChapterNumber ?? 0);
+            }
+
+            if (x.VerseNumber != y.VerseNumber)
+            {
+                return x.VerseNumber ?? 0.CompareTo(y.VerseNumber ?? 0);
+            }
+
+            return 0;
         }
 
         private Database MergeDatabases(IEnumerable<BackupFile> jwlibraryFiles)
@@ -641,9 +754,9 @@
         private void Clean(BackupFile backupFile)
         {
             Log.Logger.Debug("Cleaning backup file {backupFile}", backupFile.Manifest.Name);
-            
+
             var cleaner = new Cleaner(backupFile.Database);
-            int rowsRemoved = cleaner.Clean();
+            var rowsRemoved = cleaner.Clean();
             if (rowsRemoved > 0)
             {
                 ProgressMessage($"Removed {rowsRemoved} inaccessible rows");
@@ -710,7 +823,7 @@
                 throw new BackupFileServicesException($"Could not find manifest entry in jwlibrary file: {filename}");
             }
             
-            using (StreamReader stream = new StreamReader(manifestEntry.Open()))
+            using (var stream = new StreamReader(manifestEntry.Open()))
             {
                 var fileContents = stream.ReadToEnd();
 
@@ -749,13 +862,13 @@
         {
             ProgressMessage("Generating database hash");
 
-            using (FileStream fs = new FileStream(databaseFilePath, FileMode.Open))
+            using (var fs = new FileStream(databaseFilePath, FileMode.Open))
             {
-                using (BufferedStream bs = new BufferedStream(fs))
-                using (SHA256Managed sha1 = new SHA256Managed())
+                using (var bs = new BufferedStream(fs))
+                using (var sha1 = new SHA256Managed())
                 {
                     byte[] hash = sha1.ComputeHash(bs);
-                    StringBuilder sb = new StringBuilder(2 * hash.Length);
+                    var sb = new StringBuilder(2 * hash.Length);
                     foreach (byte b in hash)
                     {
                         sb.Append($"{b:x2}");
@@ -784,22 +897,6 @@
             }
         }
 
-        private string CreateTemporaryDatabaseFile(
-            Database backupDatabase, 
-            string originalDatabaseFilePathForSchema)
-        {
-#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
-            string tmpFile = Path.GetTempFileName();
-#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
-
-            Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
-
-            new DataAccessLayer(originalDatabaseFilePathForSchema).CreateEmptyClone(tmpFile);
-            new DataAccessLayer(tmpFile).PopulateTables(backupDatabase);
-
-            return tmpFile;
-        }
-
         private void OnProgressEvent(ProgressEventArgs e)
         {
             ProgressEvent?.Invoke(this, e);
@@ -814,84 +911,6 @@
         {
             Log.Logger.Information(logMessage);
             OnProgressEvent(logMessage);
-        }
-
-        private IEnumerable<int> GetNotesWithNoTag(BackupFile backup)
-        {
-            var notesWithTags = backup.Database.TagMaps.Select(x => x.NoteId).ToHashSet();
-
-            foreach (var note in backup.Database.Notes)
-            {
-                if (!notesWithTags.Contains(note.NoteId))
-                {
-                    yield return note.NoteId;
-                }
-            }
-        }
-
-        private bool ShouldRemoveUnderlining(
-            UserMark mark, Database database, int colorIndex, bool anyColor, string publicationSymbol, bool anyPublication)
-        {
-            if (!anyColor && mark.ColorIndex != colorIndex)
-            {
-                return false;
-            }
-
-            if (anyPublication)
-            {
-                return true;
-            }
-
-            var location = database.FindLocation(mark.LocationId);
-            return location.KeySymbol == publicationSymbol;
-        }
-
-        private int RemoveUnderlining(Database database, HashSet<int> userMarkIdsToRemove, bool removeAssociatedNotes)
-        {
-            var noteIdsToRemove = new HashSet<int>();
-            var tagMapIdsToRemove = new HashSet<int>();
-
-            if (userMarkIdsToRemove.Any())
-            {
-                foreach (var note in database.Notes)
-                {
-                    if (note.UserMarkId == null)
-                    {
-                        continue;
-                    }
-
-                    if (userMarkIdsToRemove.Contains(note.UserMarkId.Value))
-                    {
-                        if (removeAssociatedNotes)
-                        {
-                            noteIdsToRemove.Add(note.NoteId);
-                        }
-                        else
-                        {
-                            note.UserMarkId = null;
-                        }
-                    }
-                }
-
-                foreach (var tagMap in database.TagMaps)
-                {
-                    if (tagMap.NoteId == null)
-                    {
-                        continue;
-                    }
-
-                    if (noteIdsToRemove.Contains(tagMap.NoteId.Value))
-                    {
-                        tagMapIdsToRemove.Add(tagMap.TagMapId);
-                    }
-                }
-            }
-
-            database.UserMarks.RemoveAll(x => userMarkIdsToRemove.Contains(x.UserMarkId));
-            database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
-            database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
-
-            return userMarkIdsToRemove.Count;
         }
     }
 }

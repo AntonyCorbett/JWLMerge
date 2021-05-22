@@ -67,8 +67,14 @@
         /// <param name="tagIds">Tag IDs to match.</param>
         /// <param name="removeUntaggedNotes">Whether to remove notes that have no tag.</param>
         /// <param name="removeAssociatedUnderlining">Whether to remove any associated underlining.</param>
+        /// <param name="removeAssociatedTags">Whether to remove any associated tags.</param>
         /// <returns>Number of notes removed.</returns>
-        int RemoveNotesByTag(BackupFile backup, int[] tagIds, bool removeUntaggedNotes, bool removeAssociatedUnderlining);
+        int RemoveNotesByTag(
+            BackupFile backup,
+            int[] tagIds,
+            bool removeUntaggedNotes,
+            bool removeAssociatedUnderlining,
+            bool removeAssociatedTags);
 
         /// <summary>
         /// Removes underlining by colour.
@@ -77,7 +83,7 @@
         /// <param name="colorIndexes">The color indexes to target.</param>
         /// <param name="removeAssociatedNotes">Whether associated notes should also be removed.</param>
         /// <returns>Number of underlined items removed.</returns>
-        int RemoveUnderliningByColourAsync(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes);
+        int RemoveUnderliningByColour(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes);
 
         /// <summary>
         /// Removes underlining by publication and colour.

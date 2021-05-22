@@ -6,12 +6,14 @@
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.Models;
+    using JWLMerge.Services;
     using MaterialDesignThemes.Wpf;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal class RemoveNotesByTagViewModel : ViewModelBase
     {
         private bool _removeAssociatedUnderlining;
+        private bool _removeAssociatedTags;
 
         public RemoveNotesByTagViewModel()
         {
@@ -37,6 +39,16 @@
             set => Set(ref _removeAssociatedUnderlining, value);
         }
 
+        public bool RemoveAssociatedTags
+        {
+            get => _removeAssociatedTags;
+            set => Set(ref _removeAssociatedTags, value);
+        }
+
+        public string RemoveTagsCaption => NumTagsSelectedExcludingFirst() > 1 
+            ? "Remove associated Tags" 
+            : "Remove associated Tag";
+
         private void TagItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
@@ -48,9 +60,15 @@
             }
         }
 
+        private int NumTagsSelectedExcludingFirst()
+        {
+            return TagItems.Count(x => x.IsChecked && x.Id != DialogService.UntaggedItemId);
+        }
+
         private void ItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(SelectionMade));
+            RaisePropertyChanged(nameof(RemoveTagsCaption));
         }
 
         private void Cancel()

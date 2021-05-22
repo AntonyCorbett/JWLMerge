@@ -86,7 +86,7 @@
             return result;
         }
 
-        private List<TRowType> ReadAllRows<TRowType>(
+        private static List<TRowType> ReadAllRows<TRowType>(
             SQLiteConnection connection,
             Func<SQLiteDataReader, TRowType> readRowFunction)
         {
@@ -106,29 +106,29 @@
                     }
                 }
 
-                Log.Logger.Debug($"SQL resultset count: {result.Count}");
+                Log.Logger.Debug($"SQL result set count: {result.Count}");
                 
                 return result;
             }
         }
 
-        private string ReadString(SQLiteDataReader reader, string columnName)
+        private static string ReadString(SQLiteDataReader reader, string columnName)
         {
             return reader[columnName].ToString();
         }
 
-        private string ReadNullableString(SQLiteDataReader reader, string columnName)
+        private static string ReadNullableString(SQLiteDataReader reader, string columnName)
         {
             var value = reader[columnName];
             return value == DBNull.Value ? null : value.ToString();
         }
 
-        private int ReadInt(SQLiteDataReader reader, string columnName)
+        private static int ReadInt(SQLiteDataReader reader, string columnName)
         {
             return Convert.ToInt32(reader[columnName]);
         }
 
-        private int? ReadNullableInt(SQLiteDataReader reader, string columnName)
+        private static int? ReadNullableInt(SQLiteDataReader reader, string columnName)
         {
             var value = reader[columnName];
             return value == DBNull.Value ? (int?)null : Convert.ToInt32(value);
@@ -258,7 +258,7 @@
             return CreateConnection(_databaseFilePath);
         }
         
-        private SQLiteConnection CreateConnection(string filePath)
+        private static SQLiteConnection CreateConnection(string filePath)
         {
             var connectionString = $"Data Source={filePath};Version=3;";
             Log.Logger.Debug("SQL create connection: {connection}", connectionString);
@@ -268,7 +268,7 @@
             return connection;
         }
 
-        private void ClearData(SQLiteConnection connection)
+        private static void ClearData(SQLiteConnection connection)
         {
             ClearTable(connection, "UserMark");
             ClearTable(connection, "TagMap");
@@ -284,7 +284,7 @@
             VacuumDatabase(connection);
         }
 
-        private void VacuumDatabase(SQLiteConnection connection)
+        private static void VacuumDatabase(SQLiteConnection connection)
         {
             using (var command = connection.CreateCommand())
             {
@@ -295,7 +295,7 @@
             }
         }
 
-        private void UpdateLastModified(SQLiteConnection connection)
+        private static void UpdateLastModified(SQLiteConnection connection)
         {
             using (var command = connection.CreateCommand())
             {
@@ -306,7 +306,7 @@
             }
         }
 
-        private void ClearTable(SQLiteConnection connection, string tableName)
+        private static void ClearTable(SQLiteConnection connection, string tableName)
         {
             using (var command = connection.CreateCommand())
             {
@@ -317,7 +317,7 @@
             }
         }
 
-        private void PopulateTable<TRowType>(SQLiteConnection connection, List<TRowType> rows)
+        private static void PopulateTable<TRowType>(SQLiteConnection connection, List<TRowType> rows)
         {
             var tableName = typeof(TRowType).Name;
             var columnNames = GetColumnNames<TRowType>();
@@ -329,12 +329,9 @@
             {
                 foreach (var row in rows)
                 {
-                    using (SQLiteCommand cmd = connection.CreateCommand())
+                    using (var cmd = connection.CreateCommand())
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.AppendLine($"insert into {tableName} ({columnNamesCsv}) values ({paramNamesCsv})");
-
-                        cmd.CommandText = sb.ToString();
+                        cmd.CommandText = $"insert into {tableName} ({columnNamesCsv}) values ({paramNamesCsv})";
                         AddPopulateTableParams(cmd, columnNames, paramNames, row);
 
                         cmd.ExecuteNonQuery();
@@ -345,7 +342,7 @@
             }
         }
 
-        private void AddPopulateTableParams<TRowType>(
+        private static void AddPopulateTableParams<TRowType>(
             SQLiteCommand cmd, 
             List<string> columnNames,
             List<string> paramNames, 
@@ -358,12 +355,12 @@
             }
         }
 
-        private List<string> GetParamNames(IReadOnlyCollection<string> columnNames)
+        private static List<string> GetParamNames(IReadOnlyCollection<string> columnNames)
         {
             return columnNames.Select(columnName => $"@{columnName}").ToList();
         }
 
-        private List<string> GetColumnNames<TRowType>()
+        private static List<string> GetColumnNames<TRowType>()
         {
             PropertyInfo[] properties = typeof(TRowType).GetProperties();
             return properties.Select(property => property.Name).ToList();

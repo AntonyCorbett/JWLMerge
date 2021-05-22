@@ -44,7 +44,7 @@
                 Margin="0,0,0,10"
                 Text="This function is typically used to remove confidential notes. It removes all notes that are associated with one or more of the Tags selected from the following list and then overwrites the original backup file." />
 
-            <Border Height="275" 
+            <Border Height="230" 
                     Padding="10,0,0,0"
                     BorderBrush="{StaticResource MaterialDesignChipBackground}" BorderThickness="1">
                 <ScrollViewer>
@@ -57,6 +57,13 @@
                     </ItemsControl>
                 </ScrollViewer>
             </Border>
+
+            <CheckBox
+                Margin="0,10,0,0"
+                IsChecked="{Binding RemoveAssociatedTags}"
+                Content="{Binding RemoveTagsCaption}"
+                Style="{StaticResource MaterialDesignCheckBox}">
+            </CheckBox>
 
             <CheckBox
                 Margin="0,10,0,0"

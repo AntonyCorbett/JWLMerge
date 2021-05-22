@@ -331,8 +331,8 @@ namespace JWLMerge.ViewModel
             
             var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks, false);
 
-            var (colourIndexes, removeNotes) = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
-            if (colourIndexes == null || !colourIndexes.Any())
+            var result = await _dialogService.GetColourSelectionForUnderlineRemovalAsync(colors);
+            if (result.ColourIndexes == null || !result.ColourIndexes.Any())
             {
                 return;
             }
@@ -344,8 +344,8 @@ namespace JWLMerge.ViewModel
 
                 await Task.Run(() =>
                 {
-                    underliningRemoved = _backupFileService.RemoveUnderliningByColourAsync(
-                        file.BackupFile, colourIndexes, removeNotes);
+                    underliningRemoved = _backupFileService.RemoveUnderliningByColour(
+                        file.BackupFile, result.ColourIndexes, result.RemoveNotes);
 
                     if (underliningRemoved > 0)
                     {
@@ -380,10 +380,9 @@ namespace JWLMerge.ViewModel
 
             var includeUntaggedNotes = TagHelper.AnyNotesHaveNoTag(file.BackupFile.Database);
 
-            var (tagIds, removeUntaggedNotes, removeUnderlining) = 
-                await _dialogService.GetTagSelectionForNotesRemovalAsync(tags, includeUntaggedNotes);
+            var result = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags, includeUntaggedNotes);
 
-            if (tagIds == null || !tagIds.Any())
+            if (result.TagIds == null || !result.TagIds.Any())
             {
                 return;
             }
@@ -396,7 +395,11 @@ namespace JWLMerge.ViewModel
                 await Task.Run(() =>
                 {
                     notesRemovedCount = _backupFileService.RemoveNotesByTag(
-                        file.BackupFile, tagIds, removeUntaggedNotes, removeUnderlining);
+                        file.BackupFile, 
+                        result.TagIds, 
+                        result.RemoveUntaggedNotes, 
+                        result.RemoveAssociatedUnderlining,
+                        result.RemoveAssociatedTags);
 
                     if (notesRemovedCount > 0)
                     {

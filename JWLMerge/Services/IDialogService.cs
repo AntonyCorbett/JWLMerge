@@ -17,9 +17,9 @@
 
         Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
-        Task<(int[] tagIds, bool removeUntaggedNotes, bool removeUnderlining)> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes);
+        Task<NotesByTagResult> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes);
 
-        Task<(int[] colourIndexes, bool removeNotes)> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
+        Task<ColorResult> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
 
         Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors);
 
