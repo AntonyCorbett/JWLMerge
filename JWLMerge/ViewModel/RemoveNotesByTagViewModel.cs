@@ -3,14 +3,14 @@
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.Linq;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.Models;
     using JWLMerge.Services;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RemoveNotesByTagViewModel : ViewModelBase
+    internal class RemoveNotesByTagViewModel : ObservableObject
     {
         private bool _removeAssociatedUnderlining;
         private bool _removeAssociatedTags;
@@ -36,13 +36,13 @@
         public bool RemoveAssociatedUnderlining
         {
             get => _removeAssociatedUnderlining;
-            set => Set(ref _removeAssociatedUnderlining, value);
+            set => SetProperty(ref _removeAssociatedUnderlining, value);
         }
 
         public bool RemoveAssociatedTags
         {
             get => _removeAssociatedTags;
-            set => Set(ref _removeAssociatedTags, value);
+            set => SetProperty(ref _removeAssociatedTags, value);
         }
 
         public string RemoveTagsCaption => NumTagsSelectedExcludingFirst() > 1 
@@ -67,8 +67,8 @@
 
         private void ItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(SelectionMade));
-            RaisePropertyChanged(nameof(RemoveTagsCaption));
+            OnPropertyChanged(nameof(SelectionMade));
+            OnPropertyChanged(nameof(RemoveTagsCaption));
         }
 
         private void Cancel()

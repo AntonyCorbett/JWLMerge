@@ -1,11 +1,11 @@
 ﻿namespace JWLMerge.ViewModel
 {
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RemoveFavouritesPromptViewModel : ViewModelBase
+    internal class RemoveFavouritesPromptViewModel : ObservableObject
     {
         public RemoveFavouritesPromptViewModel()
         {

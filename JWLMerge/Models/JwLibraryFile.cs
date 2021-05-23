@@ -1,10 +1,10 @@
 ﻿namespace JWLMerge.Models
 {
     using System.Text;
-    using GalaSoft.MvvmLight;
     using JWLMerge.BackupFileServices.Models;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-    internal class JwLibraryFile : ViewModelBase
+    internal class JwLibraryFile : ObservableObject
     {
         public JwLibraryFile()
         {
@@ -37,12 +37,12 @@
 
         public void RefreshTooltipSummary()
         {
-            RaisePropertyChanged(nameof(TooltipSummaryText));
+            OnPropertyChanged(nameof(TooltipSummaryText));
         }
 
         private void MergeParametersPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(MergeParameters));
+            OnPropertyChanged(nameof(MergeParameters));
         }
     }
 }

@@ -3,13 +3,13 @@
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.Linq;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.Models;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RemoveUnderliningByColourViewModel : ViewModelBase
+    internal class RemoveUnderliningByColourViewModel : ObservableObject
     {
         private bool _removeAssociatedNotes;
 
@@ -34,7 +34,7 @@
         public bool RemoveAssociatedNotes
         {
             get => _removeAssociatedNotes;
-            set => Set(ref _removeAssociatedNotes, value);
+            set => SetProperty(ref _removeAssociatedNotes, value);
         }
 
         private void ItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -50,7 +50,7 @@
 
         private void ItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(SelectionMade));
+            OnPropertyChanged(nameof(SelectionMade));
         }
 
         private void Cancel()

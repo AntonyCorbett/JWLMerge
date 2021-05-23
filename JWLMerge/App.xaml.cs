@@ -1,4 +1,7 @@
-﻿namespace JWLMerge
+﻿using System.Windows.Threading;
+using JWLMerge.Helpers;
+
+namespace JWLMerge
 {
     using System;
     using System.IO;
@@ -6,8 +9,13 @@
     using System.Windows;
     using System.Windows.Interop;
     using System.Windows.Media;
-    using GalaSoft.MvvmLight.Threading;
     using Serilog;
+    using JWLMerge.BackupFileServices;
+    using JWLMerge.ExcelServices;
+    using JWLMerge.Services;
+    using JWLMerge.ViewModel;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -17,20 +25,17 @@
         private readonly string _appString = "JWLMergeAC";
         private Mutex _appMutex;
 
-        public App()
+        protected override void OnExit(ExitEventArgs e)
         {
-            DispatcherHelper.Initialize();
-            
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.File(GetRollingFileFormat())
-                .ReadFrom.AppSettings()
-                .CreateLogger();
-            
-            Log.Logger.Information("JWLMerge Launched");
+            _appMutex?.Dispose();
+            Log.Logger.Information("==== Exit ====");
         }
+
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            ConfigureServices();
+
             if (AnotherInstanceRunning())
             {
                 Shutdown();
@@ -40,13 +45,46 @@
             {
                 // disable hardware (GPU) rendering so that it's all done by the CPU...
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+                ConfigureLogger();
             }
+
+            Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
         }
 
-        protected override void OnExit(ExitEventArgs e)
+        private void CurrentDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            _appMutex?.Dispose();
-            Log.Logger.Information("==== Exit ====");
+            // unhandled exceptions thrown from UI thread
+            e.Handled = true;
+            Log.Logger.Fatal(e.Exception, "Unhandled exception");
+            Current.Shutdown();
+        }
+
+        private void ConfigureServices()
+        {
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddSingleton<IDragDropService, DragDropService>();
+            serviceCollection.AddSingleton<IBackupFileService, BackupFileService>();
+            serviceCollection.AddSingleton<IFileOpenSaveService, FileOpenSaveService>();
+            serviceCollection.AddSingleton<IWindowService, WindowService>();
+            serviceCollection.AddSingleton<IDialogService, DialogService>();
+            serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
+            serviceCollection.AddSingleton<IExcelService, ExcelService>();
+
+            serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
+
+            serviceCollection.AddSingleton<MainViewModel>();
+            serviceCollection.AddSingleton<BackupFileFormatErrorViewModel>();
+            serviceCollection.AddSingleton<RedactNotesPromptViewModel>();
+            serviceCollection.AddSingleton<RemoveFavouritesPromptViewModel>();
+            serviceCollection.AddSingleton<RemoveNotesByTagViewModel>();
+            serviceCollection.AddSingleton<RemoveUnderliningByColourViewModel>();
+            serviceCollection.AddSingleton<RemoveUnderliningByPubAndColourViewModel>();
+            serviceCollection.AddSingleton<ImportBibleNotesViewModel >();
+            serviceCollection.AddTransient<DetailViewModel>();
+            
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            Ioc.Default.ConfigureServices(serviceProvider);
         }
 
         private bool ForceSoftwareRendering()
@@ -66,7 +104,7 @@
             return renderingTier == 0;
         }
 
-        private string GetRollingFileFormat()
+        private static void ConfigureLogger()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMerge\\Logs");
             if (!Directory.Exists(folder))
@@ -74,7 +112,13 @@
                 Directory.CreateDirectory(folder);
             }
 
-            return string.Concat(folder, "\\log.txt");
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(Path.Combine(folder, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .CreateLogger();
+
+            Log.Logger.Information("==== Launched ====");
+            Log.Logger.Information($"Version {VersionDetection.GetCurrentVersion()}");
         }
 
         private bool AnotherInstanceRunning()

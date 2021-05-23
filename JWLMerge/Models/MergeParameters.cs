@@ -1,8 +1,8 @@
 ﻿namespace JWLMerge.Models
 {
-    using GalaSoft.MvvmLight;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-    public class MergeParameters : ViewModelBase
+    public class MergeParameters : ObservableObject
     {
         private bool _includeBookmarks;
         private bool _includeNotes;
@@ -27,7 +27,7 @@
                 if (_includeInputFields != value)
                 {
                     _includeInputFields = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -40,7 +40,7 @@
                 if (_includeBookmarks != value)
                 {
                     _includeBookmarks = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -53,7 +53,7 @@
                 if (_includeNotes != value)
                 {
                     _includeNotes = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -66,7 +66,7 @@
                 if (_includeUnderlining != value)
                 {
                     _includeUnderlining = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -79,7 +79,7 @@
                 if (_includeTags != value)
                 {
                     _includeTags = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }

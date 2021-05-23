@@ -24,7 +24,7 @@
         <DataTemplate DataType="{x:Type models:JwLibraryFile}">
             <materialDesign:Card 
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
-                Margin="10,10,0,0" Padding="10" Width="220" Height="230">
+                Margin="20,20,0,0" Padding="10" Width="220" Height="230">
                 <materialDesign:Card.ToolTip>
                     <ToolTip Content="{Binding TooltipSummaryText}" 
                              Placement="Right"/>

@@ -1,14 +1,14 @@
 ﻿namespace JWLMerge.ViewModel
 {
     using System.Collections.Generic;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class ImportBibleNotesViewModel : ViewModelBase
+    internal class ImportBibleNotesViewModel : ObservableObject
     {
         private IReadOnlyCollection<Tag> _tags;
 
@@ -30,7 +30,7 @@
             set
             {
                 _tags = value;
-                RaisePropertyChanged();
+                OnPropertyChanged();
             }
         }
 

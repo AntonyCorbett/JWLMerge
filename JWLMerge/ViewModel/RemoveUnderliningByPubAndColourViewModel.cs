@@ -1,12 +1,12 @@
 ﻿namespace JWLMerge.ViewModel
 {
     using System.Collections.ObjectModel;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.Models;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
 
-    internal class RemoveUnderliningByPubAndColourViewModel : ViewModelBase
+    internal class RemoveUnderliningByPubAndColourViewModel : ObservableObject
     {
         private bool _removeAssociatedNotes;
         private PublicationDef _selectedPublication;
@@ -34,8 +34,8 @@
                 if (_selectedPublication != value)
                 {
                     _selectedPublication = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(SelectionMade));
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SelectionMade));
                 }
             }
         }
@@ -48,8 +48,8 @@
                 if (_selectedColour != value)
                 {
                     _selectedColour = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(SelectionMade));
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SelectionMade));
                 }
             }
         }
@@ -61,7 +61,7 @@
         public bool RemoveAssociatedNotes
         {
             get => _removeAssociatedNotes;
-            set => Set(ref _removeAssociatedNotes, value);
+            set => SetProperty(ref _removeAssociatedNotes, value);
         }
 
         private void Cancel()

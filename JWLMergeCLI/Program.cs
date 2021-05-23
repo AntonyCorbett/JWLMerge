@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using JWLMergeCLI.Args;
     using Serilog;
 
@@ -15,9 +16,7 @@
         /// </param>
         public static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.AppSettings()
-                .CreateLogger();
+            ConfigureLogging();
             
             try
             {
@@ -49,6 +48,23 @@
             }
 
             Log.CloseAndFlush();
+        }
+
+        private static void ConfigureLogging()
+        {
+            var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMergeCLI\\Logs");
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(Path.Combine(folder, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .CreateLogger();
+
+            Log.Logger.Information("==== Launched ====");
+            Log.Logger.Information($"Version {GetVersion()}");
         }
 
         private static string GetVersion()

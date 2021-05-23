@@ -3,15 +3,12 @@ namespace JWLMerge.ViewModel
     using System;
     using System.Collections.Concurrent;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
-    using GalaSoft.MvvmLight.Messaging;
-    using GalaSoft.MvvmLight.Threading;
     using JWLMerge.BackupFileServices;
     using JWLMerge.BackupFileServices.Helpers;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
@@ -21,10 +18,13 @@ namespace JWLMerge.ViewModel
     using JWLMerge.Models;
     using JWLMerge.Services;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
+    using Microsoft.Toolkit.Mvvm.Messaging;
     using Serilog;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class MainViewModel : ViewModelBase
+    internal class MainViewModel : ObservableObject
     {
         private readonly string _latestReleaseUrl = Properties.Resources.LATEST_RELEASE_URL;
         private readonly IDragDropService _dragDropService;
@@ -58,9 +58,9 @@ namespace JWLMerge.ViewModel
             SetTitle();
 
             // subscriptions...
-            Messenger.Default.Register<DragOverMessage>(this, OnDragOver);
-            Messenger.Default.Register<DragDropMessage>(this, OnDragDrop);
-            Messenger.Default.Register<MainWindowClosingMessage>(this, OnMainWindowClosing);
+            WeakReferenceMessenger.Default.Register<DragOverMessage>(this, OnDragOver);
+            WeakReferenceMessenger.Default.Register<DragDropMessage>(this, OnDragDrop);
+            WeakReferenceMessenger.Default.Register<MainWindowClosingMessage>(this, OnMainWindowClosing);
             
             AddDesignTimeItems();
 
@@ -83,11 +83,11 @@ namespace JWLMerge.ViewModel
                 if (_isBusy != value)
                 {
                     _isBusy = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(IsNotBusy));
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(IsNotBusy));
 
-                    MergeCommand?.RaiseCanExecuteChanged();
-                    CloseCardCommand?.RaiseCanExecuteChanged();
+                    MergeCommand?.NotifyCanExecuteChanged();
+                    CloseCardCommand?.NotifyCanExecuteChanged();
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace JWLMerge.ViewModel
             return file;
         }
 
-        private void OnMainWindowClosing(MainWindowClosingMessage message)
+        private void OnMainWindowClosing(object recipient, MainWindowClosingMessage message)
         {
             message.CancelEventArgs.Cancel = IsBusy || _dialogService.IsDialogVisible();
             if (!message.CancelEventArgs.Cancel)
@@ -161,9 +161,9 @@ namespace JWLMerge.ViewModel
             object sender, 
             System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            RaisePropertyChanged(nameof(FileListEmpty));
-            RaisePropertyChanged(nameof(MergeCommandCaption));
-            MergeCommand?.RaiseCanExecuteChanged();
+            OnPropertyChanged(nameof(FileListEmpty));
+            OnPropertyChanged(nameof(MergeCommandCaption));
+            MergeCommand?.NotifyCanExecuteChanged();
         }
 
         private void InitCommands()
@@ -570,10 +570,10 @@ namespace JWLMerge.ViewModel
                 }
             }).ContinueWith(previousTask =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     IsBusy = false;
-                });
+                }));
             });
         }
 
@@ -646,7 +646,7 @@ namespace JWLMerge.ViewModel
         
         private void AddDesignTimeItems()
         {
-            if (IsInDesignMode)
+            if (IsInDesignMode())
             {
                 for (int n = 0; n < 3; ++n)
                 {
@@ -657,12 +657,12 @@ namespace JWLMerge.ViewModel
         
         private void SetTitle()
         {
-            Title = IsInDesignMode
+            Title = IsInDesignMode()
                 ? "JWL Merge (design mode)"
                 : "JWL Merge";
         }
 
-        private void OnDragOver(DragOverMessage message)
+        private void OnDragOver(object recipient, DragOverMessage message)
         {
             message.DragEventArgs.Effects = !IsBusy && _dragDropService.CanAcceptDrop(message.DragEventArgs)
                 ? DragDropEffects.Copy
@@ -671,7 +671,7 @@ namespace JWLMerge.ViewModel
             message.DragEventArgs.Handled = true;
         }
 
-        private void OnDragDrop(DragDropMessage message)
+        private void OnDragDrop(object recipient, DragDropMessage message)
         {
             if (!IsBusy)
             {
@@ -724,8 +724,8 @@ namespace JWLMerge.ViewModel
         private void FilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // when the merge params are modified it can leave the number of mergeable items at less than 2.
-            MergeCommand?.RaiseCanExecuteChanged();
-            RaisePropertyChanged(nameof(MergeCommandCaption));
+            MergeCommand?.NotifyCanExecuteChanged();
+            OnPropertyChanged(nameof(MergeCommandCaption));
         }
 
         private bool IsSameFile(string path1, string path2)
@@ -747,10 +747,10 @@ namespace JWLMerge.ViewModel
        
         private void GetVersionData()
         {
-            if (IsInDesignMode)
+            if (IsInDesignMode())
             {
                 IsNewVersionAvailable = true;
-                RaisePropertyChanged(nameof(IsNewVersionAvailable));
+                OnPropertyChanged(nameof(IsNewVersionAvailable));
             }
             else
             {
@@ -761,10 +761,20 @@ namespace JWLMerge.ViewModel
                     {
                         // there is a new version....
                         IsNewVersionAvailable = true;
-                        RaisePropertyChanged(nameof(IsNewVersionAvailable));
+                        OnPropertyChanged(nameof(IsNewVersionAvailable));
                     }
                 });
             }
+        }
+
+        private bool IsInDesignMode()
+        {
+#if DEBUG
+            DependencyObject dep = new();
+            return DesignerProperties.GetIsInDesignMode(dep);
+#else
+            return false;
+#endif
         }
     }
 }

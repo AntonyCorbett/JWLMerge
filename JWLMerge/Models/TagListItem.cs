@@ -1,6 +1,6 @@
 ﻿namespace JWLMerge.Models
 {
-    using GalaSoft.MvvmLight;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
 
     internal class TagListItem : ObservableObject
     {
@@ -18,7 +18,7 @@
                 if (_isChecked != value)
                 {
                     _isChecked = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }

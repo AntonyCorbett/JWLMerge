@@ -1,7 +1,7 @@
 ﻿namespace JWLMerge.Models
 {
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
     using System.Windows.Media;
-    using GalaSoft.MvvmLight;
 
     internal class ColourListItem : ObservableObject
     {
@@ -21,7 +21,7 @@
                 if (_isChecked != value)
                 {
                     _isChecked = value;
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }

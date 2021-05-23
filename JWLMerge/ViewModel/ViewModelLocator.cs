@@ -1,11 +1,6 @@
 namespace JWLMerge.ViewModel
 {
-    using System;
-    using CommonServiceLocator;
-    using GalaSoft.MvvmLight.Ioc;
-    using JWLMerge.BackupFileServices;
-    using JWLMerge.ExcelServices;
-    using JWLMerge.Services;
+    using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
     /// <summary>
     /// This class contains static references to all the view models in the
@@ -13,46 +8,22 @@ namespace JWLMerge.ViewModel
     /// </summary>
     internal class ViewModelLocator
     {
-        public ViewModelLocator()
-        {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+        public static MainViewModel Main => Ioc.Default.GetService<MainViewModel>()!;
 
-            SimpleIoc.Default.Register<IDragDropService, DragDropService>();
-            SimpleIoc.Default.Register<IBackupFileService, BackupFileService>();
-            SimpleIoc.Default.Register<IFileOpenSaveService, FileOpenSaveService>();
-            SimpleIoc.Default.Register<IWindowService, WindowService>();
-            SimpleIoc.Default.Register<IDialogService, DialogService>();
-            SimpleIoc.Default.Register<ISnackbarService, SnackbarService>();
-            SimpleIoc.Default.Register<IExcelService, ExcelService>();
+        public RedactNotesPromptViewModel RedactNotesPromptDialog => Ioc.Default.GetService<RedactNotesPromptViewModel>()!;
 
-            SimpleIoc.Default.Register<BackupFileFormatErrorViewModel>();
-            SimpleIoc.Default.Register<RedactNotesPromptViewModel>();
-            SimpleIoc.Default.Register<RemoveFavouritesPromptViewModel>();
-            SimpleIoc.Default.Register<RemoveNotesByTagViewModel>();
-            SimpleIoc.Default.Register<RemoveUnderliningByColourViewModel>();
-            SimpleIoc.Default.Register<RemoveUnderliningByPubAndColourViewModel>();
-            SimpleIoc.Default.Register<ImportBibleNotesViewModel>();
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<DetailViewModel>();
-        }
+        public RemoveNotesByTagViewModel RemoveNotesByTagDialog => Ioc.Default.GetService<RemoveNotesByTagViewModel>()!;
 
-        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        public RemoveUnderliningByColourViewModel RemoveUnderliningByColourDialog => Ioc.Default.GetService<RemoveUnderliningByColourViewModel>()!;
 
-        public RedactNotesPromptViewModel RedactNotesPromptDialog => ServiceLocator.Current.GetInstance<RedactNotesPromptViewModel>();
+        public RemoveUnderliningByPubAndColourViewModel RemoveUnderliningByPubAndColourDialog => Ioc.Default.GetService<RemoveUnderliningByPubAndColourViewModel>()!;
 
-        public RemoveNotesByTagViewModel RemoveNotesByTagDialog => ServiceLocator.Current.GetInstance<RemoveNotesByTagViewModel>();
+        public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => Ioc.Default.GetService<RemoveFavouritesPromptViewModel>()!;
 
-        public RemoveUnderliningByColourViewModel RemoveUnderliningByColourDialog => ServiceLocator.Current.GetInstance<RemoveUnderliningByColourViewModel>();
+        public ImportBibleNotesViewModel ImportBibleNotesDialog => Ioc.Default.GetService<ImportBibleNotesViewModel>()!;
 
-        public RemoveUnderliningByPubAndColourViewModel RemoveUnderliningByPubAndColourDialog => ServiceLocator.Current.GetInstance<RemoveUnderliningByPubAndColourViewModel>();
+        public BackupFileFormatErrorViewModel BackupFileFormatErrorDialog => Ioc.Default.GetService<BackupFileFormatErrorViewModel>()!;
 
-        public RemoveFavouritesPromptViewModel RemoveFavouritesPromptDialog => ServiceLocator.Current.GetInstance<RemoveFavouritesPromptViewModel>();
-
-        public ImportBibleNotesViewModel ImportBibleNotesDialog => ServiceLocator.Current.GetInstance<ImportBibleNotesViewModel>();
-
-        public BackupFileFormatErrorViewModel BackupFileFormatErrorDialog => ServiceLocator.Current.GetInstance<BackupFileFormatErrorViewModel>();
-
-        // NB - the guid key produces a new instance per view.
-        public DetailViewModel Detail => ServiceLocator.Current.GetInstance<DetailViewModel>(Guid.NewGuid().ToString());
+        public DetailViewModel Detail => Ioc.Default.GetService<DetailViewModel>()!;
     }
 }

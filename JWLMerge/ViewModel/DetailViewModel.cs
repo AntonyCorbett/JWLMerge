@@ -2,14 +2,14 @@
 {
     using System.Collections;
     using System.Collections.Generic;
-    using GalaSoft.MvvmLight;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.BackupFileServices.Models.ManifestFile;
     using JWLMerge.Models;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class DetailViewModel : ViewModelBase
+    internal class DetailViewModel : ObservableObject
     {
         private DataTypeListItem _selectedDataType;
         private bool _notesRedacted;
@@ -30,7 +30,7 @@
             {
                 if (_backupFile != value)
                 {
-                    Set(ref _backupFile, value);
+                    SetProperty(ref _backupFile, value);
                     var deviceName = BackupFile?.Manifest.UserDataBackup.DeviceName;
                     WindowTitle = $"Details - {deviceName}";
                 }
@@ -42,7 +42,7 @@
         public string WindowTitle
         {
             get => _windowTitle ?? string.Empty;
-            set => Set(ref _windowTitle, value);
+            set => SetProperty(ref _windowTitle, value);
         }
 
         public bool NotesRedacted
@@ -53,8 +53,8 @@
                 if (_notesRedacted != value)
                 {
                     _notesRedacted = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(NotesNotRedacted));
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(NotesNotRedacted));
                 }
             }
         }
@@ -69,9 +69,9 @@
                 if (_selectedDataType != value)
                 {
                     _selectedDataType = value;
-                    RaisePropertyChanged();
-                    RaisePropertyChanged(nameof(DataItemsSource));
-                    RaisePropertyChanged(nameof(IsNotesItemSelected));
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(DataItemsSource));
+                    OnPropertyChanged(nameof(IsNotesItemSelected));
                 }
             }
         }

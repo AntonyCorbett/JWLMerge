@@ -1,12 +1,12 @@
 ﻿namespace JWLMerge.ViewModel
 {
     using System.Collections.Generic;
-    using GalaSoft.MvvmLight;
-    using GalaSoft.MvvmLight.CommandWpf;
     using JWLMerge.Models;
     using MaterialDesignThemes.Wpf;
+    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    using Microsoft.Toolkit.Mvvm.Input;
 
-    internal class BackupFileFormatErrorViewModel : ViewModelBase
+    internal class BackupFileFormatErrorViewModel : ObservableObject
     {
         public BackupFileFormatErrorViewModel()
         {

@@ -2,8 +2,8 @@
 {
     using System.ComponentModel;
     using System.Windows;
-    using GalaSoft.MvvmLight.Messaging;
     using JWLMerge.Messages;
+    using Microsoft.Toolkit.Mvvm.Messaging;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -17,17 +17,17 @@
 
         private void PanelOnDragOver(object sender, DragEventArgs e)
         {
-            Messenger.Default.Send(new DragOverMessage { DragEventArgs = e });
+            WeakReferenceMessenger.Default.Send(new DragOverMessage { DragEventArgs = e });
         }
 
         private void PanelOnDrop(object sender, DragEventArgs e)
         {
-            Messenger.Default.Send(new DragDropMessage { DragEventArgs = e });
+            WeakReferenceMessenger.Default.Send(new DragDropMessage { DragEventArgs = e });
         }
 
         private void MainWindowOnClosing(object sender, CancelEventArgs e)
         {
-            Messenger.Default.Send(new MainWindowClosingMessage { CancelEventArgs = e });
+            WeakReferenceMessenger.Default.Send(new MainWindowClosingMessage { CancelEventArgs = e });
         }
     }
 }

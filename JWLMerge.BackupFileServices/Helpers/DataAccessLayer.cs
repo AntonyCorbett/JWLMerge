@@ -1,11 +1,9 @@
 ﻿namespace JWLMerge.BackupFileServices.Helpers
 {
+    using Microsoft.Data.Sqlite;
     using System;
     using System.Collections.Generic;
-    using System.Data.SQLite;
     using System.Linq;
-    using System.Reflection;
-    using System.Text;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using Serilog;
 
@@ -33,7 +31,7 @@
             using (var source = CreateConnection(_databaseFilePath))
             using (var destination = CreateConnection(cloneFilePath))
             {
-                source.BackupDatabase(destination, "main", "main", -1, null, -1);
+                source.BackupDatabase(destination, "main", "main");
                 ClearData(destination);
             }
         }
@@ -87,8 +85,8 @@
         }
 
         private static List<TRowType> ReadAllRows<TRowType>(
-            SQLiteConnection connection,
-            Func<SQLiteDataReader, TRowType> readRowFunction)
+            SqliteConnection connection,
+            Func<SqliteDataReader, TRowType> readRowFunction)
         {
             using (var cmd = connection.CreateCommand())
             {
@@ -112,163 +110,39 @@
             }
         }
 
-        private static string ReadString(SQLiteDataReader reader, string columnName)
+        private static string ReadString(SqliteDataReader reader, string columnName)
         {
             return reader[columnName].ToString();
         }
 
-        private static string ReadNullableString(SQLiteDataReader reader, string columnName)
+        private static string ReadNullableString(SqliteDataReader reader, string columnName)
         {
             var value = reader[columnName];
             return value == DBNull.Value ? null : value.ToString();
         }
 
-        private static int ReadInt(SQLiteDataReader reader, string columnName)
+        private static int ReadInt(SqliteDataReader reader, string columnName)
         {
             return Convert.ToInt32(reader[columnName]);
         }
 
-        private static int? ReadNullableInt(SQLiteDataReader reader, string columnName)
+        private static int? ReadNullableInt(SqliteDataReader reader, string columnName)
         {
             var value = reader[columnName];
             return value == DBNull.Value ? (int?)null : Convert.ToInt32(value);
         }
 
-        private Location ReadLocation(SQLiteDataReader reader)
-        {
-            return new Location
-            {
-                LocationId = ReadInt(reader, "LocationId"),
-                BookNumber = ReadNullableInt(reader, "BookNumber"),
-                ChapterNumber = ReadNullableInt(reader, "ChapterNumber"),
-                DocumentId = ReadNullableInt(reader, "DocumentId"),
-                Track = ReadNullableInt(reader, "Track"),
-                IssueTagNumber = ReadInt(reader, "IssueTagNumber"),
-                KeySymbol = ReadString(reader, "KeySymbol"),
-                MepsLanguage = ReadInt(reader, "MepsLanguage"),
-                Type = ReadInt(reader, "Type"),
-                Title = ReadNullableString(reader, "Title"),
-            };
-        }
-
-        private Note ReadNote(SQLiteDataReader reader)
-        {
-            return new Note
-            {
-                NoteId = ReadInt(reader, "NoteId"),
-                Guid = ReadString(reader, "Guid"),
-                UserMarkId = ReadNullableInt(reader, "UserMarkId"),
-                LocationId = ReadNullableInt(reader, "LocationId"),
-                Title = ReadNullableString(reader, "Title"),
-                Content = ReadNullableString(reader, "Content"),
-                LastModified = ReadString(reader, "LastModified"),
-                BlockType = ReadInt(reader, "BlockType"),
-                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier"),
-            };
-        }
-
-        private Tag ReadTag(SQLiteDataReader reader)
-        {
-            return new Tag
-            {
-                TagId = ReadInt(reader, "TagId"),
-                Type = ReadInt(reader, "Type"),
-                Name = ReadString(reader, "Name"),
-                ImageFileName = ReadNullableString(reader, "ImageFilename"),    // added in db v7 April 2020
-            };
-        }
-
-        private TagMap ReadTagMap(SQLiteDataReader reader)
-        {
-            return new TagMap
-            {
-                TagMapId = ReadInt(reader, "TagMapId"),
-                
-                // added in db v7, April 2020...
-                PlaylistItemId = ReadNullableInt(reader, "PlaylistItemId"),
-                LocationId = ReadNullableInt(reader, "LocationId"),
-                NoteId = ReadNullableInt(reader, "NoteId"),
-
-                TagId = ReadInt(reader, "TagId"),
-                Position = ReadInt(reader, "Position"),
-            };
-        }
-
-        private BlockRange ReadBlockRange(SQLiteDataReader reader)
-        {
-            return new BlockRange
-            {
-                BlockRangeId = ReadInt(reader, "BlockRangeId"),
-                BlockType = ReadInt(reader, "BlockType"),
-                Identifier = ReadInt(reader, "Identifier"),
-                StartToken = ReadNullableInt(reader, "StartToken"),
-                EndToken = ReadNullableInt(reader, "EndToken"),
-                UserMarkId = ReadInt(reader, "UserMarkId"),
-            };
-        }
-
-        private Bookmark ReadBookmark(SQLiteDataReader reader)
-        {
-            return new Bookmark
-            {
-                BookmarkId = ReadInt(reader, "BookmarkId"),
-                LocationId = ReadInt(reader, "LocationId"),
-                PublicationLocationId = ReadInt(reader, "PublicationLocationId"),
-                Slot = ReadInt(reader, "Slot"),
-                Title = ReadString(reader, "Title"),
-                Snippet = ReadNullableString(reader, "Snippet"),
-                BlockType = ReadInt(reader, "BlockType"),
-                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier"),
-            };
-        }
-
-        private LastModified ReadLastModified(SQLiteDataReader reader)
-        {
-            return new LastModified
-            {
-                TimeLastModified = ReadString(reader, "LastModified"),
-            };
-        }
-        
-        private UserMark ReadUserMark(SQLiteDataReader reader)
-        {
-            return new UserMark
-            {
-                UserMarkId = ReadInt(reader, "UserMarkId"),
-                ColorIndex = ReadInt(reader, "ColorIndex"),
-                LocationId = ReadInt(reader, "LocationId"),
-                StyleIndex = ReadInt(reader, "StyleIndex"),
-                UserMarkGuid = ReadString(reader, "UserMarkGuid"),
-                Version = ReadInt(reader, "Version"),
-            };
-        }
-
-        private InputField ReadInputField(SQLiteDataReader reader)
-        {
-            return new InputField
-            {
-                LocationId = ReadInt(reader, "LocationId"),
-                TextTag = ReadString(reader, "TextTag"),
-                Value = ReadString(reader, "Value"),
-            };
-        }
-
-        private SQLiteConnection CreateConnection()
-        {
-            return CreateConnection(_databaseFilePath);
-        }
-        
-        private static SQLiteConnection CreateConnection(string filePath)
+        private static SqliteConnection CreateConnection(string filePath)
         {
             var connectionString = $"Data Source={filePath};Version=3;";
             Log.Logger.Debug("SQL create connection: {connection}", connectionString);
-            
-            var connection = new SQLiteConnection(connectionString);
+
+            var connection = new SqliteConnection(connectionString);
             connection.Open();
             return connection;
         }
 
-        private static void ClearData(SQLiteConnection connection)
+        private static void ClearData(SqliteConnection connection)
         {
             ClearTable(connection, "UserMark");
             ClearTable(connection, "TagMap");
@@ -284,40 +158,40 @@
             VacuumDatabase(connection);
         }
 
-        private static void VacuumDatabase(SQLiteConnection connection)
+        private static void VacuumDatabase(SqliteConnection connection)
         {
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "vacuum;";
                 Log.Logger.Debug($"SQL: {command.CommandText}");
-                
+
                 command.ExecuteNonQuery();
             }
         }
 
-        private static void UpdateLastModified(SQLiteConnection connection)
+        private static void UpdateLastModified(SqliteConnection connection)
         {
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = "delete from LastModified; insert into LastModified default values";
                 Log.Logger.Debug($"SQL: {command.CommandText}");
-                
+
                 command.ExecuteNonQuery();
             }
         }
 
-        private static void ClearTable(SQLiteConnection connection, string tableName)
+        private static void ClearTable(SqliteConnection connection, string tableName)
         {
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = $"delete from {tableName}";
                 Log.Logger.Debug($"SQL: {command.CommandText}");
-                
+
                 command.ExecuteNonQuery();
             }
         }
 
-        private static void PopulateTable<TRowType>(SQLiteConnection connection, List<TRowType> rows)
+        private static void PopulateTable<TRowType>(SqliteConnection connection, List<TRowType> rows)
         {
             var tableName = typeof(TRowType).Name;
             var columnNames = GetColumnNames<TRowType>();
@@ -337,15 +211,15 @@
                         cmd.ExecuteNonQuery();
                     }
                 }
-                
+
                 transaction.Commit();
             }
         }
 
         private static void AddPopulateTableParams<TRowType>(
-            SQLiteCommand cmd, 
+            SqliteCommand cmd,
             List<string> columnNames,
-            List<string> paramNames, 
+            List<string> paramNames,
             TRowType row)
         {
             for (int n = 0; n < columnNames.Count; ++n)
@@ -362,8 +236,132 @@
 
         private static List<string> GetColumnNames<TRowType>()
         {
-            PropertyInfo[] properties = typeof(TRowType).GetProperties();
+            var properties = typeof(TRowType).GetProperties();
             return properties.Select(property => property.Name).ToList();
+        }
+
+        private Location ReadLocation(SqliteDataReader reader)
+        {
+            return new Location
+            {
+                LocationId = ReadInt(reader, "LocationId"),
+                BookNumber = ReadNullableInt(reader, "BookNumber"),
+                ChapterNumber = ReadNullableInt(reader, "ChapterNumber"),
+                DocumentId = ReadNullableInt(reader, "DocumentId"),
+                Track = ReadNullableInt(reader, "Track"),
+                IssueTagNumber = ReadInt(reader, "IssueTagNumber"),
+                KeySymbol = ReadString(reader, "KeySymbol"),
+                MepsLanguage = ReadInt(reader, "MepsLanguage"),
+                Type = ReadInt(reader, "Type"),
+                Title = ReadNullableString(reader, "Title"),
+            };
+        }
+
+        private Note ReadNote(SqliteDataReader reader)
+        {
+            return new Note
+            {
+                NoteId = ReadInt(reader, "NoteId"),
+                Guid = ReadString(reader, "Guid"),
+                UserMarkId = ReadNullableInt(reader, "UserMarkId"),
+                LocationId = ReadNullableInt(reader, "LocationId"),
+                Title = ReadNullableString(reader, "Title"),
+                Content = ReadNullableString(reader, "Content"),
+                LastModified = ReadString(reader, "LastModified"),
+                BlockType = ReadInt(reader, "BlockType"),
+                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier"),
+            };
+        }
+
+        private Tag ReadTag(SqliteDataReader reader)
+        {
+            return new Tag
+            {
+                TagId = ReadInt(reader, "TagId"),
+                Type = ReadInt(reader, "Type"),
+                Name = ReadString(reader, "Name"),
+                ImageFileName = ReadNullableString(reader, "ImageFilename"),    // added in db v7 April 2020
+            };
+        }
+
+        private TagMap ReadTagMap(SqliteDataReader reader)
+        {
+            return new TagMap
+            {
+                TagMapId = ReadInt(reader, "TagMapId"),
+                
+                // added in db v7, April 2020...
+                PlaylistItemId = ReadNullableInt(reader, "PlaylistItemId"),
+                LocationId = ReadNullableInt(reader, "LocationId"),
+                NoteId = ReadNullableInt(reader, "NoteId"),
+
+                TagId = ReadInt(reader, "TagId"),
+                Position = ReadInt(reader, "Position"),
+            };
+        }
+
+        private BlockRange ReadBlockRange(SqliteDataReader reader)
+        {
+            return new BlockRange
+            {
+                BlockRangeId = ReadInt(reader, "BlockRangeId"),
+                BlockType = ReadInt(reader, "BlockType"),
+                Identifier = ReadInt(reader, "Identifier"),
+                StartToken = ReadNullableInt(reader, "StartToken"),
+                EndToken = ReadNullableInt(reader, "EndToken"),
+                UserMarkId = ReadInt(reader, "UserMarkId"),
+            };
+        }
+
+        private Bookmark ReadBookmark(SqliteDataReader reader)
+        {
+            return new Bookmark
+            {
+                BookmarkId = ReadInt(reader, "BookmarkId"),
+                LocationId = ReadInt(reader, "LocationId"),
+                PublicationLocationId = ReadInt(reader, "PublicationLocationId"),
+                Slot = ReadInt(reader, "Slot"),
+                Title = ReadString(reader, "Title"),
+                Snippet = ReadNullableString(reader, "Snippet"),
+                BlockType = ReadInt(reader, "BlockType"),
+                BlockIdentifier = ReadNullableInt(reader, "BlockIdentifier"),
+            };
+        }
+
+        private LastModified ReadLastModified(SqliteDataReader reader)
+        {
+            return new LastModified
+            {
+                TimeLastModified = ReadString(reader, "LastModified"),
+            };
+        }
+        
+        private UserMark ReadUserMark(SqliteDataReader reader)
+        {
+            return new UserMark
+            {
+                UserMarkId = ReadInt(reader, "UserMarkId"),
+                ColorIndex = ReadInt(reader, "ColorIndex"),
+                LocationId = ReadInt(reader, "LocationId"),
+                StyleIndex = ReadInt(reader, "StyleIndex"),
+                UserMarkGuid = ReadString(reader, "UserMarkGuid"),
+                Version = ReadInt(reader, "Version"),
+            };
+        }
+
+        private InputField ReadInputField(SqliteDataReader reader)
+        {
+            return new InputField
+            {
+                LocationId = ReadInt(reader, "LocationId"),
+                TextTag = ReadString(reader, "TextTag"),
+                Value = ReadString(reader, "Value"),
+            };
+        }
+
+        private SqliteConnection CreateConnection()
+        {
+            return CreateConnection(_databaseFilePath);
         }
     }
 }
