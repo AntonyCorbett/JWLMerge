@@ -36,6 +36,8 @@ namespace JWLMerge
         {
             ConfigureServices();
 
+            ConfigureLogger();
+
             if (AnotherInstanceRunning())
             {
                 Shutdown();
@@ -45,7 +47,6 @@ namespace JWLMerge
             {
                 // disable hardware (GPU) rendering so that it's all done by the CPU...
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-                ConfigureLogger();
             }
 
             Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
@@ -114,7 +115,7 @@ namespace JWLMerge
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.File(Path.Combine(folder, "log-{Date}.txt"), retainedFileCountLimit: 28)
+                .WriteTo.File(Path.Combine(folder, "log.txt"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 28)
                 .CreateLogger();
 
             Log.Logger.Information("==== Launched ====");

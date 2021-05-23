@@ -42,17 +42,16 @@
         /// <param name="dataToUse">The data to use.</param>
         public void PopulateTables(Database dataToUse)
         {
-            using (var connection = CreateConnection())
-            {
-                PopulateTable(connection, dataToUse.Locations);
-                PopulateTable(connection, dataToUse.Notes);
-                PopulateTable(connection, dataToUse.InputFields);
-                PopulateTable(connection, dataToUse.UserMarks);
-                PopulateTable(connection, dataToUse.Tags);
-                PopulateTable(connection, dataToUse.TagMaps);
-                PopulateTable(connection, dataToUse.BlockRanges);
-                PopulateTable(connection, dataToUse.Bookmarks);
-            }
+            using var connection = CreateConnection();
+
+            PopulateTable(connection, dataToUse.Locations);
+            PopulateTable(connection, dataToUse.UserMarks);
+            PopulateTable(connection, dataToUse.Tags);
+            PopulateTable(connection, dataToUse.Notes);
+            PopulateTable(connection, dataToUse.TagMaps);
+            PopulateTable(connection, dataToUse.InputFields);
+            PopulateTable(connection, dataToUse.Bookmarks);
+            PopulateTable(connection, dataToUse.BlockRanges);
         }
 
         /// <summary>
@@ -134,7 +133,7 @@
 
         private static SqliteConnection CreateConnection(string filePath)
         {
-            var connectionString = $"Data Source={filePath};Version=3;";
+            var connectionString = $"Data Source={filePath};";
             Log.Logger.Debug("SQL create connection: {connection}", connectionString);
 
             var connection = new SqliteConnection(connectionString);
@@ -144,15 +143,15 @@
 
         private static void ClearData(SqliteConnection connection)
         {
-            ClearTable(connection, "UserMark");
-            ClearTable(connection, "TagMap");
-            ClearTable(connection, "Tag");
-            ClearTable(connection, "InputField");
-            ClearTable(connection, "Note");
-            ClearTable(connection, "Location");
-            ClearTable(connection, "Bookmark");
             ClearTable(connection, "BlockRange");
-
+            ClearTable(connection, "Bookmark");
+            ClearTable(connection, "InputField");
+            ClearTable(connection, "TagMap");
+            ClearTable(connection, "Note");
+            ClearTable(connection, "Tag");
+            ClearTable(connection, "UserMark");
+            ClearTable(connection, "Location");
+            
             UpdateLastModified(connection);
 
             VacuumDatabase(connection);
@@ -199,21 +198,18 @@
             var paramNames = GetParamNames(columnNames);
             var paramNamesCsv = string.Join(",", paramNames);
 
-            using (var transaction = connection.BeginTransaction())
+            using var transaction = connection.BeginTransaction();
+
+            foreach (var row in rows)
             {
-                foreach (var row in rows)
-                {
-                    using (var cmd = connection.CreateCommand())
-                    {
-                        cmd.CommandText = $"insert into {tableName} ({columnNamesCsv}) values ({paramNamesCsv})";
-                        AddPopulateTableParams(cmd, columnNames, paramNames, row);
+                using var cmd = connection.CreateCommand();
+                cmd.CommandText = $"insert into {tableName} ({columnNamesCsv}) values ({paramNamesCsv})";
+                AddPopulateTableParams(cmd, columnNames, paramNames, row);
 
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
-                transaction.Commit();
+                cmd.ExecuteNonQuery();
             }
+
+            transaction.Commit();
         }
 
         private static void AddPopulateTableParams<TRowType>(
@@ -224,7 +220,7 @@
         {
             for (int n = 0; n < columnNames.Count; ++n)
             {
-                var value = row.GetType().GetProperty(columnNames[n])?.GetValue(row);
+                var value = row.GetType().GetProperty(columnNames[n])?.GetValue(row) ?? DBNull.Value;
                 cmd.Parameters.AddWithValue(paramNames[n], value);
             }
         }
