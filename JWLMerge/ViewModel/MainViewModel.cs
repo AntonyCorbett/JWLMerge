@@ -402,7 +402,7 @@ namespace JWLMerge.ViewModel
 
             var result = await _dialogService.GetTagSelectionForNotesRemovalAsync(tags, includeUntaggedNotes);
 
-            if (result.TagIds == null || !result.TagIds.Any())
+            if (!result.RemoveUntaggedNotes && (result.TagIds == null || !result.TagIds.Any()))
             {
                 return;
             }

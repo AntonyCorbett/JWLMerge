@@ -58,6 +58,8 @@
                     item.PropertyChanged += ItemPropertyChanged;
                 }
             }
+
+            OnPropertyChanged(nameof(SelectionMade));
         }
 
         private int NumTagsSelectedExcludingFirst()

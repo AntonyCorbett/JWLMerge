@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices
+﻿using System.Diagnostics;
+
+namespace JWLMerge.BackupFileServices
 {
     using System;
     using System.Collections.Generic;
@@ -178,6 +180,7 @@
             }
 
             backup.Database.TagMaps.RemoveAll(x => tagMapIdsToRemove.Contains(x.TagMapId));
+            backup.Database.TagMaps.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId ?? 0));
             backup.Database.Notes.RemoveAll(x => noteIdsToRemove.Contains(x.NoteId));
 
             if (removeAssociatedUnderlining)
@@ -189,7 +192,7 @@
             {
                 RemoveSelectedTags(backup.Database, tagIdsHash);
             }
-            
+
             return noteIdsToRemove.Count;
         }
 
@@ -268,6 +271,9 @@
                 throw new ArgumentNullException(nameof(backup));
             }
 
+            ProgressMessage(" Checking validity");
+            backup.Database.CheckValidity();
+
             ProgressMessage("Writing merged database file");
 
             using var memoryStream = new MemoryStream();
@@ -309,7 +315,7 @@
             memoryStream.Seek(0, SeekOrigin.Begin);
             memoryStream.CopyTo(fileStream);
         }
-
+        
         /// <inheritdoc />
         public int RemoveTags(Database database)
         {
@@ -557,6 +563,7 @@
         private static void RemoveSelectedTags(Database database, HashSet<int> tagIds)
         {
             database.Tags.RemoveAll(x => tagIds.Contains(x.TagId));
+            database.TagMaps.RemoveAll(x => tagIds.Contains(x.TagMapId));
         }
 
         private static string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)

@@ -46,6 +46,8 @@
                     item.PropertyChanged += ItemPropertyChanged;
                 }
             }
+
+            OnPropertyChanged(nameof(SelectionMade));
         }
 
         private void ItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
