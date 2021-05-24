@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Threading;
-
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -596,8 +593,6 @@ namespace JWLMerge.ViewModel
 
         private void ApplyMergeParameters()
         {
-            // ReSharper disable once StyleCop.SA1116
-            // ReSharper disable once StyleCop.SA1115
             Parallel.ForEach(Files, file =>
             {
                 if (File.Exists(file.FilePath))
@@ -612,8 +607,6 @@ namespace JWLMerge.ViewModel
 
         private void ReloadFiles()
         {
-            // ReSharper disable once StyleCop.SA1116
-            // ReSharper disable once StyleCop.SA1115
             Parallel.ForEach(Files, file =>
             {
                 if (File.Exists(file.FilePath))

@@ -6,7 +6,7 @@
 #define MyAppURL "https://github.com/AntonyCorbett/JWLMerge"
 #define MyAppExeName "JWLMerge.exe"
 
-#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\JWLMerge.exe');
+#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\net5.0-windows\publish\JWLMerge.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -35,30 +35,28 @@ AppMutex=JWLMergeAC
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
+[InstallDelete]
+; files from pre-net-5 edition
+Type: files; Name: {app}\JWLMerge.exe.config
+Type: files; Name: {app}\JWLMergeCLI.exe.config
+Type: files; Name: {app}\Serilog.Settings.AppSettings.dll
+Type: files; Name: {app}\SQLite.Interop.dll
+Type: files; Name: {app}\System.Data.SQLite.dll
+Type: files; Name: {app}\System.Windows.Interactivity.dll
+Type: files; Name: {app}\GalaSoft.MvvmLight.dll
+Type: files; Name: {app}\GalaSoft.MvvmLight.Extras.dll
+Type: files; Name: {app}\GalaSoft.MvvmLight.Platform.dll
+Type: files; Name: {app}\CommonServiceLocator.dll
+
 [Files]
-Source: "..\JWLMerge\bin\Release\x64\*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\x86\*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\ClosedXML.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\CommonServiceLocator.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\DocumentFormat.OpenXml.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\ExcelNumberFormat.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.Extras.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\GalaSoft.MvvmLight.Platform.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\JWLMerge.BackupFileServices.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\JWLMerge.ExcelServices.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\JWLMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\JWLMerge.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\Release\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\Release\JWLMergeCLI.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\MaterialDesignColors.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\MaterialDesignThemes.Wpf.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\Serilog.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\Serilog.Settings.AppSettings.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\Serilog.Sinks.File.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\System.Data.SQLite.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMerge\bin\Release\System.Windows.Interactivity.dll"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "..\JWLMerge\bin\Release\net5.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion
+
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.deps.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\System.Drawing.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\System.IO.Packaging.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
