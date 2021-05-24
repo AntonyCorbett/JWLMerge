@@ -1,3 +1,6 @@
+using System.Reflection;
+using System.Threading;
+
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -720,14 +723,13 @@ namespace JWLMerge.ViewModel
 
         private void HandleDroppedFiles(DragEventArgs dragEventArgs)
         {
-            var jwLibraryFiles = _dragDropService.GetDroppedFiles(dragEventArgs);
-
             var tmpFilesCollection = new ConcurrentBag<JwLibraryFile>();
 
+            var jwLibraryFiles = _dragDropService.GetDroppedFiles(dragEventArgs);
+                
             Parallel.ForEach(jwLibraryFiles, file =>
             {
                 var backupFile = _backupFileService.Load(file);
-
                 tmpFilesCollection.Add(new JwLibraryFile(file, backupFile));
             });
 

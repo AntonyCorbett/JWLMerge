@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace JWLMerge.BackupFileServices
+﻿namespace JWLMerge.BackupFileServices
 {
     using System;
     using System.Collections.Generic;

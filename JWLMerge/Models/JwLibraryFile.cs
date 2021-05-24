@@ -33,8 +33,8 @@ namespace JWLMerge.Models
                 var sb = new StringBuilder();
                 sb.AppendLine($"{BackupFile.Database.Notes.Count} notes");
                 sb.AppendLine($"{BackupFile.Database.Bookmarks.Count} bookmarks");
-                sb.AppendLine($"{BackupFile.Database.UserMarks.Count} underlining");
                 sb.AppendLine($"{BackupFile.Database.InputFields.Count} input fields");
+                sb.AppendLine($"{BackupFile.Database.UserMarks.Count} underlining");
                 sb.Append($"{BackupFile.Database.Tags.Count} tags");
 
                 return sb.ToString();
