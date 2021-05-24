@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using Models;
+    using Models.DatabaseModels;
 
     internal sealed class NotesImporter
     {
@@ -74,7 +74,7 @@
                 }
                 else
                 {
-                    if (!existingNote.Content.Equals(note.NoteContent))
+                    if (NoteIsDifferent(existingNote, note.NoteContent))
                     {
                         // need to update the note.
                         result.BibleNotesUpdated++;
@@ -92,6 +92,16 @@
             return result;
         }
 
+        private static bool NoteIsDifferent(Note existingNote, string? newNote)
+        {
+            if (string.IsNullOrEmpty(existingNote.Content))
+            {
+                return !string.IsNullOrEmpty(newNote);
+            }
+
+            return !existingNote.Content.Equals(newNote);
+        }
+
         private void InsertNote(BibleNote note)
         {
             var book = note.BookChapterAndVerse.BookNumber;
@@ -100,7 +110,7 @@
             var location = _targetDatabase.FindLocationByBibleChapter(_bibleKeySymbol, book, chapter) ?? 
                            InsertLocation(book, chapter);
 
-            UserMark userMark = null;
+            UserMark? userMark = null;
             if (note.StartTokenInVerse != null && note.EndTokenInVerse != null)
             {
                 // the note should be associated with some
@@ -185,7 +195,7 @@
             return userMark;
         }
 
-        private UserMark FindExistingUserMark(int locationId, int startToken, int endToken)
+        private UserMark? FindExistingUserMark(int locationId, int startToken, int endToken)
         {
             var userMarksForLocation = _targetDatabase.FindUserMarks(locationId);
             if (userMarksForLocation == null)
@@ -228,7 +238,7 @@
             return location;
         }
 
-        private Note FindExistingNote(Database database, BibleNote note)
+        private static Note? FindExistingNote(Database database, BibleNote note)
         {
             var existingVerseNotes = database.FindNotes(note.BookChapterAndVerse);
             return existingVerseNotes?.FirstOrDefault(verseNote => verseNote.Title == note.NoteTitle);

@@ -4,7 +4,9 @@
     using System.Runtime.Serialization;
 
     [Serializable]
+#pragma warning disable RCS1194 // Implement exception constructors.
     public class WrongDatabaseVersionException : BackupFileServicesException
+#pragma warning restore RCS1194 // Implement exception constructors.
     {
         public WrongDatabaseVersionException(string filename, int expectedVersion, int foundVersion)
             : base($"Wrong database version found ({foundVersion}) in {filename}. Expecting {expectedVersion}")
@@ -20,7 +22,7 @@
         {
         }
 
-        public string Filename { get; }
+        public string? Filename { get; }
 
         public int ExpectedVersion { get; }
 

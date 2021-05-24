@@ -4,14 +4,14 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using Models.DatabaseModels;
     using Serilog;
 
     /// <summary>
     /// Isolates all data access to the SQLite database embedded in
     /// jwlibrary files.
     /// </summary>
-    internal class DataAccessLayer
+    internal sealed class DataAccessLayer
     {
         private readonly string _databaseFilePath;
 
@@ -27,13 +27,12 @@
         public void CreateEmptyClone(string cloneFilePath)
         {
             Log.Logger.Debug($"Creating empty clone: {cloneFilePath}");
-            
-            using (var source = CreateConnection(_databaseFilePath))
-            using (var destination = CreateConnection(cloneFilePath))
-            {
-                source.BackupDatabase(destination, "main", "main");
-                ClearData(destination);
-            }
+
+            using var source = CreateConnection(_databaseFilePath);
+            using var destination = CreateConnection(cloneFilePath);
+
+            source.BackupDatabase(destination, "main", "main");
+            ClearData(destination);
         }
 
         /// <summary>
@@ -62,23 +61,22 @@
         {
             var result = new Database();
 
-            using (var connection = CreateConnection())
-            {
-                result.InitBlank();
+            using var connection = CreateConnection();
 
-                result.LastModified.TimeLastModified = ReadAllRows(connection, ReadLastModified)?.FirstOrDefault()?.TimeLastModified;
-                result.Locations.AddRange(ReadAllRows(connection, ReadLocation));
-                result.Notes.AddRange(ReadAllRows(connection, ReadNote));
-                result.Tags.AddRange(ReadAllRows(connection, ReadTag));
-                result.TagMaps.AddRange(ReadAllRows(connection, ReadTagMap));
-                result.BlockRanges.AddRange(ReadAllRows(connection, ReadBlockRange));
-                result.Bookmarks.AddRange(ReadAllRows(connection, ReadBookmark));
-                result.UserMarks.AddRange(ReadAllRows(connection, ReadUserMark));
-                result.InputFields.AddRange(ReadAllRows(connection, ReadInputField));
+            result.InitBlank();
 
-                // ensure bookmarks appear in similar order to original.
-                result.Bookmarks.Sort((bookmark1, bookmark2) => bookmark1.Slot.CompareTo(bookmark2.Slot));
-            }
+            result.LastModified.TimeLastModified = ReadAllRows(connection, ReadLastModified).FirstOrDefault()?.TimeLastModified;
+            result.Locations.AddRange(ReadAllRows(connection, ReadLocation));
+            result.Notes.AddRange(ReadAllRows(connection, ReadNote));
+            result.Tags.AddRange(ReadAllRows(connection, ReadTag));
+            result.TagMaps.AddRange(ReadAllRows(connection, ReadTagMap));
+            result.BlockRanges.AddRange(ReadAllRows(connection, ReadBlockRange));
+            result.Bookmarks.AddRange(ReadAllRows(connection, ReadBookmark));
+            result.UserMarks.AddRange(ReadAllRows(connection, ReadUserMark));
+            result.InputFields.AddRange(ReadAllRows(connection, ReadInputField));
+
+            // ensure bookmarks appear in similar order to original.
+            result.Bookmarks.Sort((bookmark1, bookmark2) => bookmark1.Slot.CompareTo(bookmark2.Slot));
 
             return result;
         }
@@ -87,26 +85,25 @@
             SqliteConnection connection,
             Func<SqliteDataReader, TRowType> readRowFunction)
         {
-            using (var cmd = connection.CreateCommand())
+            using var cmd = connection.CreateCommand();
+
+            var result = new List<TRowType>();
+            var tableName = typeof(TRowType).Name;
+
+            cmd.CommandText = $"select * from {tableName}";
+            Log.Logger.Debug($"SQL: {cmd.CommandText}");
+                
+            using (var reader = cmd.ExecuteReader())
             {
-                var result = new List<TRowType>();
-                var tableName = typeof(TRowType).Name;
-
-                cmd.CommandText = $"select * from {tableName}";
-                Log.Logger.Debug($"SQL: {cmd.CommandText}");
-                
-                using (var reader = cmd.ExecuteReader())
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        result.Add(readRowFunction(reader));
-                    }
+                    result.Add(readRowFunction(reader));
                 }
-
-                Log.Logger.Debug($"SQL result set count: {result.Count}");
-                
-                return result;
             }
+
+            Log.Logger.Debug($"SQL result set count: {result.Count}");
+                
+            return result;
         }
 
         private static string ReadString(SqliteDataReader reader, string columnName)
@@ -114,7 +111,7 @@
             return reader[columnName].ToString();
         }
 
-        private static string ReadNullableString(SqliteDataReader reader, string columnName)
+        private static string? ReadNullableString(SqliteDataReader reader, string columnName)
         {
             var value = reader[columnName];
             return value == DBNull.Value ? null : value.ToString();
@@ -159,35 +156,32 @@
 
         private static void VacuumDatabase(SqliteConnection connection)
         {
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = "vacuum;";
-                Log.Logger.Debug($"SQL: {command.CommandText}");
+            using var command = connection.CreateCommand();
 
-                command.ExecuteNonQuery();
-            }
+            command.CommandText = "vacuum;";
+            Log.Logger.Debug($"SQL: {command.CommandText}");
+
+            command.ExecuteNonQuery();
         }
 
         private static void UpdateLastModified(SqliteConnection connection)
         {
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = "delete from LastModified; insert into LastModified default values";
-                Log.Logger.Debug($"SQL: {command.CommandText}");
+            using var command = connection.CreateCommand();
 
-                command.ExecuteNonQuery();
-            }
+            command.CommandText = "delete from LastModified; insert into LastModified default values";
+            Log.Logger.Debug($"SQL: {command.CommandText}");
+
+            command.ExecuteNonQuery();
         }
 
         private static void ClearTable(SqliteConnection connection, string tableName)
         {
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = $"delete from {tableName}";
-                Log.Logger.Debug($"SQL: {command.CommandText}");
+            using var command = connection.CreateCommand();
 
-                command.ExecuteNonQuery();
-            }
+            command.CommandText = $"delete from {tableName}";
+            Log.Logger.Debug($"SQL: {command.CommandText}");
+
+            command.ExecuteNonQuery();
         }
 
         private static void PopulateTable<TRowType>(SqliteConnection connection, List<TRowType> rows)
@@ -202,6 +196,11 @@
 
             foreach (var row in rows)
             {
+                if (row == null)
+                {
+                    continue;
+                }
+
                 using var cmd = connection.CreateCommand();
                 cmd.CommandText = $"insert into {tableName} ({columnNamesCsv}) values ({paramNamesCsv})";
                 AddPopulateTableParams(cmd, columnNames, paramNames, row);
@@ -220,7 +219,7 @@
         {
             for (int n = 0; n < columnNames.Count; ++n)
             {
-                var value = row.GetType().GetProperty(columnNames[n])?.GetValue(row) ?? DBNull.Value;
+                var value = row!.GetType().GetProperty(columnNames[n])?.GetValue(row) ?? DBNull.Value;
                 cmd.Parameters.AddWithValue(paramNames[n], value);
             }
         }

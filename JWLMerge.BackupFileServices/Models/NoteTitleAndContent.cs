@@ -1,9 +1,9 @@
 ﻿namespace JWLMerge.BackupFileServices.Models
 {
-    internal class NoteTitleAndContent
+    internal sealed class NoteTitleAndContent
     {
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public string Content { get; set; }
+        public string? Content { get; set; }
     }
 }

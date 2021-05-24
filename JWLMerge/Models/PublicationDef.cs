@@ -1,9 +1,15 @@
 ﻿namespace JWLMerge.Models
 {
-    internal class PublicationDef
+    internal sealed class PublicationDef
     {
-        public string KeySymbol { get; set; }
+        public PublicationDef(string keySymbol, bool isAllPubSymbol)
+        {
+            KeySymbol = keySymbol;
+            IsAllPublicationsSymbol = isAllPubSymbol;
+        }
 
-        public bool IsAllPublicationsSymbol { get; set; }
+        public string KeySymbol { get; }
+
+        public bool IsAllPublicationsSymbol { get; }
     }
 }

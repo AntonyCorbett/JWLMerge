@@ -1,6 +1,6 @@
 ﻿namespace JWLMerge.BackupFileServices.Models
 {
-    internal class TagTypeAndName
+    internal sealed class TagTypeAndName
     {
         public TagTypeAndName(int type, string name)
         {

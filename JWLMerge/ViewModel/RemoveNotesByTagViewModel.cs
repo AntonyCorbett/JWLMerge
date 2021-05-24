@@ -3,14 +3,14 @@
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
     using System.Linq;
-    using JWLMerge.Models;
-    using JWLMerge.Services;
+    using Models;
+    using Services;
     using MaterialDesignThemes.Wpf;
     using Microsoft.Toolkit.Mvvm.ComponentModel;
     using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RemoveNotesByTagViewModel : ObservableObject
+    internal sealed class RemoveNotesByTagViewModel : ObservableObject
     {
         private bool _removeAssociatedUnderlining;
         private bool _removeAssociatedTags;
@@ -23,13 +23,13 @@
             TagItems.CollectionChanged += TagItemsCollectionChanged;
         }
 
-        public RelayCommand OkCommand { get; set; }
+        public RelayCommand OkCommand { get; }
 
-        public RelayCommand CancelCommand { get; set; }
+        public RelayCommand CancelCommand { get; }
 
-        public int[] Result { get; private set; }
+        public int[]? Result { get; private set; }
 
-        public ObservableCollection<TagListItem> TagItems { get; } = new ObservableCollection<TagListItem>();
+        public ObservableCollection<TagListItem> TagItems { get; } = new();
 
         public bool SelectionMade => TagItems.Any(x => x.IsChecked);
 
@@ -49,9 +49,9 @@
             ? "Remove associated Tags" 
             : "Remove associated Tag";
 
-        private void TagItemsCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void TagItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewItems != null)
             {
                 foreach (TagListItem item in e.NewItems)
                 {
@@ -65,7 +65,7 @@
             return TagItems.Count(x => x.IsChecked && x.Id != DialogService.UntaggedItemId);
         }
 
-        private void ItemPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ItemPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             OnPropertyChanged(nameof(SelectionMade));
             OnPropertyChanged(nameof(RemoveTagsCaption));

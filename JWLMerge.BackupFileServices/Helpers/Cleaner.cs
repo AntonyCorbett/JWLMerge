@@ -2,13 +2,13 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using Models.DatabaseModels;
     using Serilog;
 
     /// <summary>
     /// Cleans jwlibrary files by removing redundant or anomalous database rows.
     /// </summary>
-    internal class Cleaner
+    internal sealed class Cleaner
     {
         private readonly Database _database;
 
@@ -114,11 +114,10 @@
         {
             int removed = 0;
 
-            var userMarkIdsFound = new HashSet<int>();
-            
             var ranges = _database.BlockRanges;
             if (ranges.Any())
             {
+                var userMarkIdsFound = new HashSet<int>();
                 var userMarkIds = GetUserMarkIdsInUse();
                 
                 foreach (var range in Enumerable.Reverse(ranges))

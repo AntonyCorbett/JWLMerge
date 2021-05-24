@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using JWLMerge.BackupFileServices.Events;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.ExcelServices;
+    using Events;
+    using Models;
+    using Models.DatabaseModels;
+    using ExcelServices;
 
     /// <summary>
     /// The BackupFileService interface.
@@ -71,7 +71,7 @@
         /// <returns>Number of notes removed.</returns>
         int RemoveNotesByTag(
             BackupFile backup,
-            int[] tagIds,
+            int[]? tagIds,
             bool removeUntaggedNotes,
             bool removeAssociatedUnderlining,
             bool removeAssociatedTags);
@@ -83,7 +83,7 @@
         /// <param name="colorIndexes">The color indexes to target.</param>
         /// <param name="removeAssociatedNotes">Whether associated notes should also be removed.</param>
         /// <returns>Number of underlined items removed.</returns>
-        int RemoveUnderliningByColour(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes);
+        int RemoveUnderliningByColour(BackupFile backup, int[]? colorIndexes, bool removeAssociatedNotes);
 
         /// <summary>
         /// Removes underlining by publication and colour.
@@ -99,7 +99,7 @@
             BackupFile backup,
             int colorIndex,
             bool anyColor,
-            string publicationSymbol,
+            string? publicationSymbol,
             bool anyPublication,
             bool removeAssociatedNotes);
 

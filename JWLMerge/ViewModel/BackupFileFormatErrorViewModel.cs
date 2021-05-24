@@ -1,19 +1,19 @@
 ﻿namespace JWLMerge.ViewModel
 {
     using System.Collections.Generic;
-    using JWLMerge.Models;
+    using Models;
     using MaterialDesignThemes.Wpf;
     using Microsoft.Toolkit.Mvvm.ComponentModel;
     using Microsoft.Toolkit.Mvvm.Input;
 
-    internal class BackupFileFormatErrorViewModel : ObservableObject
+    internal sealed class BackupFileFormatErrorViewModel : ObservableObject
     {
         public BackupFileFormatErrorViewModel()
         {
             OkCommand = new RelayCommand(Ok);
         }
 
-        public List<FileFormatErrorListItem> Errors { get; } = new List<FileFormatErrorListItem>();
+        public List<FileFormatErrorListItem> Errors { get; } = new();
 
         public RelayCommand OkCommand { get; }
 

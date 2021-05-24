@@ -9,14 +9,14 @@ namespace JWLMerge.ViewModel
     using System.Linq;
     using System.Threading.Tasks;
     using System.Windows;
-    using JWLMerge.BackupFileServices;
+    using BackupFileServices;
     using JWLMerge.BackupFileServices.Helpers;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.ExcelServices;
-    using JWLMerge.Helpers;
-    using JWLMerge.Messages;
-    using JWLMerge.Models;
-    using JWLMerge.Services;
+    using ExcelServices;
+    using Helpers;
+    using Messages;
+    using Models;
+    using Services;
     using MaterialDesignThemes.Wpf;
     using Microsoft.Toolkit.Mvvm.ComponentModel;
     using Microsoft.Toolkit.Mvvm.Input;
@@ -24,7 +24,7 @@ namespace JWLMerge.ViewModel
     using Serilog;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class MainViewModel : ObservableObject
+    internal sealed class MainViewModel : ObservableObject
     {
         private readonly string _latestReleaseUrl = Properties.Resources.LATEST_RELEASE_URL;
         private readonly IDragDropService _dragDropService;
@@ -69,9 +69,9 @@ namespace JWLMerge.ViewModel
             GetVersionData();
         }
 
-        public ObservableCollection<JwLibraryFile> Files { get; } = new ObservableCollection<JwLibraryFile>();
+        public ObservableCollection<JwLibraryFile> Files { get; } = new();
 
-        public string Title { get; set; }
+        public string Title { get; private set; } = null!;
 
         public bool FileListEmpty => Files.Count == 0;
 
@@ -86,8 +86,8 @@ namespace JWLMerge.ViewModel
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(IsNotBusy));
 
-                    MergeCommand?.NotifyCanExecuteChanged();
-                    CloseCardCommand?.NotifyCanExecuteChanged();
+                    MergeCommand.NotifyCanExecuteChanged();
+                    CloseCardCommand.NotifyCanExecuteChanged();
                 }
             }
         }
@@ -113,31 +113,31 @@ namespace JWLMerge.ViewModel
         public ISnackbarMessageQueue TheSnackbarMessageQueue => _snackbarService.TheSnackbarMessageQueue;
 
         // commands...
-        public RelayCommand<string> CloseCardCommand { get; set; }
+        public RelayCommand<string> CloseCardCommand { get; private set; } = null!;
 
-        public RelayCommand<string> ShowDetailsCommand { get; set; }
+        public RelayCommand<string> ShowDetailsCommand { get; private set; } = null!;
 
-        public RelayCommand MergeCommand { get; set; }
+        public RelayCommand MergeCommand { get; private set; } = null!;
 
-        public RelayCommand HomepageCommand { get; set; }
+        public RelayCommand HomepageCommand { get; private set; } = null!;
 
-        public RelayCommand UpdateCommand { get; set; }
+        public RelayCommand UpdateCommand { get; private set; } = null!;
 
-        public RelayCommand<string> RemoveFavouritesCommand { get; set; }
+        public RelayCommand<string> RemoveFavouritesCommand { get; private set; } = null!;
 
-        public RelayCommand<string> RedactNotesCommand { get; set; }
+        public RelayCommand<string> RedactNotesCommand { get; private set; } = null!;
 
-        public RelayCommand<string> ImportBibleNotesCommand { get; set; }
+        public RelayCommand<string> ImportBibleNotesCommand { get; private set; } = null!;
 
-        public RelayCommand<string> ExportBibleNotesCommand { get; set; }
+        public RelayCommand<string> ExportBibleNotesCommand { get; private set; } = null!;
 
-        public RelayCommand<string> RemoveNotesByTagCommand { get; set; }
+        public RelayCommand<string> RemoveNotesByTagCommand { get; private set; } = null!;
 
-        public RelayCommand<string> RemoveUnderliningByColourCommand { get; set; }
+        public RelayCommand<string> RemoveUnderliningByColourCommand { get; private set; } = null!;
 
-        public RelayCommand<string> RemoveUnderliningByPubAndColourCommand { get; set; }
+        public RelayCommand<string> RemoveUnderliningByPubAndColourCommand { get; private set; } = null!;
 
-        private JwLibraryFile GetFile(string filePath)
+        private JwLibraryFile? GetFile(string? filePath)
         {
             var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
             if (file == null)
@@ -158,34 +158,38 @@ namespace JWLMerge.ViewModel
         }
 
         private void FilesCollectionChanged(
-            object sender, 
+            object? sender, 
             System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(FileListEmpty));
             OnPropertyChanged(nameof(MergeCommandCaption));
-            MergeCommand?.NotifyCanExecuteChanged();
+            MergeCommand.NotifyCanExecuteChanged();
         }
 
         private void InitCommands()
         {
-            CloseCardCommand = new RelayCommand<string>(RemoveCard, filePath => !IsBusy && !_dialogService.IsDialogVisible());
-            ShowDetailsCommand = new RelayCommand<string>(ShowDetails, filePath => !IsBusy);
+            CloseCardCommand = new RelayCommand<string>(RemoveCard, _ => !IsBusy && !_dialogService.IsDialogVisible());
+            ShowDetailsCommand = new RelayCommand<string>(ShowDetails, _ => !IsBusy);
             MergeCommand = new RelayCommand(MergeFiles, () => GetMergeableFileCount() > 0 && !IsBusy && !_dialogService.IsDialogVisible());
             HomepageCommand = new RelayCommand(LaunchHomepage);
             UpdateCommand = new RelayCommand(LaunchLatestReleasePage);
 
-            RemoveFavouritesCommand = new RelayCommand<string>(async (filePath) => await RemoveFavouritesAsync(filePath), filePath => !IsBusy);
-            RedactNotesCommand = new RelayCommand<string>(async (filePath) => await RedactNotesAsync(filePath), filePath => !IsBusy);
-            ImportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ImportBibleNotesAsync(filePath), filePath => !IsBusy);
-            ExportBibleNotesCommand = new RelayCommand<string>(async (filePath) => await ExportBibleNotesAsync(filePath), filePath => !IsBusy);
-            RemoveNotesByTagCommand = new RelayCommand<string>(async (filePath) => await RemoveNotesByTagAsync(filePath), filePath => !IsBusy);
-            RemoveUnderliningByColourCommand = new RelayCommand<string>(async (filePath) => await RemoveUnderliningByColourAsync(filePath), filePath => !IsBusy);
-            RemoveUnderliningByPubAndColourCommand = new RelayCommand<string>(async (filePath) => await RemoveUnderliningByPubAndColourAsync(filePath), filePath => !IsBusy);
+            RemoveFavouritesCommand = new RelayCommand<string>(async filePath => await RemoveFavouritesAsync(filePath), _ => !IsBusy);
+            RedactNotesCommand = new RelayCommand<string>(async filePath => await RedactNotesAsync(filePath), _ => !IsBusy);
+            ImportBibleNotesCommand = new RelayCommand<string>(async filePath => await ImportBibleNotesAsync(filePath), _ => !IsBusy);
+            ExportBibleNotesCommand = new RelayCommand<string>(async filePath => await ExportBibleNotesAsync(filePath), _ => !IsBusy);
+            RemoveNotesByTagCommand = new RelayCommand<string>(async filePath => await RemoveNotesByTagAsync(filePath), _ => !IsBusy);
+            RemoveUnderliningByColourCommand = new RelayCommand<string>(async filePath => await RemoveUnderliningByColourAsync(filePath), _ => !IsBusy);
+            RemoveUnderliningByPubAndColourCommand = new RelayCommand<string>(async filePath => await RemoveUnderliningByPubAndColourAsync(filePath), _ => !IsBusy);
         }
         
-        private async Task ExportBibleNotesAsync(string filePath)
+        private async Task ExportBibleNotesAsync(string? filePath)
         {
             var file = GetFile(filePath);
+            if (file == null)
+            {
+                return;
+            }
 
             var bibleNotesExportFilePath = _fileOpenSaveService.GetBibleNotesExportFilePath("Bible Notes File");
             if (string.IsNullOrWhiteSpace(bibleNotesExportFilePath))
@@ -217,9 +221,13 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task ImportBibleNotesAsync(string filePath)
+        private async Task ImportBibleNotesAsync(string? filePath)
         {
             var file = GetFile(filePath);
+            if (file == null)
+            {
+                return;
+            }
 
             var bibleNotesImportFilePath = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");
             if (string.IsNullOrWhiteSpace(bibleNotesImportFilePath))
@@ -227,7 +235,7 @@ namespace JWLMerge.ViewModel
                 return;
             }
 
-            var userDefinedTags = file.BackupFile.Database.Tags.Where(x => x.Type != 0)
+            var userDefinedTags = file!.BackupFile.Database.Tags.Where(x => x.Type != 0)
                 .OrderBy(x => x.Name)
                 .ToList();
 
@@ -256,7 +264,7 @@ namespace JWLMerge.ViewModel
                     _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, file.FilePath, file.FilePath);
                 });
 
-                _windowService.Close(filePath);
+                _windowService.Close(filePath!);
                 _snackbarService.Enqueue("Bible notes imported successfully");
 
                 file.RefreshTooltipSummary();
@@ -272,9 +280,13 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task RemoveUnderliningByPubAndColourAsync(string filePath)
+        private async Task RemoveUnderliningByPubAndColourAsync(string? filePath)
         {
             var file = GetFile(filePath);
+            if (file == null)
+            {
+                return;
+            }
             
             var colors = ColourHelper.GetHighlighterColoursInUse(file.BackupFile.Database.UserMarks, true);
             var pubs = PublicationHelper.GetPublications(file.BackupFile.Database.Locations, file.BackupFile.Database.UserMarks, true);
@@ -296,11 +308,11 @@ namespace JWLMerge.ViewModel
 
                     if (underliningRemoved > 0)
                     {
-                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath, filePath);
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath!, filePath!);
                     }
                 });
 
-                _windowService.Close(filePath);
+                _windowService.Close(filePath!);
 
                 _snackbarService.Enqueue(underliningRemoved == 0
                     ? "There was no underlining to remove!"
@@ -319,9 +331,13 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task RemoveUnderliningByColourAsync(string filePath)
+        private async Task RemoveUnderliningByColourAsync(string? filePath)
         {
             var file = GetFile(filePath);
+            if (file == null)
+            {
+                return;
+            }
             
             if (!file.BackupFile.Database.UserMarks.Any())
             {
@@ -349,11 +365,11 @@ namespace JWLMerge.ViewModel
 
                     if (underliningRemoved > 0)
                     {
-                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath, filePath);
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath!, filePath!);
                     }
                 });
 
-                _windowService.Close(filePath);
+                _windowService.Close(filePath!);
 
                 _snackbarService.Enqueue(underliningRemoved == 0
                     ? "There was no underlining to remove!"
@@ -372,9 +388,13 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task RemoveNotesByTagAsync(string filePath)
+        private async Task RemoveNotesByTagAsync(string? filePath)
         {
             var file = GetFile(filePath);
+            if (file == null)
+            {
+                return;
+            }
 
             var tags = TagHelper.GetTagsInUseByNotes(file.BackupFile.Database);
 
@@ -403,11 +423,11 @@ namespace JWLMerge.ViewModel
 
                     if (notesRemovedCount > 0)
                     {
-                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath, filePath);
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath!, filePath!);
                     }
                 });
 
-                _windowService.Close(filePath);
+                _windowService.Close(filePath!);
 
                 _snackbarService.Enqueue(notesRemovedCount == 0 
                     ? "There were no notes to remove!"
@@ -426,18 +446,18 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task RedactNotesAsync(string filePath)
+        private async Task RedactNotesAsync(string? filePath)
         {
             var file = GetFile(filePath);
 
-            var notes = file.BackupFile?.Database.Notes;
+            var notes = file?.BackupFile.Database.Notes;
             if (notes == null || !notes.Any())
             {
                 _snackbarService.Enqueue("No notes found");
                 return;
             }
 
-            if (file.NotesRedacted)
+            if (file!.NotesRedacted)
             {
                 _snackbarService.Enqueue("Notes already obfuscated");
                 return;
@@ -452,10 +472,10 @@ namespace JWLMerge.ViewModel
                     await Task.Run(() =>
                     {
                         count = _backupFileService.RedactNotes(file.BackupFile);
-                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath, filePath);
+                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath!, filePath!);
                     });
                     
-                    _windowService.Close(filePath);
+                    _windowService.Close(filePath!);
                     file.NotesRedacted = true;
                     _snackbarService.Enqueue($"{count} Notes obfuscated successfully");
                 }
@@ -471,11 +491,11 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private async Task RemoveFavouritesAsync(string filePath)
+        private async Task RemoveFavouritesAsync(string? filePath)
         {
             var file = GetFile(filePath);
             
-            var favourites = file.BackupFile?.Database.TagMaps.Where(x => x.TagId == 1);
+            var favourites = file?.BackupFile.Database.TagMaps.Where(x => x.TagId == 1);
             if (favourites == null || !favourites.Any())
             {
                 _snackbarService.Enqueue("No favourites found");
@@ -489,14 +509,14 @@ namespace JWLMerge.ViewModel
                 {
                     await Task.Run(() =>
                     {
-                        _backupFileService.RemoveFavourites(file.BackupFile);
-                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath, filePath);
+                        _backupFileService.RemoveFavourites(file!.BackupFile);
+                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath!, filePath!);
                     });
 
                     _snackbarService.Enqueue("Favourites removed successfully");
-                    _windowService.Close(filePath);
+                    _windowService.Close(filePath!);
 
-                    file.RefreshTooltipSummary();
+                    file!.RefreshTooltipSummary();
                 }
                 catch (Exception ex)
                 {
@@ -568,13 +588,7 @@ namespace JWLMerge.ViewModel
                     // applying any merge parameters.
                     ReloadFiles();
                 }
-            }).ContinueWith(previousTask =>
-            {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    IsBusy = false;
-                }));
-            });
+            }).ContinueWith(_ => Application.Current.Dispatcher.BeginInvoke(new Action(() => IsBusy = false)));
         }
 
         private void ApplyMergeParameters()
@@ -606,7 +620,7 @@ namespace JWLMerge.ViewModel
             });
         }
 
-        private string GetSuitableFilePathForSchema()
+        private string? GetSuitableFilePathForSchema()
         {
             foreach (var file in Files)
             {
@@ -619,8 +633,13 @@ namespace JWLMerge.ViewModel
             return null;
         }
 
-        private void RemoveCard(string filePath)
+        private void RemoveCard(string? filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return;
+            }
+
             foreach (var file in Files)
             {
                 if (IsSameFile(file.FilePath, filePath))
@@ -632,8 +651,13 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private void ShowDetails(string filePath)
+        private void ShowDetails(string? filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return;
+            }
+
             var file = GetFile(filePath);
             if (file != null)
             {
@@ -704,11 +728,7 @@ namespace JWLMerge.ViewModel
             {
                 var backupFile = _backupFileService.Load(file);
 
-                tmpFilesCollection.Add(new JwLibraryFile
-                {
-                    BackupFile = backupFile,
-                    FilePath = file,
-                });
+                tmpFilesCollection.Add(new JwLibraryFile(file, backupFile));
             });
 
             foreach (var file in tmpFilesCollection)
@@ -721,14 +741,14 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private void FilePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void FilePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             // when the merge params are modified it can leave the number of mergeable items at less than 2.
-            MergeCommand?.NotifyCanExecuteChanged();
+            MergeCommand.NotifyCanExecuteChanged();
             OnPropertyChanged(nameof(MergeCommandCaption));
         }
 
-        private bool IsSameFile(string path1, string path2)
+        private static bool IsSameFile(string path1, string path2)
         {
             return Path.GetFullPath(path1).Equals(Path.GetFullPath(path2), StringComparison.OrdinalIgnoreCase);
         }
@@ -767,7 +787,7 @@ namespace JWLMerge.ViewModel
             }
         }
 
-        private bool IsInDesignMode()
+        private static bool IsInDesignMode()
         {
 #if DEBUG
             DependencyObject dep = new();

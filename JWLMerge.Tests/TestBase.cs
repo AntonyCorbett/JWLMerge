@@ -2,24 +2,24 @@
 {
     using System;
     using System.Collections.Generic;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.BackupFileServices.Models.ManifestFile;
+    using BackupFileServices.Models;
+    using BackupFileServices.Models.DatabaseModels;
+    using BackupFileServices.Models.ManifestFile;
 
     public class TestBase
     {
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
         
         protected BackupFile CreateMockBackup(int numRecords = 100)
         {
-            return new BackupFile
+            return new()
             {
                 Manifest = CreateMockManifest(),
                 Database = CreateMockDatabase(numRecords),
             };
         }
 
-        protected Database CreateMockDatabase(int numRecords)
+        private Database CreateMockDatabase(int numRecords)
         {
             var result = new Database();
 
@@ -34,7 +34,7 @@
             return result;
         }
 
-        protected Manifest CreateMockManifest()
+        private static Manifest CreateMockManifest()
         {
             DateTime now = DateTime.Now;
             string simpleDateString = $"{now.Year}-{now.Month:D2}-{now.Day:D2}";
@@ -55,7 +55,7 @@
             };
         }
 
-        private List<BlockRange> CreateMockBlockRanges(int numRecords)
+        private static List<BlockRange> CreateMockBlockRanges(int numRecords)
         {
             var result = new List<BlockRange>();
 
@@ -97,7 +97,7 @@
             return result;
         }
 
-        private List<UserMark> CreateMockUserMarks(int numRecords)
+        private static List<UserMark> CreateMockUserMarks(int numRecords)
         {
             var result = new List<UserMark>();
 

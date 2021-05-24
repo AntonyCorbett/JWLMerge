@@ -4,11 +4,11 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using JWLMerge.BackupFileServices;
-    using JWLMerge.ViewModel;
+    using BackupFileServices;
+    using ViewModel;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class WindowService : IWindowService
+    internal sealed class WindowService : IWindowService
     {
         private readonly List<DetailWindow> _detailWindows;
 
@@ -67,9 +67,9 @@
             return window;
         }
 
-        private void DetailWindowClosed(object sender, EventArgs e)
+        private void DetailWindowClosed(object? sender, EventArgs e)
         {
-            var window = (DetailWindow)sender;
+            var window = (DetailWindow?)sender;
             if (window != null)
             {
                 _detailWindows.Remove(window);
@@ -77,12 +77,17 @@
             }
         }
 
-        private DetailWindow GetDetailWindow(string filePath)
+        private DetailWindow? GetDetailWindow(string filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return null;
+            }
+
             foreach (var window in _detailWindows)
             {
                 var path = ((DetailViewModel)window.DataContext).FilePath;
-                if (IsSameFile(path, filePath))
+                if (!string.IsNullOrEmpty(path) && IsSameFile(path, filePath))
                 {
                     return window;
                 }
@@ -91,7 +96,7 @@
             return null;
         }
 
-        private bool IsSameFile(string path1, string path2)
+        private static bool IsSameFile(string path1, string path2)
         {
             return Path.GetFullPath(path1).Equals(Path.GetFullPath(path2), StringComparison.OrdinalIgnoreCase);
         }

@@ -1,8 +1,8 @@
 ﻿namespace JWLMerge.Services
 {
-    internal class NotesByTagResult
+    internal sealed class NotesByTagResult
     {
-        public int[] TagIds { get; set; }
+        public int[]? TagIds { get; set; }
 
         public bool RemoveUntaggedNotes { get; set; }
 

@@ -1,9 +1,15 @@
 ﻿namespace JWLMerge.Models
 {
-    internal class FileFormatErrorListItem
+    internal sealed class FileFormatErrorListItem
     {
-        public string Filename { get; set; }
+        public FileFormatErrorListItem(string filename, string errorMsg)
+        {
+            Filename = filename;
+            ErrorMsg = errorMsg;
+        }
 
-        public string ErrorMsg { get; set; }
+        public string Filename { get; }
+
+        public string ErrorMsg { get; }
     }
 }

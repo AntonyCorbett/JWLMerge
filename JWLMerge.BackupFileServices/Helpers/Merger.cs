@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using JWLMerge.BackupFileServices.Events;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using Events;
+    using Models.DatabaseModels;
     using Serilog;
 
     /// <summary>
@@ -25,7 +25,7 @@
         private int _maxBlockRangeId;
         private int _maxBookmarkId;
 
-        public event EventHandler<ProgressEventArgs> ProgressEvent;
+        public event EventHandler<ProgressEventArgs>? ProgressEvent;
 
         /// <summary>
         /// Merges the specified databases.
@@ -158,7 +158,7 @@
             }
         }
 
-        private bool OverlappingBlockRanges(BlockRange blockRange1, BlockRange blockRange2)
+        private static bool OverlappingBlockRanges(BlockRange blockRange1, BlockRange blockRange2)
         {
             if (blockRange1.StartToken == blockRange2.StartToken && 
                 blockRange1.EndToken == blockRange2.EndToken)
@@ -192,7 +192,7 @@
 
                 var tagId = _translatedTagIds.GetTranslatedId(sourceTagMap.TagId);
                 var id = 0;
-                TagMap existingTagMap = null;
+                TagMap? existingTagMap = null;
                 
                 if (sourceTagMap.LocationId != null)
                 {
@@ -202,8 +202,11 @@
                     {
                         // must add location...
                         var location = source.FindLocation(sourceTagMap.LocationId.Value);
-                        InsertLocation(location, destination);
-                        id = _translatedLocationIds.GetTranslatedId(sourceTagMap.LocationId.Value);
+                        if (location != null)
+                        {
+                            InsertLocation(location, destination);
+                            id = _translatedLocationIds.GetTranslatedId(sourceTagMap.LocationId.Value);
+                        }
                     }
 
                     existingTagMap = destination.FindTagMapForLocation(tagId, id);
@@ -224,7 +227,7 @@
             NormaliseTagMapPositions(destination.TagMaps);
         }
 
-        private void NormaliseTagMapPositions(List<TagMap> entries)
+        private static void NormaliseTagMapPositions(List<TagMap> entries)
         {
             // there is unique constraint on TagId, Position
             var tmpStorage = entries.GroupBy(x => x.TagId).ToDictionary(x => x.Key);
@@ -273,8 +276,11 @@
                 {
                     var referencedLocation = sourceUserMark.LocationId;
                     var location = source.FindLocation(referencedLocation);
+                    if (location != null)
+                    {
+                        InsertLocation(location, destination);
+                    }
 
-                    InsertLocation(location, destination);
                     InsertUserMark(sourceUserMark, destination);
                 }
             }
@@ -300,7 +306,7 @@
             }
         }
 
-        private void InsertInputField(InputField inputField, int locationId, Database destination)
+        private static void InsertInputField(InputField inputField, int locationId, Database destination)
         {
             var inputFldClone = inputField.Clone();
             inputFldClone.LocationId = locationId;
@@ -438,8 +444,10 @@
                     {
                         var referencedLocation = note.LocationId.Value;
                         var location = source.FindLocation(referencedLocation);
-
-                        InsertLocation(location, destination);
+                        if (location != null)
+                        {
+                            InsertLocation(location, destination);
+                        }
                     }
                     
                     InsertNote(note, destination);
@@ -447,7 +455,7 @@
             }
         }
 
-        private void UpdateNote(Note source, Note destination)
+        private static void UpdateNote(Note source, Note destination)
         {
             destination.Title = source.Title;
             destination.Content = source.Content;
@@ -456,7 +464,7 @@
 
         private void OnProgressEvent(string message)
         {
-            ProgressEvent?.Invoke(this, new ProgressEventArgs { Message = message });
+            ProgressEvent?.Invoke(this, new ProgressEventArgs(message));
         }
         
         private void ProgressMessage(string logMessage)

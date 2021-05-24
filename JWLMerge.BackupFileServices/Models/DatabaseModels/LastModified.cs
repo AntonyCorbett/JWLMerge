@@ -8,7 +8,7 @@
         /// Time stamp when the database was last modified.
         /// </summary>
         [JsonProperty(PropertyName = "LastModified")]
-        public string TimeLastModified { get; set; }
+        public string? TimeLastModified { get; set; }
 
         public void Reset()
         {

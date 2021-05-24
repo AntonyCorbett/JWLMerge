@@ -38,7 +38,7 @@
         /// <summary>
         /// The JWL publication key symbol (nullable).
         /// </summary>
-        public string KeySymbol { get; set; }
+        public string? KeySymbol { get; set; }
 
         /// <summary>
         /// The MEPS identifier for the publication language.
@@ -57,7 +57,7 @@
         /// <summary>
         /// A location title (nullable).
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         public Location Clone()
         {

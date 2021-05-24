@@ -18,19 +18,19 @@
         /// <summary>
         /// Playlist Item Id.
         /// </summary>
-        /// <remarks>added in in db v7, Apr 2020</remarks>
+        /// <remarks>added in db v7, Apr 2020</remarks>
         public int? PlaylistItemId { get; set; }
 
         /// <summary>
         /// Location Id. 
         /// </summary>
-        /// <remarks>added in in db v7, Apr 2020</remarks>
+        /// <remarks>added in db v7, Apr 2020</remarks>
         public int? LocationId { get; set; }
 
         /// <summary>
         /// Note Id.
         /// </summary>
-        /// <remarks>added in in db v7, Apr 2020.</remarks>
+        /// <remarks>added in db v7, Apr 2020.</remarks>
         public int? NoteId { get; set; }
 
         /// <summary>

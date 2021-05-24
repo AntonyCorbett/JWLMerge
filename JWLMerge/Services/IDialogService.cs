@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.Models;
+    using Models;
 
     internal interface IDialogService
     {
@@ -15,13 +15,13 @@
 
         Task<bool> ShouldRemoveFavouritesAsync();
 
-        Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
+        Task<ImportBibleNotesParams?> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
         Task<NotesByTagResult> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes);
 
         Task<ColorResult> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
 
-        Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors);
+        Task<PubColourResult?> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors);
 
         bool IsDialogVisible();
     }

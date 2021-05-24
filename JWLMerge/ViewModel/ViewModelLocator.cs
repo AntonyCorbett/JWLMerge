@@ -6,7 +6,7 @@ namespace JWLMerge.ViewModel
     /// This class contains static references to all the view models in the
     /// application and provides an entry point for the bindings.
     /// </summary>
-    internal class ViewModelLocator
+    internal sealed class ViewModelLocator
     {
         public static MainViewModel Main => Ioc.Default.GetService<MainViewModel>()!;
 

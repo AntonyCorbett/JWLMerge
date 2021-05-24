@@ -4,18 +4,18 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
+    using Models;
+    using Models.DatabaseModels;
 
     public class BibleNotesFile
     {
         private const int MaxTitleLength = 50;
-        private const string BibleKeySymbolToken = @"[BibleKeySymbol";
-        private const string MepsLanguageIdToken = @"[MepsLanguageId";
+        private const string BibleKeySymbolToken = "[BibleKeySymbol";
+        private const string MepsLanguageIdToken = "[MepsLanguageId";
 
         private readonly List<BibleNote> _notes = new List<BibleNote>();
         private readonly string _path;
-        private string _bibleKeySymbol;
+        private string _bibleKeySymbol = null!;
         private int _mepsLanguageId;
         private bool _initialised;
 
@@ -61,15 +61,17 @@
             ParseNotes(lines);
         }
 
-        private void RemoveParamLines(string[] lines)    
+        private static void RemoveParamLines(string[] lines)    
         {
             RemoveLineStarting(BibleKeySymbolToken, lines);
             RemoveLineStarting(MepsLanguageIdToken, lines);
         }
 
-        private void RemoveLineStarting(string token, string[] lines)
+        private static void RemoveLineStarting(string token, string[] lines)
         {
-            for (int n = 0; n < lines.Length; ++n)
+#pragma warning disable U2U1015 // Do not index an array multiple times within a loop body
+            for (var n = 0; n < lines.Length; ++n)
+#pragma warning restore U2U1015 // Do not index an array multiple times within a loop body
             {
                 if (lines[n].Trim().StartsWith(token, StringComparison.OrdinalIgnoreCase))
                 {
@@ -98,7 +100,7 @@
         {
             var linesInNote = new List<string>();
 
-            BibleNotesVerseSpecification currentVerseSpec = null;
+            BibleNotesVerseSpecification? currentVerseSpec = null;
 
             foreach (var line in lines)
             {
@@ -122,7 +124,7 @@
             StoreNote(linesInNote, currentVerseSpec);
         }
 
-        private void StoreNote(IReadOnlyList<string> lines, BibleNotesVerseSpecification currentVerseSpec)
+        private void StoreNote(IReadOnlyList<string> lines, BibleNotesVerseSpecification? currentVerseSpec)
         {
             if (currentVerseSpec == null)
             {
@@ -142,15 +144,15 @@
                     currentVerseSpec.ChapterNumber, 
                     currentVerseSpec.VerseNumber),
 
-                NoteTitle = titleAndContent.Title.Trim(),
-                NoteContent = titleAndContent.Content.Trim(),
+                NoteTitle = titleAndContent.Title?.Trim(),
+                NoteContent = titleAndContent.Content?.Trim(),
                 ColourIndex = currentVerseSpec.ColourIndex,
                 StartTokenInVerse = currentVerseSpec.StartWordIndex,
                 EndTokenInVerse = currentVerseSpec.EndWordIndex,
             });
         }
 
-        private NoteTitleAndContent ParseTitleAndContent(IReadOnlyList<string> lines)
+        private static NoteTitleAndContent? ParseTitleAndContent(IReadOnlyList<string> lines)
         {
             if (lines.Count == 0)
             {
@@ -174,11 +176,11 @@
             return result;
         }
 
-        private BibleNotesVerseSpecification GetVerseSpecification(string line)
+        private static BibleNotesVerseSpecification? GetVerseSpecification(string line)
         {
             var trimmed = line.Trim();
 
-            if (!trimmed.StartsWith("[") || !trimmed.EndsWith("]"))
+            if (!trimmed.StartsWith("[", StringComparison.Ordinal) || !trimmed.EndsWith("]", StringComparison.Ordinal))
             {
                 return null;
             }
@@ -251,7 +253,7 @@
             }
         }
 
-        private string FindValue(string[] lines, string token)
+        private static string? FindValue(string[] lines, string token)
         {
             var line = lines.FirstOrDefault(x =>
                 x.Trim().StartsWith(token, StringComparison.OrdinalIgnoreCase));

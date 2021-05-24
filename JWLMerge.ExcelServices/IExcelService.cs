@@ -5,6 +5,10 @@ namespace JWLMerge.ExcelServices
 {
     public interface IExcelService
     {
-        int AppendToBibleNotesFile(string excelFilePath, IReadOnlyCollection<BibleNote> notes, int startRow, string backupFilePath);
+        int AppendToBibleNotesFile(
+            string excelFilePath, 
+            IReadOnlyCollection<BibleNote>? notes, 
+            int startRow, 
+            string backupFilePath);
     }
 }

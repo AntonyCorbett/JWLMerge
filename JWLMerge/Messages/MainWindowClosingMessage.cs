@@ -2,8 +2,13 @@
 {
     using System.ComponentModel;
 
-    internal class MainWindowClosingMessage
+    internal sealed class MainWindowClosingMessage
     {
-        public CancelEventArgs CancelEventArgs { get; set; }
+        public MainWindowClosingMessage(CancelEventArgs args)
+        {
+            CancelEventArgs = args;
+        }
+
+        public CancelEventArgs CancelEventArgs { get; }
     }
 }

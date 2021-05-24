@@ -5,15 +5,15 @@
     using Microsoft.Win32;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class FileOpenSaveService : IFileOpenSaveService
+    internal sealed class FileOpenSaveService : IFileOpenSaveService
     {
-        private static string SaveDirectory { get; set; }
+        private static string? SaveDirectory { get; set; }
 
-        private static string ImportDirectory { get; set; }
+        private static string? ImportDirectory { get; set; }
 
-        private static string ExportDirectory { get; set; }
+        private static string? ExportDirectory { get; set; }
 
-        public string GetBibleNotesExportFilePath(string title)
+        public string? GetBibleNotesExportFilePath(string title)
         {
             var saveFileDialog = new SaveFileDialog
             {
@@ -32,7 +32,7 @@
             return null;
         }
 
-        public string GetBibleNotesImportFilePath(string title)
+        public string? GetBibleNotesImportFilePath(string title)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -53,7 +53,7 @@
             return null;
         }
 
-        public string GetSaveFilePath(string title)
+        public string? GetSaveFilePath(string title)
         {
             var saveFileDialog = new SaveFileDialog
             {
@@ -72,7 +72,7 @@
             return null;
         }
 
-        private string GetJWLMergeDocsFolder()
+        private static string GetJWLMergeDocsFolder()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMerge");
             if (!Directory.Exists(folder))
@@ -83,17 +83,17 @@
             return folder;
         }
 
-        private string GetDefaultSaveFolder()
+        private static string GetDefaultSaveFolder()
         {
             return GetJWLMergeDocsFolder();
         }
 
-        private string GetDefaultExportFolder()
+        private static string GetDefaultExportFolder()
         {
             return GetJWLMergeDocsFolder();
         }
 
-        private string GetDefaultImportFolder()
+        private static string GetDefaultImportFolder()
         {
             var folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (!Directory.Exists(folder))

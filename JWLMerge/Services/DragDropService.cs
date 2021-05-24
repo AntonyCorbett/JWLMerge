@@ -6,7 +6,7 @@
     using System.Windows;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class DragDropService : IDragDropService
+    internal sealed class DragDropService : IDragDropService
     {
         /// <summary>
         /// Determines whether we can accept the drag and drop operation
@@ -42,7 +42,7 @@
             {
                 foreach (var filePath in dataObject.GetFileDropList())
                 {
-                    if (IsJwLibraryFile(filePath))
+                    if (IsJwLibraryFile(filePath) && !string.IsNullOrEmpty(filePath))
                     {
                         result.Add(filePath);
                     }
@@ -52,10 +52,15 @@
             return result;
         }
 
-        private bool IsJwLibraryFile(string filePath)
+        private static bool IsJwLibraryFile(string? filePath)
         {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return false;
+            }
+
             var ext = Path.GetExtension(filePath);
-            return ext != null && ext.Equals(".jwlibrary", StringComparison.OrdinalIgnoreCase);
+            return ext.Equals(".jwlibrary", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

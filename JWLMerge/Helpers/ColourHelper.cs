@@ -1,10 +1,9 @@
 ﻿namespace JWLMerge.Helpers
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.Models;
+    using Models;
 
     internal static class ColourHelper
     {

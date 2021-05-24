@@ -1,6 +1,6 @@
 ﻿namespace JWLMerge.BackupFileServices.Models
 {
-    internal class BibleNotesVerseSpecification
+    internal sealed class BibleNotesVerseSpecification
     {
         public int BookNumber { get; set; }
 

@@ -2,3 +2,21 @@
 
 # S112: General exceptions should never be thrown
 dotnet_diagnostic.S112.severity = silent
+
+# U2U1202: Use LINQ Count methods efficiently
+dotnet_diagnostic.U2U1202.severity = silent
+
+# RCS1037: Remove trailing white-space.
+dotnet_diagnostic.RCS1037.severity = silent
+
+# U2U1108: StringBuilders should be initialized with capacity
+dotnet_diagnostic.U2U1108.severity = silent
+
+# U2U1009: Async or iterator methods should avoid state machine generation for early exits (throws or synchronous returns)
+dotnet_diagnostic.U2U1009.severity = silent
+
+# U2U1212: Capture intermediate results in lambda expressions
+dotnet_diagnostic.U2U1212.severity = silent
+
+# U2U1201: Local collections should be initialized with capacity
+dotnet_diagnostic.U2U1201.severity = silent

@@ -2,7 +2,7 @@
 {
     using System;
     
-    public struct BibleBookChapterAndVerse : IEquatable<BibleBookChapterAndVerse>
+    public readonly struct BibleBookChapterAndVerse : IEquatable<BibleBookChapterAndVerse>
     {
         public BibleBookChapterAndVerse(int bookNum, int chapterNum, int verseNum)
         {

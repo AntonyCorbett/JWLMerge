@@ -5,7 +5,7 @@
     using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RemoveFavouritesPromptViewModel : ObservableObject
+    internal sealed class RemoveFavouritesPromptViewModel : ObservableObject
     {
         public RemoveFavouritesPromptViewModel()
         {
@@ -13,9 +13,9 @@
             NoCommand = new RelayCommand(No);
         }
 
-        public RelayCommand YesCommand { get; set; }
+        public RelayCommand YesCommand { get; }
 
-        public RelayCommand NoCommand { get; set; }
+        public RelayCommand NoCommand { get; }
 
         public bool Result { get; private set; }
 

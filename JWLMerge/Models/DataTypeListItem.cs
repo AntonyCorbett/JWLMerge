@@ -1,10 +1,15 @@
 ﻿namespace JWLMerge.Models
 {
-    internal class DataTypeListItem
+    internal sealed class DataTypeListItem
     {
-        // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public string Caption { get; set; }
+        public DataTypeListItem(string caption, JwLibraryFileDataTypes dataType)
+        {
+            Caption = caption;
+            DataType = dataType;
+        }
         
-        public JwLibraryFileDataTypes DataType { get; set; }
+        public string Caption { get; }
+        
+        public JwLibraryFileDataTypes DataType { get; }
     }
 }

@@ -10,8 +10,8 @@
 
         public int ColourIndex { get; set; }
 
-        public string NoteTitle { get; set; }
+        public string? NoteTitle { get; set; }
 
-        public string NoteContent { get; set; }
+        public string? NoteContent { get; set; }
     }
 }

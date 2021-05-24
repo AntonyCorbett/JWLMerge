@@ -2,8 +2,13 @@
 {
     using System.Windows;
 
-    internal class DragOverMessage
+    internal sealed class DragOverMessage
     {
-        public DragEventArgs DragEventArgs { get; set; }
+        public DragOverMessage(DragEventArgs args)
+        {
+            DragEventArgs = args;
+        }
+
+        public DragEventArgs DragEventArgs { get; }
     }
 }

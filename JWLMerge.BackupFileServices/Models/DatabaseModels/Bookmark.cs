@@ -28,12 +28,12 @@
         /// <summary>
         /// The title text.
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = null!;
 
         /// <summary>
         /// A snippet of the bookmarked text (can be null)
         /// </summary>
-        public string Snippet { get; set; }
+        public string? Snippet { get; set; }
 
         /// <summary>
         /// The block type. Compare Locations.cs > BlockType

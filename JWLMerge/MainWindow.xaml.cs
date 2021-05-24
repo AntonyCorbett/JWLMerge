@@ -2,7 +2,7 @@
 {
     using System.ComponentModel;
     using System.Windows;
-    using JWLMerge.Messages;
+    using Messages;
     using Microsoft.Toolkit.Mvvm.Messaging;
 
     /// <summary>
@@ -17,17 +17,17 @@
 
         private void PanelOnDragOver(object sender, DragEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new DragOverMessage { DragEventArgs = e });
+            WeakReferenceMessenger.Default.Send(new DragOverMessage(e));
         }
 
         private void PanelOnDrop(object sender, DragEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new DragDropMessage { DragEventArgs = e });
+            WeakReferenceMessenger.Default.Send(new DragDropMessage(e));
         }
 
         private void MainWindowOnClosing(object sender, CancelEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new MainWindowClosingMessage { CancelEventArgs = e });
+            WeakReferenceMessenger.Default.Send(new MainWindowClosingMessage(e));
         }
     }
 }

@@ -12,7 +12,7 @@
             AwaitingOutput,
         }
 
-        public static CommandLineArgs Parse(string[] args)
+        public static CommandLineArgs? Parse(string[]? args)
         {
             if (args == null || args.Length < 2)
             {

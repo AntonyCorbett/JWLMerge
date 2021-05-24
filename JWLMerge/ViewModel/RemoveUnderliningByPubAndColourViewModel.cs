@@ -1,16 +1,16 @@
 ﻿namespace JWLMerge.ViewModel
 {
     using System.Collections.ObjectModel;
-    using JWLMerge.Models;
+    using Models;
     using MaterialDesignThemes.Wpf;
     using Microsoft.Toolkit.Mvvm.ComponentModel;
     using Microsoft.Toolkit.Mvvm.Input;
 
-    internal class RemoveUnderliningByPubAndColourViewModel : ObservableObject
+    internal sealed class RemoveUnderliningByPubAndColourViewModel : ObservableObject
     {
         private bool _removeAssociatedNotes;
-        private PublicationDef _selectedPublication;
-        private ColourListItem _selectedColour;
+        private PublicationDef? _selectedPublication;
+        private ColourListItem? _selectedColour;
 
         public RemoveUnderliningByPubAndColourViewModel()
         {
@@ -18,15 +18,15 @@
             CancelCommand = new RelayCommand(Cancel);
         }
 
-        public RelayCommand OkCommand { get; set; }
+        public RelayCommand OkCommand { get; }
 
-        public RelayCommand CancelCommand { get; set; }
+        public RelayCommand CancelCommand { get; }
 
-        public ObservableCollection<PublicationDef> PublicationList { get; } = new ObservableCollection<PublicationDef>();
+        public ObservableCollection<PublicationDef> PublicationList { get; } = new();
 
-        public ObservableCollection<ColourListItem> ColourItems { get; } = new ObservableCollection<ColourListItem>();
+        public ObservableCollection<ColourListItem> ColourItems { get; } = new();
 
-        public PublicationDef SelectedPublication
+        public PublicationDef? SelectedPublication
         {
             get => _selectedPublication;
             set
@@ -40,7 +40,7 @@
             }
         }
 
-        public ColourListItem SelectedColour
+        public ColourListItem? SelectedColour
         {
             get => _selectedColour;
             set
@@ -56,7 +56,7 @@
 
         public bool SelectionMade => SelectedPublication != null && SelectedColour != null;
 
-        public PubColourResult Result { get; private set; }
+        public PubColourResult? Result { get; private set; }
 
         public bool RemoveAssociatedNotes
         {

@@ -7,13 +7,13 @@
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
-    using JWLMerge.BackupFileServices.Events;
-    using JWLMerge.BackupFileServices.Exceptions;
-    using JWLMerge.BackupFileServices.Helpers;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.BackupFileServices.Models.ManifestFile;
-    using JWLMerge.ExcelServices;
+    using Events;
+    using Exceptions;
+    using Helpers;
+    using Models;
+    using Models.DatabaseModels;
+    using Models.ManifestFile;
+    using ExcelServices;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Newtonsoft.Json.Serialization;
@@ -33,7 +33,7 @@
             _merger.ProgressEvent += MergerProgressEvent;
         }
 
-        public event EventHandler<ProgressEventArgs> ProgressEvent;
+        public event EventHandler<ProgressEventArgs>? ProgressEvent;
 
         /// <inheritdoc />
         public BackupFile Load(string backupFilePath)
@@ -53,18 +53,16 @@
                 var filename = Path.GetFileName(backupFilePath);
                 ProgressMessage($"Loading {filename}");
 
-                using (var archive = new ZipArchive(File.OpenRead(backupFilePath), ZipArchiveMode.Read))
+                using var archive = new ZipArchive(File.OpenRead(backupFilePath), ZipArchiveMode.Read);
+                var manifest = ReadManifest(filename, archive);
+
+                var database = ReadDatabase(archive, manifest.UserDataBackup.DatabaseName);
+
+                return new BackupFile
                 {
-                    var manifest = ReadManifest(filename, archive);
-
-                    var database = ReadDatabase(archive, manifest.UserDataBackup.DatabaseName);
-
-                    return new BackupFile
-                    {
-                        Manifest = manifest,
-                        Database = database,
-                    };
-                }
+                    Manifest = manifest,
+                    Database = database,
+                };
             }
             catch (UnauthorizedAccessException)
             {
@@ -137,7 +135,7 @@
         /// <inheritdoc />
         public int RemoveNotesByTag(
             BackupFile backup, 
-            int[] tagIds, 
+            int[]? tagIds, 
             bool removeUntaggedNotes, 
             bool removeAssociatedUnderlining,
             bool removeAssociatedTags)
@@ -147,10 +145,7 @@
                 throw new ArgumentNullException(nameof(backup));
             }
 
-            if (tagIds == null)
-            {
-                tagIds = Array.Empty<int>();
-            }
+            tagIds ??= Array.Empty<int>();
 
             var tagIdsHash = tagIds.ToHashSet();
 
@@ -199,17 +194,14 @@
         }
 
         /// <inheritdoc />
-        public int RemoveUnderliningByColour(BackupFile backup, int[] colorIndexes, bool removeAssociatedNotes)
+        public int RemoveUnderliningByColour(BackupFile backup, int[]? colorIndexes, bool removeAssociatedNotes)
         {
             if (backup == null)
             {
                 throw new ArgumentNullException(nameof(backup));
             }
 
-            if (colorIndexes == null)
-            {
-                colorIndexes = Array.Empty<int>();
-            }
+            colorIndexes ??= Array.Empty<int>();
 
             var userMarkIdsToRemove = new HashSet<int>();
             
@@ -229,7 +221,7 @@
             BackupFile backup, 
             int colorIndex, 
             bool anyColor, 
-            string publicationSymbol,
+            string? publicationSymbol,
             bool anyPublication, 
             bool removeAssociatedNotes)
         {
@@ -277,48 +269,45 @@
             }
 
             ProgressMessage("Writing merged database file");
-            
-            using (var memoryStream = new MemoryStream())
+
+            using var memoryStream = new MemoryStream();
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
             {
-                using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                Log.Logger.Debug("Created ZipArchive");
+
+                var tmpDatabaseFileName = ExtractDatabaseToFile(originalJwlibraryFilePathForSchema);
+                try
                 {
-                    Log.Logger.Debug("Created ZipArchive");
+                    backup.Manifest.UserDataBackup.Hash = GenerateDatabaseHash(tmpDatabaseFileName);
 
-                    var tmpDatabaseFileName = ExtractDatabaseToFile(originalJwlibraryFilePathForSchema);
-                    try
+                    var manifestEntry = archive.CreateEntry(ManifestEntryName);
+                    using (var entryStream = manifestEntry.Open())
+                    using (var streamWriter = new StreamWriter(entryStream))
                     {
-                        backup.Manifest.UserDataBackup.Hash = GenerateDatabaseHash(tmpDatabaseFileName);
-
-                        var manifestEntry = archive.CreateEntry(ManifestEntryName);
-                        using (var entryStream = manifestEntry.Open())
-                        using (var streamWriter = new StreamWriter(entryStream))
-                        {
-                            streamWriter.Write(
-                                JsonConvert.SerializeObject(
-                                    backup.Manifest,
-                                    new JsonSerializerSettings
-                                    {
-                                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                                    }));
-                        }
+                        streamWriter.Write(
+                            JsonConvert.SerializeObject(
+                                backup.Manifest,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                                }));
+                    }
                     
-                        AddDatabaseEntryToArchive(archive, backup.Database, tmpDatabaseFileName);
-                    }
-                    finally
-                    {
-                        Log.Logger.Debug("Deleting {tmpDatabaseFileName}", tmpDatabaseFileName);
-                        File.Delete(tmpDatabaseFileName);
-                    }
+                    AddDatabaseEntryToArchive(archive, backup.Database, tmpDatabaseFileName);
                 }
-                
-                using (var fileStream = new FileStream(newDatabaseFilePath, FileMode.Create))
+                finally
                 {
-                    ProgressMessage("Finishing");
-                    
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    memoryStream.CopyTo(fileStream);
+                    Log.Logger.Debug("Deleting {tmpDatabaseFileName}", tmpDatabaseFileName);
+                    File.Delete(tmpDatabaseFileName);
                 }
             }
+
+            using var fileStream = new FileStream(newDatabaseFilePath, FileMode.Create);
+
+            ProgressMessage("Finishing");
+                    
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            memoryStream.CopyTo(fileStream);
         }
 
         /// <inheritdoc />
@@ -407,7 +396,7 @@
                 }
             }
 
-            int countRemoved = 0;
+            var countRemoved = 0;
             foreach (var userMark in Enumerable.Reverse(database.UserMarks))
             {
                 if (!userMarksToRetain.Contains(userMark.UserMarkId))
@@ -457,7 +446,7 @@
 
             ProgressMessage($"Merging {files.Count} backup files");
 
-            int fileNumber = 1;
+            var fileNumber = 1;
             var originals = new List<BackupFile>();
             foreach (var file in files)
             {
@@ -547,10 +536,9 @@
                     }
                 }
                 
-                notesToWrite.Add(new ExcelServices.Models.BibleNote
+                notesToWrite.Add(new ExcelServices.Models.BibleNote(
+                    location.BookNumber.Value, BibleBookNames.GetName(location.BookNumber.Value))
                 {
-                    BookNumber = location.BookNumber.Value,
-                    BookName = BibleBookNames.GetName(location.BookNumber.Value),
                     ChapterNumber = location.ChapterNumber,
                     VerseNumber = note.BlockIdentifier,
                     NoteTitle = note.Title?.Trim(),
@@ -573,13 +561,14 @@
 
         private static string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
         {
-            var t = tags[noteId]?.ToArray();
-            if (t == null || !t.Any())
+            var t = tags[noteId].ToArray();
+            if (!t.Any())
             {
                 return string.Empty;
             }
 
-            return string.Join(", ", t.Select(x => database.FindTag(x.TagId).Name));
+            var tagNames = t.Select(x => database.FindTag(x.TagId)?.Name).Where(x => !string.IsNullOrEmpty(x));
+            return string.Join(", ", tagNames);
         }
 
         private static bool SupportDatabaseVersion(int version)
@@ -641,7 +630,7 @@
         }
 
         private static bool ShouldRemoveUnderlining(
-            UserMark mark, Database database, int colorIndex, bool anyColor, string publicationSymbol, bool anyPublication)
+            UserMark mark, Database database, int colorIndex, bool anyColor, string? publicationSymbol, bool anyPublication)
         {
             if (!anyColor && mark.ColorIndex != colorIndex)
             {
@@ -654,7 +643,7 @@
             }
 
             var location = database.FindLocation(mark.LocationId);
-            return location.KeySymbol == publicationSymbol;
+            return location != null && location.KeySymbol == publicationSymbol;
         }
 
         private static int RemoveUnderlining(Database database, HashSet<int> userMarkIdsToRemove, bool removeAssociatedNotes)
@@ -797,20 +786,18 @@
         private string ExtractDatabaseToFile(string jwlibraryFile)
         {
             Log.Logger.Debug("Opening ZipArchive {jwlibraryFile}", jwlibraryFile);
-            
-            using (var archive = new ZipArchive(File.OpenRead(jwlibraryFile), ZipArchiveMode.Read))
-            {
-                var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
 
-                var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
+            using var archive = new ZipArchive(File.OpenRead(jwlibraryFile), ZipArchiveMode.Read);
+            var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
+
+            var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
 #pragma warning disable S5445 // Insecure temporary file creation methods should not be used
-                var tmpFile = Path.GetTempFileName();
+            var tmpFile = Path.GetTempFileName();
 #pragma warning restore S5445 // Insecure temporary file creation methods should not be used
-                databaseEntry.ExtractToFile(tmpFile, overwrite: true);
+            databaseEntry.ExtractToFile(tmpFile, overwrite: true);
 
-                Log.Logger.Information("Created temp file: {tmpDatabaseFileName}", tmpFile);
-                return tmpFile;
-            }
+            Log.Logger.Information("Created temp file: {tmpDatabaseFileName}", tmpFile);
+            return tmpFile;
         }
 
         private Manifest ReadManifest(string filename, ZipArchive archive)
@@ -822,32 +809,81 @@
             {
                 throw new BackupFileServicesException($"Could not find manifest entry in jwlibrary file: {filename}");
             }
-            
-            using (var stream = new StreamReader(manifestEntry.Open()))
-            {
-                var fileContents = stream.ReadToEnd();
 
-                Log.Logger.Debug("Parsing manifest");
-                dynamic data = JObject.Parse(fileContents);
+            using var stream = new StreamReader(manifestEntry.Open());
+
+            var fileContents = stream.ReadToEnd();
+
+            Log.Logger.Debug("Parsing manifest");
+            dynamic data = JObject.Parse(fileContents);
                 
-                int manifestVersion = data.version ?? 0;
-                if (!SupportManifestVersion(manifestVersion))
-                {
-                    throw new WrongManifestVersionException(filename, ManifestVersionSupported, manifestVersion);
-                }
+            int manifestVersion = data.version ?? 0;
+            if (!SupportManifestVersion(manifestVersion))
+            {
+                throw new WrongManifestVersionException(filename, ManifestVersionSupported, manifestVersion);
+            }
 
-                int databaseVersion = data.userDataBackup.schemaVersion ?? 0;
-                if (!SupportDatabaseVersion(databaseVersion))
-                {
-                    throw new WrongDatabaseVersionException(filename, DatabaseVersionSupported, databaseVersion);
-                }
+            int databaseVersion = data.userDataBackup?.schemaVersion ?? 0;
+            if (!SupportDatabaseVersion(databaseVersion))
+            {
+                throw new WrongDatabaseVersionException(filename, DatabaseVersionSupported, databaseVersion);
+            }
 
-                var result = JsonConvert.DeserializeObject<Manifest>(fileContents);
+            var result = JsonConvert.DeserializeObject<Manifest>(fileContents);
 
-                var prettyJson = JsonConvert.SerializeObject(result, Formatting.Indented);
-                Log.Logger.Debug("Parsed manifest {manifestJson}", prettyJson);
+            ValidateManifest(filename, result);
 
-                return result;
+            var prettyJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+            Log.Logger.Debug("Parsed manifest {manifestJson}", prettyJson);
+
+            return result!;
+        }
+
+        private static void ValidateManifest(string filename, Manifest? result)
+        {
+            if (result == null)
+            {
+                throw new BackupFileServicesException($"Could not deserialize manifest entry from jwlibrary file: {filename}");
+            }
+
+            if (string.IsNullOrEmpty(result.Name))
+            {
+                throw new BackupFileServicesException($"Could not retrieve manifest name from jwlibrary file: {filename}");
+            }
+
+            if (string.IsNullOrEmpty(result.CreationDate))
+            {
+                throw new BackupFileServicesException($"Could not retrieve manifest creation date from jwlibrary file: {filename}");
+            }
+
+            ValidateUserDataBackup(filename, result.UserDataBackup);
+        }
+
+        private static void ValidateUserDataBackup(string filename, UserDataBackup userDataBackup)
+        {
+            if (userDataBackup == null)
+            {
+                throw new BackupFileServicesException($"Could not retrieve UserDataBackup element from jwlibrary file: {filename}");
+            }
+
+            if (string.IsNullOrEmpty(userDataBackup.DatabaseName))
+            {
+                throw new BackupFileServicesException($"DatabaseName element empty in UserDataBackup from jwlibrary file: {filename}");
+            }
+
+            if (string.IsNullOrEmpty(userDataBackup.DeviceName))
+            {
+                throw new BackupFileServicesException($"DeviceName element empty in UserDataBackup from jwlibrary file: {filename}");
+            }
+
+            if (string.IsNullOrEmpty(userDataBackup.Hash))
+            {
+                throw new BackupFileServicesException($"Hash element empty in UserDataBackup from jwlibrary file: {filename}");
+            }
+
+            if (string.IsNullOrEmpty(userDataBackup.LastModifiedDate))
+            {
+                throw new BackupFileServicesException($"LastModifiedDate element empty in UserDataBackup from jwlibrary file: {filename}");
             }
         }
 
@@ -862,21 +898,18 @@
         {
             ProgressMessage("Generating database hash");
 
-            using (var fs = new FileStream(databaseFilePath, FileMode.Open))
-            {
-                using (var bs = new BufferedStream(fs))
-                using (var sha1 = new SHA256Managed())
-                {
-                    byte[] hash = sha1.ComputeHash(bs);
-                    var sb = new StringBuilder(2 * hash.Length);
-                    foreach (byte b in hash)
-                    {
-                        sb.Append($"{b:x2}");
-                    }
+            using var fs = new FileStream(databaseFilePath, FileMode.Open);
+            using var bs = new BufferedStream(fs);
+            using var sha1 = new SHA256Managed();
 
-                    return sb.ToString();
-                }
+            byte[] hash = sha1.ComputeHash(bs);
+            var sb = new StringBuilder(2 * hash.Length);
+            foreach (byte b in hash)
+            {
+                sb.Append($"{b:x2}");
             }
+
+            return sb.ToString();
         }
 
         private void AddDatabaseEntryToArchive(
@@ -904,7 +937,7 @@
 
         private void OnProgressEvent(string message)
         {
-            OnProgressEvent(new ProgressEventArgs { Message = message });
+            OnProgressEvent(new ProgressEventArgs(message));
         }
         
         private void ProgressMessage(string logMessage)

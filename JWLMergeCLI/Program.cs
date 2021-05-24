@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.IO;
-    using JWLMergeCLI.Args;
+    using Args;
     using Serilog;
 
     public static class Program
@@ -71,7 +71,7 @@
         {
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion;
+            return fvi.FileVersion ?? "Unknown";
         }
 
         private static void ShowUsage()
@@ -79,36 +79,36 @@
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             Console.WriteLine();
-            Console.WriteLine($" JWLMergeCLI version {GetVersion()} ");
+            Console.WriteLine($@" JWLMergeCLI version {GetVersion()} ");
             Console.WriteLine();
             Console.ResetColor();
             
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("   Description:");
+            Console.WriteLine(@"   Description:");
             Console.ResetColor();
-            Console.WriteLine("    JWLMergeCLI is used to merge the contents of 2 or more jwlibrary backup");
-            Console.WriteLine("    files. These files are produced by the JW Library backup command and");
-            Console.WriteLine("    contain your personal study notes and highlighting.");
+            Console.WriteLine(@"    JWLMergeCLI is used to merge the contents of 2 or more jwlibrary backup");
+            Console.WriteLine(@"    files. These files are produced by the JW Library backup command and");
+            Console.WriteLine(@"    contain your personal study notes and highlighting.");
             Console.WriteLine();
             
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("   Usage:");
+            Console.WriteLine(@"   Usage:");
             Console.ResetColor();
-            Console.WriteLine("    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>... [-o output file]");
+            Console.WriteLine(@"    JWLMergeCLI <jwlibrary file 1> <jwlibrary file 2>... [-o output file]");
             Console.WriteLine();
-            Console.WriteLine("   Note that you can optionally specify the full path and name of the merged");
-            Console.WriteLine("   file using the -o (or --output directive). If you omit it, the merged");
-            Console.WriteLine("   file is stored in the current folder.");
+            Console.WriteLine(@"   Note that you can optionally specify the full path and name of the merged");
+            Console.WriteLine(@"   file using the -o (or --output directive). If you omit it, the merged");
+            Console.WriteLine(@"   file is stored in the current folder.");
             Console.WriteLine();
 
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("   An example:");
+            Console.WriteLine(@"   An example:");
             Console.ResetColor();
-            Console.WriteLine("    JWLMergeCLI \"C:\\Backup_PC16.jwlibrary\" \"C:\\Backup_iPad.jwlibrary\"");
+            Console.WriteLine(@"    JWLMergeCLI ""C:\Backup_PC16.jwlibrary"" ""C:\Backup_iPad.jwlibrary""");
             Console.WriteLine();
         }
 
-        private static void AppProgress(object sender, JWLMerge.BackupFileServices.Events.ProgressEventArgs e)
+        private static void AppProgress(object? sender, JWLMerge.BackupFileServices.Events.ProgressEventArgs e)
         {
             Console.WriteLine(e.Message);
         }

@@ -2,7 +2,7 @@
 {
     using System.Windows.Media;
 
-    internal class ColourDef
+    internal sealed class ColourDef
     {
         public ColourDef(int colourIndex, string name, string rgb)
         {
@@ -11,11 +11,11 @@
             RgbString = rgb;
         }
 
-        public int ColourIndex { get; set; }
+        public int ColourIndex { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
-        public string RgbString { get; set; }
+        public string RgbString { get; }
 
         public Color Color => (Color)ColorConverter.ConvertFromString(RgbString);
     }

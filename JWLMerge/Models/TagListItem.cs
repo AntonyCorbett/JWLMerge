@@ -2,13 +2,19 @@
 {
     using Microsoft.Toolkit.Mvvm.ComponentModel;
 
-    internal class TagListItem : ObservableObject
+    internal sealed class TagListItem : ObservableObject
     {
         private bool _isChecked;
 
-        public string Name { get; set; }
+        public TagListItem(string name, int id)
+        {
+            Name = name;
+            Id = id;
+        }
 
-        public int Id { get; set; }
+        public string Name { get; }
+
+        public int Id { get; }
 
         public bool IsChecked
         {

@@ -1,9 +1,9 @@
 ﻿namespace JWLMergeCLI.Args
 {
-    internal class CommandLineArgs
+    internal sealed class CommandLineArgs
     {
-        public string[] BackupFiles { get; set; }
+        public string[] BackupFiles { get; set; } = null!;
 
-        public string OutputFilePath { get; set; }
+        public string? OutputFilePath { get; set; }
     }
 }

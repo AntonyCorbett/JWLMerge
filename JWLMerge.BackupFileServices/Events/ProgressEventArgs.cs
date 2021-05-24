@@ -4,6 +4,11 @@
 
     public class ProgressEventArgs : EventArgs
     {
-        public string Message { get; set; }
+        public ProgressEventArgs(string msg)
+        {
+            Message = msg;
+        }
+
+        public string Message { get; }
     }
 }

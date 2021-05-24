@@ -4,16 +4,16 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using JWLMerge.BackupFileServices.Exceptions;
+    using BackupFileServices.Exceptions;
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.Dialogs;
-    using JWLMerge.Models;
-    using JWLMerge.ViewModel;
+    using Dialogs;
+    using Models;
+    using ViewModel;
     using MaterialDesignThemes.Wpf;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class DialogService : IDialogService
+    internal sealed class DialogService : IDialogService
     {
         public const int UntaggedItemId = -1;
         private const string NotTaggedString = "** Not Tagged **";
@@ -36,16 +36,13 @@
                     switch (e)
                     {
                         case WrongDatabaseVersionException dbVerEx:
-                            dc.Errors.Add(new FileFormatErrorListItem
-                                { Filename = dbVerEx.Filename, ErrorMsg = dbVerEx.Message });
+                            dc.Errors.Add(new FileFormatErrorListItem(dbVerEx.Filename ?? "Error", dbVerEx.Message));
                             break;
                         case WrongManifestVersionException mftVerEx:
-                            dc.Errors.Add(new FileFormatErrorListItem
-                                { Filename = mftVerEx.Filename, ErrorMsg = mftVerEx.Message });
+                            dc.Errors.Add(new FileFormatErrorListItem(mftVerEx.Filename ?? "Error", mftVerEx.Message));
                             break;
                         default:
-                            dc.Errors.Add(new FileFormatErrorListItem
-                                { Filename = "Error", ErrorMsg = bex.Message });
+                            dc.Errors.Add(new FileFormatErrorListItem("Error", bex.Message));
                             break;
                     }
                 }
@@ -53,10 +50,7 @@
 
             await DialogHost.Show(
                 dialog,
-                (object sender, DialogClosingEventArgs args) =>
-                {
-                    _isDialogVisible = false;
-                }).ConfigureAwait(false);
+                (object sender, DialogClosingEventArgs args) => _isDialogVisible = false).ConfigureAwait(false);
         }
 
         public async Task<bool> ShouldRemoveFavouritesAsync()
@@ -102,20 +96,12 @@
 
             if (includeUntaggedNotes)
             {
-                dc.TagItems.Add(new TagListItem
-                {
-                    Id = UntaggedItemId,
-                    Name = NotTaggedString,
-                });
+                dc.TagItems.Add(new TagListItem(NotTaggedString, UntaggedItemId));
             }
 
             foreach (var tag in tags)
             {
-                dc.TagItems.Add(new TagListItem
-                {
-                    Id = tag.TagId,
-                    Name = tag.Name,
-                });
+                dc.TagItems.Add(new TagListItem(tag.Name, tag.TagId));
             }
 
             await DialogHost.Show(
@@ -147,12 +133,7 @@
 
             foreach (var c in colours)
             {
-                dc.ColourItems.Add(new ColourListItem
-                {
-                    Id = c.ColourIndex,
-                    Name = c.Name,
-                    Color = c.Color,
-                });
+                dc.ColourItems.Add(new ColourListItem(c.Name, c.ColourIndex, c.Color));
             }
 
             await DialogHost.Show(
@@ -167,7 +148,7 @@
             };
         }
 
-        public async Task<PubColourResult> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors)
+        public async Task<PubColourResult?> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors)
         {
             _isDialogVisible = true;
 
@@ -180,12 +161,7 @@
 
             foreach (var c in colors)
             {
-                dc.ColourItems.Add(new ColourListItem
-                {
-                    Id = c.ColourIndex,
-                    Name = c.Name,
-                    Color = c.Color,
-                });
+                dc.ColourItems.Add(new ColourListItem(c.Name, c.ColourIndex, c.Color));
             }
 
             foreach (var p in pubs)
@@ -201,7 +177,7 @@
             return dc.Result;
         }
 
-        public async Task<ImportBibleNotesParams> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)
+        public async Task<ImportBibleNotesParams?> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags)
         {
             _isDialogVisible = true;
 

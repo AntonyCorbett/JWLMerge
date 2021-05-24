@@ -5,25 +5,25 @@
     using JWLMerge.BackupFileServices.Models;
     using JWLMerge.BackupFileServices.Models.DatabaseModels;
     using JWLMerge.BackupFileServices.Models.ManifestFile;
-    using JWLMerge.Models;
+    using Models;
     using Microsoft.Toolkit.Mvvm.ComponentModel;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class DetailViewModel : ObservableObject
+    internal sealed class DetailViewModel : ObservableObject
     {
-        private DataTypeListItem _selectedDataType;
+        private DataTypeListItem? _selectedDataType;
         private bool _notesRedacted;
-        private string _windowTitle;
-        private BackupFile _backupFile;
+        private string? _windowTitle;
+        private BackupFile? _backupFile;
         
         public DetailViewModel() 
         {
             ListItems = CreateListItems();
         }
 
-        public string FilePath { get; set; }
+        public string? FilePath { get; set; }
 
-        public BackupFile BackupFile
+        public BackupFile? BackupFile
         {
             get => _backupFile;
             set
@@ -36,13 +36,13 @@
                 }
             }
         }
-        
+
         public List<DataTypeListItem> ListItems { get; }
 
         public string WindowTitle
         {
             get => _windowTitle ?? string.Empty;
-            set => SetProperty(ref _windowTitle, value);
+            private set => SetProperty(ref _windowTitle, value);
         }
 
         public bool NotesRedacted
@@ -61,7 +61,7 @@
 
         public bool NotesNotRedacted => !NotesRedacted;
 
-        public DataTypeListItem SelectedDataType
+        public DataTypeListItem? SelectedDataType
         {
             get => _selectedDataType;
             set
@@ -76,7 +76,9 @@
             }
         }
 
-        public IEnumerable DataItemsSource
+#pragma warning disable U2U1200 // Prefer generic collections over non-generic ones
+        public IEnumerable? DataItemsSource
+#pragma warning restore U2U1200 // Prefer generic collections over non-generic ones
         {
             get
             {
@@ -118,13 +120,17 @@
                     }
                 }
 
+#pragma warning disable S1168 // Empty arrays and collections should be returned instead of null
                 return null;
+#pragma warning restore S1168 // Empty arrays and collections should be returned instead of null
             }
         }
 
-        public bool IsNotesItemSelected => SelectedDataType.DataType == JwLibraryFileDataTypes.Note;
-        
-        private IEnumerable ManifestAsItemsSource(Manifest manifest)
+        public bool IsNotesItemSelected => SelectedDataType?.DataType == JwLibraryFileDataTypes.Note;
+
+#pragma warning disable U2U1011 // Return types should be specific
+        private static IEnumerable ManifestAsItemsSource(Manifest? manifest)
+#pragma warning restore U2U1011 // Return types should be specific
         {
             var result = new List<KeyValuePair<string, string>>();
 
@@ -144,20 +150,20 @@
             return result;
         }
 
-        private List<DataTypeListItem> CreateListItems()
+        private static List<DataTypeListItem> CreateListItems()
         {
-            return new List<DataTypeListItem>
+            return new()
             {
-                new DataTypeListItem { Caption = "Manifest", DataType = JwLibraryFileDataTypes.Manifest },
-                new DataTypeListItem { Caption = "Block Range", DataType = JwLibraryFileDataTypes.BlockRange },
-                new DataTypeListItem { Caption = "Bookmark", DataType = JwLibraryFileDataTypes.Bookmark },
-                new DataTypeListItem { Caption = "InputField", DataType = JwLibraryFileDataTypes.InputField },
-                new DataTypeListItem { Caption = "Last Modified", DataType = JwLibraryFileDataTypes.LastModified },
-                new DataTypeListItem { Caption = "Location", DataType = JwLibraryFileDataTypes.Location },
-                new DataTypeListItem { Caption = "Note", DataType = JwLibraryFileDataTypes.Note },
-                new DataTypeListItem { Caption = "Tag", DataType = JwLibraryFileDataTypes.Tag },
-                new DataTypeListItem { Caption = "Tag Map", DataType = JwLibraryFileDataTypes.TagMap },
-                new DataTypeListItem { Caption = "User Mark", DataType = JwLibraryFileDataTypes.UserMark },
+                new("Manifest", JwLibraryFileDataTypes.Manifest),
+                new("Block Range", JwLibraryFileDataTypes.BlockRange),
+                new("Bookmark", JwLibraryFileDataTypes.Bookmark),
+                new("InputField", JwLibraryFileDataTypes.InputField),
+                new("Last Modified", JwLibraryFileDataTypes.LastModified),
+                new("Location", JwLibraryFileDataTypes.Location),
+                new("Note", JwLibraryFileDataTypes.Note),
+                new("Tag", JwLibraryFileDataTypes.Tag),
+                new("Tag Map", JwLibraryFileDataTypes.TagMap),
+                new("User Mark", JwLibraryFileDataTypes.UserMark),
             };
         }
     }

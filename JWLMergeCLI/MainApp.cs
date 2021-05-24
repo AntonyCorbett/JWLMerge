@@ -4,7 +4,7 @@
     using System.Linq;
     using JWLMerge.BackupFileServices;
     using JWLMerge.BackupFileServices.Events;
-    using JWLMergeCLI.Args;
+    using Args;
     using Serilog;
 
     /// <summary>
@@ -12,7 +12,7 @@
     /// </summary>
     internal sealed class MainApp
     {
-        public event EventHandler<ProgressEventArgs> ProgressEvent;
+        public event EventHandler<ProgressEventArgs>? ProgressEvent;
         
         /// <summary>
         /// Runs the app.
@@ -20,7 +20,7 @@
         /// <param name="args">Program arguments</param>
         public void Run(CommandLineArgs args)
         {
-            IBackupFileService backupFileService = new BackupFileService();
+            var backupFileService = new BackupFileService();
             backupFileService.ProgressEvent += BackupFileServiceProgress;
             
             var backup = backupFileService.Merge(args.BackupFiles);
@@ -32,7 +32,7 @@
             OnProgressEvent(logMessage);
         }
 
-        private void BackupFileServiceProgress(object sender, ProgressEventArgs e)
+        private void BackupFileServiceProgress(object? sender, ProgressEventArgs e)
         {
             OnProgressEvent(e);
         }
@@ -44,7 +44,7 @@
 
         private void OnProgressEvent(string message)
         {
-            OnProgressEvent(new ProgressEventArgs { Message = message });
+            OnProgressEvent(new ProgressEventArgs(message));
         }
     }
 }

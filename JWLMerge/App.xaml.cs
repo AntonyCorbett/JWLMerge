@@ -10,10 +10,10 @@ namespace JWLMerge
     using System.Windows.Interop;
     using System.Windows.Media;
     using Serilog;
-    using JWLMerge.BackupFileServices;
-    using JWLMerge.ExcelServices;
-    using JWLMerge.Services;
-    using JWLMerge.ViewModel;
+    using BackupFileServices;
+    using ExcelServices;
+    using Services;
+    using ViewModel;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
@@ -23,15 +23,14 @@ namespace JWLMerge
     public partial class App : Application
     {
         private readonly string _appString = "JWLMergeAC";
-        private Mutex _appMutex;
+        private Mutex? _appMutex;
 
         protected override void OnExit(ExitEventArgs e)
         {
             _appMutex?.Dispose();
             Log.Logger.Information("==== Exit ====");
         }
-
-
+        
         protected override void OnStartup(StartupEventArgs e)
         {
             ConfigureServices();
@@ -60,7 +59,7 @@ namespace JWLMerge
             Current.Shutdown();
         }
 
-        private void ConfigureServices()
+        private static void ConfigureServices()
         {
             var serviceCollection = new ServiceCollection();
 
@@ -88,7 +87,7 @@ namespace JWLMerge
             Ioc.Default.ConfigureServices(serviceProvider);
         }
 
-        private bool ForceSoftwareRendering()
+        private static bool ForceSoftwareRendering()
         {
             // https://blogs.msdn.microsoft.com/jgoldb/2010/06/22/software-rendering-usage-in-wpf/
             // renderingTier values:

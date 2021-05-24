@@ -5,7 +5,7 @@
     /// <summary>
     /// Used by the <see cref="Merger"/> to map old and new id values./>
     /// </summary>
-    internal class IdTranslator
+    internal sealed class IdTranslator
     {
         private readonly Dictionary<int, int> _ids;
 

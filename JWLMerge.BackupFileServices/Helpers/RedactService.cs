@@ -4,7 +4,7 @@
     using System.Text;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class RedactService
+    internal sealed class RedactService
     {
         private readonly Lazy<string[]> _loremIpsumLines;
         private readonly Random _random = new Random();
@@ -32,7 +32,7 @@
             {
                 if (sb.Length > 0)
                 {
-                    sb.Append(" ");
+                    sb.Append(' ');
                 }
 
                 sb.Append(GetRandomSentence());

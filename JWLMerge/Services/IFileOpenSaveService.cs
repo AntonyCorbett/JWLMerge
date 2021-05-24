@@ -2,10 +2,10 @@
 {
     internal interface IFileOpenSaveService
     {
-        string GetSaveFilePath(string title);
+        string? GetSaveFilePath(string title);
 
-        string GetBibleNotesImportFilePath(string title);
+        string? GetBibleNotesImportFilePath(string title);
 
-        string GetBibleNotesExportFilePath(string title);
+        string? GetBibleNotesExportFilePath(string title);
     }
 }

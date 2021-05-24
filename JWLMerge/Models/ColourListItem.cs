@@ -3,15 +3,22 @@
     using Microsoft.Toolkit.Mvvm.ComponentModel;
     using System.Windows.Media;
 
-    internal class ColourListItem : ObservableObject
+    internal sealed class ColourListItem : ObservableObject
     {
         private bool _isChecked;
 
-        public string Name { get; set; }
+        public ColourListItem(string name, int id, Color color)
+        {
+            Name = name;
+            Id = id;
+            Color = color;
+        }
 
-        public int Id { get; set; }
+        public string Name { get; }
 
-        public Color Color { get; set; }
+        public int Id { get; }
+
+        public Color Color { get; }
 
         public bool IsChecked
         {

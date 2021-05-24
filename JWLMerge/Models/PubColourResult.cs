@@ -1,8 +1,8 @@
 ﻿namespace JWLMerge.Models
 {
-    internal class PubColourResult
+    internal sealed class PubColourResult
     {
-        public string PublicationSymbol { get; set; }
+        public string? PublicationSymbol { get; set; }
 
         public int ColorIndex { get; set; }
 

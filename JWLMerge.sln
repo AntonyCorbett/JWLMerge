@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.BackupFileServices", "JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj", "{83446629-CDBB-43FF-B628-1B8A3A9603C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.BackupFileServices", "JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj", "{83446629-CDBB-43FF-B628-1B8A3A9603C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JWL Database Schemas", "JWL Database Schemas", "{DA7BDF58-CFEA-489C-B18C-944D9986758D}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,21 +13,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JWL Database Schemas", "JWL
 		Version008.txt = Version008.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMergeCLI", "JWLMergeCLI\JWLMergeCLI.csproj", "{2CBBA1C2-72C9-4287-A262-EC1D2A2F6E56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMergeCLI", "JWLMergeCLI\JWLMergeCLI.csproj", "{2CBBA1C2-72C9-4287-A262-EC1D2A2F6E56}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA506BB2-675E-47BE-BC54-ED6EAE369243}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		JWLMerge\JWLMerge.ruleset = JWLMerge\JWLMerge.ruleset
 		jwlmergecmdline.png = jwlmergecmdline.png
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.Tests", "JWLMerge.Tests\JWLMerge.Tests.csproj", "{07B843A0-2DD7-40C1-AFE9-5F1BCA22393E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.Tests", "JWLMerge.Tests\JWLMerge.Tests.csproj", "{07B843A0-2DD7-40C1-AFE9-5F1BCA22393E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge", "JWLMerge\JWLMerge.csproj", "{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge", "JWLMerge\JWLMerge.csproj", "{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.ExcelServices", "JWLMerge.ExcelServices\JWLMerge.ExcelServices.csproj", "{F8D64B6C-C475-4B5E-8B32-D717380F0F36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.ExcelServices", "JWLMerge.ExcelServices\JWLMerge.ExcelServices.csproj", "{F8D64B6C-C475-4B5E-8B32-D717380F0F36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

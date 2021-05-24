@@ -8,9 +8,9 @@
     using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal class ImportBibleNotesViewModel : ObservableObject
+    internal sealed class ImportBibleNotesViewModel : ObservableObject
     {
-        private IReadOnlyCollection<Tag> _tags;
+        private IReadOnlyCollection<Tag>? _tags;
 
         public ImportBibleNotesViewModel()
         {
@@ -18,13 +18,13 @@
             CancelCommand = new RelayCommand(Cancel);
         }
 
-        public ImportBibleNotesParams Result { get; private set; }
+        public ImportBibleNotesParams? Result { get; private set; }
 
         public RelayCommand OkCommand { get; set; }
 
         public RelayCommand CancelCommand { get; set; }
 
-        public IReadOnlyCollection<Tag> Tags
+        public IReadOnlyCollection<Tag>? Tags
         {
             get => _tags;
             set

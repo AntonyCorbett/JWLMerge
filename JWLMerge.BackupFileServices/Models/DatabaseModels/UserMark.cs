@@ -27,7 +27,7 @@
         /// <summary>
         /// The guid. Useful in merging!
         /// </summary>
-        public string UserMarkGuid { get; set; }
+        public string UserMarkGuid { get; set; } = null!;
 
         /// <summary>
         /// The highlight version. Semantics unknown!

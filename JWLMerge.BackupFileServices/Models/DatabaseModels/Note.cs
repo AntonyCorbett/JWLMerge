@@ -12,7 +12,7 @@
         /// <summary>
         /// A Guid (that should assist in merging notes).
         /// </summary>
-        public string Guid { get; set; }
+        public string Guid { get; set; } = null!;
 
         /// <summary>
         /// The user mark identifier (if the note is associated with user-highlighting).
@@ -28,17 +28,17 @@
         /// <summary>
         /// The user-defined note title.
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// The user-defined note content.
         /// </summary>
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         /// <summary>
         /// Time stamp when the note was last edited. ISO 8601 format.
         /// </summary>
-        public string LastModified { get; set; }
+        public string? LastModified { get; set; }
 
         /// <summary>
         /// The type of block associated with the note. 
