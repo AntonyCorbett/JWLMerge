@@ -24,7 +24,7 @@
         <DataTemplate DataType="{x:Type models:JwLibraryFile}">
             <materialDesign:Card 
                 IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
-                Margin="20,20,0,0" Padding="10" Width="220" Height="230">
+                Margin="20,20,0,0" Padding="10" Width="220" Height="245">
                 <materialDesign:Card.ToolTip>
                     <ToolTip Content="{Binding TooltipSummaryText}" 
                              Placement="Right"/>
@@ -36,6 +36,7 @@
                                                  Height="22"
                                                  ToolTip="{Binding BackupFile.Manifest.Name}"
                                                  DockPanel.Dock="Left"/>
+
                         <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
                                    DockPanel.Dock="Left"
                                    ToolTip="{Binding BackupFile.Manifest.Name}"
@@ -58,6 +59,13 @@
                                TextTrimming="CharacterEllipsis"
                                ToolTip="{Binding BackupFile.Manifest.Name}"
                                Text="{Binding BackupFile.Manifest.UserDataBackup.DeviceName}"/>
+
+                    <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" 
+                               Margin="0,5,0,0"
+                               FontSize="10"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{Binding BackupFile.FilePath}"
+                               Text="{Binding BackupFile.FilePath}"/>
 
                     <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,0,0,-4"/>
 

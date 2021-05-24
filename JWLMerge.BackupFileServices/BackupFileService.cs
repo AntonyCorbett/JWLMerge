@@ -60,11 +60,7 @@ namespace JWLMerge.BackupFileServices
 
                 var database = ReadDatabase(archive, manifest.UserDataBackup.DatabaseName);
 
-                return new BackupFile
-                {
-                    Manifest = manifest,
-                    Database = database,
-                };
+                return new BackupFile(manifest, database, backupFilePath);
             }
             catch (UnauthorizedAccessException)
             {
@@ -79,12 +75,8 @@ namespace JWLMerge.BackupFileServices
 
             var database = new Database();
             database.InitBlank();
-            
-            return new BackupFile
-            {
-                Manifest = new Manifest(),
-                Database = database,
-            };
+
+            return new BackupFile(new Manifest(), database, "test.jwlibrary");
         }
 
         /// <inheritdoc />
@@ -439,7 +431,7 @@ namespace JWLMerge.BackupFileServices
             var newManifest = UpdateManifest(files.First().Manifest);
 
             var mergedDatabase = MergeDatabases(files);
-            return new BackupFile { Manifest = newManifest, Database = mergedDatabase };
+            return new BackupFile(newManifest, mergedDatabase, "unknown.jwlibrary");
         }
 
         /// <inheritdoc />
@@ -469,7 +461,7 @@ namespace JWLMerge.BackupFileServices
             var newManifest = UpdateManifest(originals.First().Manifest);
             
             var mergedDatabase = MergeDatabases(originals);
-            return new BackupFile { Manifest = newManifest, Database = mergedDatabase };
+            return new BackupFile(newManifest, mergedDatabase, "unknown.jwlibrary");
         }
 
         /// <inheritdoc />
@@ -501,7 +493,7 @@ namespace JWLMerge.BackupFileServices
 
             notesImporter.Import(notes);
 
-            return new BackupFile { Manifest = newManifest, Database = originalBackupFile.Database };
+            return new BackupFile(newManifest, originalBackupFile.Database, originalBackupFile.FilePath);
         }
 
         public void ExportBibleNotesToExcel(

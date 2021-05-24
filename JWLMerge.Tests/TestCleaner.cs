@@ -11,7 +11,7 @@
         public void TestAllClean()
         {
             var file = CreateMockBackup();
-            file.Manifest = new Manifest();
+            //file.Manifest = new Manifest();
             
             var cleaner = new Cleaner(file.Database);
             var removedRows = cleaner.Clean();

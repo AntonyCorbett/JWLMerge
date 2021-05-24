@@ -12,11 +12,7 @@
         
         protected BackupFile CreateMockBackup(int numRecords = 100)
         {
-            return new()
-            {
-                Manifest = CreateMockManifest(),
-                Database = CreateMockDatabase(numRecords),
-            };
+            return new(CreateMockManifest(), CreateMockDatabase(numRecords), "test.jwlibrary");
         }
 
         private Database CreateMockDatabase(int numRecords)

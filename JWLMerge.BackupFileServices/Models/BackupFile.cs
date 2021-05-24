@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Models
+﻿using JWLMerge.BackupFileServices.Models.DatabaseModels;
+
+namespace JWLMerge.BackupFileServices.Models
 {
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
@@ -12,9 +14,18 @@
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Manifest Manifest { get; set; } = null!;
+        public BackupFile(Manifest manifest, Database database, string filePath)
+        {
+            Manifest = manifest;
+            Database = database;
+            FilePath = filePath;
+        }
+
+        public Manifest Manifest { get; }
         
-        public DatabaseModels.Database Database { get; set; } = null!;
+        public Database Database { get; }
+
+        public string FilePath { get; }
 
 #pragma warning disable IDE0051 // Remove unused private members
 #pragma warning disable S1144 // Remove unused private members
