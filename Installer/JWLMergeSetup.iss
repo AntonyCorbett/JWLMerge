@@ -6,7 +6,7 @@
 #define MyAppURL "https://github.com/AntonyCorbett/JWLMerge"
 #define MyAppExeName "JWLMerge.exe"
 
-#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\net5.0-windows\publish\JWLMerge.exe');
+#define MyAppVersion GetFileVersion('..\JWLMerge\bin\x86\Release\net5.0-windows\JWLMerge.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -49,14 +49,13 @@ Type: files; Name: {app}\GalaSoft.MvvmLight.Platform.dll
 Type: files; Name: {app}\CommonServiceLocator.dll
 
 [Files]
+Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
 
-Source: "..\JWLMerge\bin\Release\net5.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion
-
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.deps.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.runtimeconfig.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\System.Drawing.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\System.IO.Packaging.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\*.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\JWLMergeCLI.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\System.Drawing.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\System.IO.Packaging.dll"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
