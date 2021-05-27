@@ -50,10 +50,13 @@ Type: files; Name: {app}\CommonServiceLocator.dll
 
 [Files]
 Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
+Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\ref\*"; DestDir: "{app}\ref"; Flags: ignoreversion recursesubdirs;
+Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\runtimes\win-x86\*"; DestDir: "{app}\runtimes\win-x86"; Flags: ignoreversion recursesubdirs;
 
 Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\*.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\JWLMergeCLI.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\ref\*"; DestDir: "{app}\ref"; Flags: ignoreversion recursesubdirs
 Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\System.Drawing.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\System.IO.Packaging.dll"; DestDir: "{app}"; Flags: ignoreversion
 
