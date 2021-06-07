@@ -6,7 +6,7 @@
 #define MyAppURL "https://github.com/AntonyCorbett/JWLMerge"
 #define MyAppExeName "JWLMerge.exe"
 
-#define MyAppVersion GetFileVersion('..\JWLMerge\bin\x86\Release\net5.0-windows\JWLMerge.exe');
+#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\net5.0-windows\publish\JWLMerge.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -37,28 +37,25 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [InstallDelete]
 ; files from pre-net-5 edition
-Type: files; Name: {app}\JWLMerge.exe.config
-Type: files; Name: {app}\JWLMergeCLI.exe.config
-Type: files; Name: {app}\Serilog.Settings.AppSettings.dll
-Type: files; Name: {app}\SQLite.Interop.dll
-Type: files; Name: {app}\System.Data.SQLite.dll
-Type: files; Name: {app}\System.Windows.Interactivity.dll
-Type: files; Name: {app}\GalaSoft.MvvmLight.dll
-Type: files; Name: {app}\GalaSoft.MvvmLight.Extras.dll
-Type: files; Name: {app}\GalaSoft.MvvmLight.Platform.dll
-Type: files; Name: {app}\CommonServiceLocator.dll
+Type: files; Name: "{app}\JWLMerge.exe.config"
+Type: files; Name: "{app}\JWLMergeCLI.exe.config"
+Type: files; Name: "{app}\Serilog.Settings.AppSettings.dll"
+Type: files; Name: "{app}\SQLite.Interop.dll"
+Type: files; Name: "{app}\System.Data.SQLite.dll"
+Type: files; Name: "{app}\System.Windows.Interactivity.dll"
+Type: files; Name: "{app}\GalaSoft.MvvmLight.dll"
+Type: files; Name: "{app}\GalaSoft.MvvmLight.Extras.dll"
+Type: files; Name: "{app}\GalaSoft.MvvmLight.Platform.dll"
+Type: files; Name: "{app}\CommonServiceLocator.dll"
+
+; from abortive net-5 pre-release
+Type: filesandordirs; Name: "{app}\ref"
+Type: filesandordirs; Name: "{app}\runtimes"
 
 [Files]
-Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
-Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\ref\*"; DestDir: "{app}\ref"; Flags: ignoreversion recursesubdirs;
-Source: "..\JWLMerge\bin\x86\Release\net5.0-windows\runtimes\win-x86\*"; DestDir: "{app}\runtimes\win-x86"; Flags: ignoreversion recursesubdirs;
-
-Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\*.json"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\JWLMergeCLI.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\JWLMergeCLI.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\ref\*"; DestDir: "{app}\ref"; Flags: ignoreversion recursesubdirs
-Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\System.Drawing.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\JWLMergeCLI\bin\x86\Release\net5.0\System.IO.Packaging.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\JWLMerge\bin\Release\net5.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
+Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\Microsoft.Win32.SystemEvents.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
