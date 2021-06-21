@@ -11,7 +11,7 @@ dotnet publish JWLMerge\JWLMerge.csproj -p:PublishProfile=FolderProfile -c:Relea
 dotnet publish JWLMergeCLI\JWLMergeCLI.csproj -p:PublishProfile=FolderProfile -c:Release
 
 REM copy items into delivery
-copy JWLMergeCLI\bin\Release\net5.0\publish\*.* bin\Release\net5.0-windows\publish /q /s /y /d
+xcopy JWLMergeCLI\bin\Release\net5.0\publish\*.* bin\Release\net5.0-windows\publish /q /s /y /d
 
 REM Create installer
 "C:\Program Files (x86)\Inno Setup 6\iscc" Installer\jwlmergesetup.iss
