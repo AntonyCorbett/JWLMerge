@@ -274,6 +274,7 @@
                 var tmpDatabaseFileName = ExtractDatabaseToFile(originalJwlibraryFilePathForSchema);
                 try
                 {
+                    backup.Manifest.UserDataBackup.DatabaseName = DatabaseEntryName;
                     backup.Manifest.UserDataBackup.Hash = GenerateDatabaseHash(tmpDatabaseFileName);
 
                     var manifestEntry = archive.CreateEntry(ManifestEntryName);
