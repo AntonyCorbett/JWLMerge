@@ -10,7 +10,7 @@ At time of writing, JW Library has _backup_ and _restore_ commands, but no _merg
 
 ### Usage
 
-Download the JWLMergeSetup.exe file from the latest release and run it. There is also a "portable" version (so you can just copy files to a folder). You may also need to download and install the Microsoft .NET 5.0 Desktop runtime (x86) from [here](https://dotnet.microsoft.com/download/dotnet/5.0/runtime).
+Download the JWLMergeSetup.exe file from the latest release and run it. There is also a "portable" version (so you can just copy files to a folder). If you choose the portable option, you may also need to download and install the Microsoft .NET 5.0 Desktop runtime (x86) from [here](https://dotnet.microsoft.com/download/dotnet/5.0/runtime).
 
 https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
