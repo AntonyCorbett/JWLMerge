@@ -18,6 +18,10 @@ https://github.com/AntonyCorbett/JWLMerge/releases/latest
 
 https://github.com/AntonyCorbett/JWLMerge/wiki
 
+#### Command-line
+
+JWLMergeCLI.exe is a command line version of the application. Run in at a command prompt to ddisplay a description of usage.
+
 #### Wine
 
 If you are interested in running JWLMerge on Wine, please see this fork:
