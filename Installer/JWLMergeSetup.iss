@@ -22,7 +22,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\JWLMerge
+DefaultDirName={commonpf}\JWLMerge
 DefaultGroupName={#MyAppName}
 OutputBaseFilename=JWLMergeSetup
 SetupIconFile=..\JWLMerge.ico
@@ -59,8 +59,6 @@ Type: filesandordirs; Name: "{app}\runtimes"
 
 [Files]
 Source: "..\JWLMerge\bin\Release\net5.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\JWLMergeCLI.*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
-Source: "..\JWLMergeCLI\bin\Release\net5.0\publish\Microsoft.Win32.SystemEvents.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 // https://go.microsoft.com/fwlink/?linkid=2135256
 Source: "netcorecheck.exe"; Flags: dontcopy noencryption
