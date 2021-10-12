@@ -532,12 +532,24 @@ namespace JWLMerge.ViewModel
 
         private void LaunchLatestReleasePage()
         {
-            Process.Start(_latestReleaseUrl);
+            var psi = new ProcessStartInfo
+            {
+                FileName = _latestReleaseUrl,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
 
-        private void LaunchHomepage()
+        private static void LaunchHomepage()
         {
-            Process.Start(Properties.Resources.HOMEPAGE);
+            var psi = new ProcessStartInfo
+            {
+                FileName = Properties.Resources.HOMEPAGE,
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
 
         private void PrepareForMerge()
