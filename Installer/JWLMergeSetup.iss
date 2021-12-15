@@ -9,7 +9,7 @@
 #define MyAppURL "https://github.com/AntonyCorbett/JWLMerge"
 #define MyAppExeName "JWLMerge.exe"
 
-#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\net5.0-windows\publish\JWLMerge.exe');
+#define MyAppVersion GetFileVersion('..\JWLMerge\bin\Release\net6.0-windows\publish\JWLMerge.exe');
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -58,7 +58,7 @@ Type: filesandordirs; Name: "{app}\ref"
 Type: filesandordirs; Name: "{app}\runtimes"
 
 [Files]
-Source: "..\JWLMerge\bin\Release\net5.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
+Source: "..\JWLMerge\bin\Release\net6.0-windows\publish\*"; DestDir: "{app}"; Flags: ignoreversion; Excludes: "*.pdb"
 
 // https://go.microsoft.com/fwlink/?linkid=2135256
 Source: "netcorecheck.exe"; Flags: dontcopy noencryption
@@ -93,9 +93,9 @@ end;
 
 function InitializeSetup: Boolean;
 begin
-  // add dependencies (.NET 5 x86 desktop runtime)  
+  // add dependencies (.NET 6 x86 desktop runtime)  
   Dependency_ForceX86 := true;  
-  Dependency_AddDotNet50Desktop;    
+  Dependency_AddDotNet60Desktop;    
   
   Result := True;  
 end;

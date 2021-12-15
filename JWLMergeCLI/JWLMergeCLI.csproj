@@ -1,24 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>Enable</Nullable>
     <ApplicationIcon>JWLMerge.ico</ApplicationIcon>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.261302">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj" />
   </ItemGroup>
-
 </Project>
