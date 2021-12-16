@@ -3,10 +3,11 @@ D:
 cd \ProjectsPersonal\JWLMerge
 rd JWLMerge\bin /q /s
 rd JWLMergeCLI\bin /q /s
+rd JWLMerge.CodeGen\bin /q /s
 rd Installer\Output /q /s
 
 REM build / publish
-
+dotnet build JWLMerge.CodeGen\JWLMerge.CodeGen.csproj
 dotnet publish JWLMerge\JWLMerge.csproj -p:PublishProfile=FolderProfile -c:Release
 dotnet publish JWLMergeCLI\JWLMergeCLI.csproj -p:PublishProfile=FolderProfile -c:Release
 

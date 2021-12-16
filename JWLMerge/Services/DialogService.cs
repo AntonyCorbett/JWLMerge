@@ -11,6 +11,7 @@
     using Models;
     using ViewModel;
     using MaterialDesignThemes.Wpf;
+    using JWLMerge.EventTracking;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class DialogService : IDialogService
@@ -36,12 +37,15 @@
                     switch (e)
                     {
                         case WrongDatabaseVersionException dbVerEx:
+                            EventTracker.TrackWrongVer(dbVerEx.FoundVersion, dbVerEx.ExpectedVersion);
                             dc.Errors.Add(new FileFormatErrorListItem(dbVerEx.Filename ?? "Error", dbVerEx.Message));
                             break;
                         case WrongManifestVersionException mftVerEx:
+                            EventTracker.TrackWrongManifestVer(mftVerEx.FoundVersion, mftVerEx.ExpectedVersion);
                             dc.Errors.Add(new FileFormatErrorListItem(mftVerEx.Filename ?? "Error", mftVerEx.Message));
                             break;
                         default:
+                            EventTracker.Error(bex, "Importing file");
                             dc.Errors.Add(new FileFormatErrorListItem("Error", bex.Message));
                             break;
                     }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32002.185
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.BackupFileServices", "JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj", "{83446629-CDBB-43FF-B628-1B8A3A9603C3}"
 EndProject
@@ -27,6 +27,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge", "JWLMerge\JWLMerge.csproj", "{0D88A466-7C90-4C0B-B8BA-E1F5EC91D4A4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.ExcelServices", "JWLMerge.ExcelServices\JWLMerge.ExcelServices.csproj", "{F8D64B6C-C475-4B5E-8B32-D717380F0F36}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.CodeGen", "JWLMerge.CodeGen\JWLMerge.CodeGen.csproj", "{39191FAC-A156-4C11-91E2-F822F2A7E62D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +100,18 @@ Global
 		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Release|x64.Build.0 = Release|x64
 		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Release|x86.ActiveCfg = Release|Any CPU
 		{F8D64B6C-C475-4B5E-8B32-D717380F0F36}.Release|x86.Build.0 = Release|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Debug|x64.Build.0 = Debug|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Debug|x86.Build.0 = Debug|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Release|x64.ActiveCfg = Release|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Release|x64.Build.0 = Release|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Release|x86.ActiveCfg = Release|Any CPU
+		{39191FAC-A156-4C11-91E2-F822F2A7E62D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

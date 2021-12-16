@@ -16,6 +16,11 @@ namespace JWLMerge
     using ViewModel;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Toolkit.Mvvm.DependencyInjection;
+    using Microsoft.AppCenter;
+    using Microsoft.AppCenter.Analytics;
+    using Microsoft.AppCenter.Crashes;
+    using System.Globalization;
+    using JWLMerge.EventTracking;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -33,6 +38,8 @@ namespace JWLMerge
         
         protected override void OnStartup(StartupEventArgs e)
         {
+            ConfigureAppCenter();
+
             ConfigureServices();
 
             ConfigureLogger();
@@ -47,13 +54,30 @@ namespace JWLMerge
                 // disable hardware (GPU) rendering so that it's all done by the CPU...
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             }
-
+                        
             Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
+        }
+
+        private void ConfigureAppCenter()
+        {
+#pragma warning disable CA1416 // Validate platform compatibility
+                        
+            AppCenter.SetCountryCode(RegionInfo.CurrentRegion.TwoLetterISORegionName);
+
+            var secret = SecretsNamespace.GeneratedCodeForSecrets.GetAppCenterSecret();
+            if (!string.IsNullOrEmpty(secret))
+            {
+                AppCenter.Start(secret, typeof(Analytics), typeof(Crashes));
+            }            
+
+#pragma warning restore CA1416 // Validate platform compatibility
         }
 
         private void CurrentDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             // unhandled exceptions thrown from UI thread
+            EventTracker.Error(e.Exception, "Unhandled exception");
+
             e.Handled = true;
             Log.Logger.Fatal(e.Exception, "Unhandled exception");
             Current.Shutdown();

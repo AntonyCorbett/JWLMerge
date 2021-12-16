@@ -1,38 +1,45 @@
-﻿<UserControl x:Class="JWLMerge.Dialogs.FileFormatErrorDialog"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:JWLMerge.Dialogs"
-             mc:Ignorable="d" 
-             Width="500" Height =" 313"
-             d:DesignHeight="313.247" d:DesignWidth="530.273"
-             DataContext="{Binding BackupFileFormatErrorDialog, Source={StaticResource Locator}}"
-             TextElement.Foreground="{StaticResource MaterialDesignBody}"
-             TextElement.FontWeight="Medium"
-             TextElement.FontSize="14"
-             TextOptions.TextFormattingMode="Ideal"
-             TextOptions.TextRenderingMode="Auto"
-             Background="{StaticResource MaterialDesignPaper}"
-             FontFamily="{StaticResource MaterialDesignFont}">
+﻿<UserControl
+    x:Class="JWLMerge.Dialogs.FileFormatErrorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:JWLMerge.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="500"
+    Height=" 313"
+    d:DesignHeight="313.247"
+    d:DesignWidth="530.273"
+    Background="{StaticResource MaterialDesignPaper}"
+    DataContext="{Binding BackupFileFormatErrorDialog, Source={StaticResource Locator}}"
+    FontFamily="{StaticResource MaterialDesignFont}"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Medium"
+    TextElement.Foreground="{StaticResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
-            <Setter Property="Width" Value="125"/>
+        <Style
+            x:Key="BtnStyle"
+            BasedOn="{StaticResource MaterialDesignRaisedLightButton}"
+            TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="125" />
         </Style>
     </UserControl.Resources>
 
     <Border Padding="20,20,20,10">
-        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
-            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                       Margin="0,0,0,10"
-                       Text="Backup File Format Error" />
-
-            <TextBlock 
-                Style="{StaticResource MaterialDesignBody2TextBlock}"
+        <StackPanel Margin="0,0,0,10" Orientation="Vertical">
+            <TextBlock
                 Margin="0,0,0,10"
-                TextWrapping="Wrap"
-                Text="Could not load one or more backup files. Details follow:" />
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                Text="Backup File Format Error" />
+
+            <TextBlock
+                Margin="0,0,0,10"
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Text="Could not load one or more backup files. Details follow:"
+                TextWrapping="Wrap" />
 
             <ScrollViewer Height="150">
 
@@ -44,13 +51,16 @@
                                     <RowDefinition Height="5*" />
                                     <RowDefinition Height="4*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock 
+                                <TextBlock
+                                    Grid.Row="0"
+                                    FontWeight="Bold"
                                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                    Grid.Row="0" Text="{Binding Filename}" FontWeight="Bold" />
-                                <TextBlock 
+                                    Text="{Binding Filename}" />
+                                <TextBlock
+                                    Grid.Row="1"
                                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                                    TextWrapping="Wrap"
-                                    Grid.Row="1" Text="{Binding ErrorMsg}" />
+                                    Text="{Binding ErrorMsg}"
+                                    TextWrapping="Wrap" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -58,16 +68,17 @@
 
             </ScrollViewer>
 
-            <StackPanel Orientation="Horizontal" 
-                        HorizontalAlignment="Center" 
-                        Margin="0,20,0,0" >
+            <StackPanel
+                Margin="0,20,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
 
-                <Button Style="{StaticResource BtnStyle}" 
-                        IsDefault="true" 
-                        Command="{Binding OkCommand}"
-                        IsCancel="true" 
-                        Content="OK">
-                </Button>
+                <Button
+                    Command="{Binding OkCommand}"
+                    Content="OK"
+                    IsCancel="true"
+                    IsDefault="true"
+                    Style="{StaticResource BtnStyle}" />
 
             </StackPanel>
         </StackPanel>

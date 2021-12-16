@@ -22,6 +22,7 @@ namespace JWLMerge.ViewModel
     using Microsoft.Toolkit.Mvvm.Input;
     using Microsoft.Toolkit.Mvvm.Messaging;
     using Serilog;
+    using JWLMerge.EventTracking;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class MainViewModel : ObservableObject
@@ -200,6 +201,8 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
+                EventTracker.Track(EventName.ExportNotes);
+
                 await Task.Run(() =>
                 {
                     _backupFileService.ExportBibleNotesToExcel(
@@ -214,6 +217,7 @@ namespace JWLMerge.ViewModel
             {
                 _snackbarService.Enqueue("Error exporting Bible notes!");
                 Log.Logger.Error(ex, "Could not export Bible notes from file: {filePath}", file.FilePath);
+                EventTracker.Error(ex, "Exporting notes");
             }
             finally
             {
@@ -228,7 +232,7 @@ namespace JWLMerge.ViewModel
             {
                 return;
             }
-
+            
             var bibleNotesImportFilePath = _fileOpenSaveService.GetBibleNotesImportFilePath("Bible Notes File");
             if (string.IsNullOrWhiteSpace(bibleNotesImportFilePath))
             {
@@ -250,6 +254,8 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
+                EventTracker.Track(EventName.ImportNotes);
+
                 await Task.Run(() =>
                 {
                     var notesFile = new BibleNotesFile(bibleNotesImportFilePath);
@@ -273,6 +279,7 @@ namespace JWLMerge.ViewModel
             {
                 _snackbarService.Enqueue("Error importing Bible notes!");
                 Log.Logger.Error(ex, "Could not import Bible notes from file: {filePath}", bibleNotesImportFilePath);
+                EventTracker.Error(ex, "Importing notes");
             }
             finally
             {
@@ -300,6 +307,8 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
+                EventTracker.Track(EventName.RemoveUnderliningByPubColour);
+
                 var underliningRemoved = 0;
                 await Task.Run(() =>
                 {
@@ -324,6 +333,7 @@ namespace JWLMerge.ViewModel
             {
                 _snackbarService.Enqueue("Error removing underlining by Publication/Colour!");
                 Log.Logger.Error(ex, "Could not remove underlining by Publication/Colour from file: {filePath}", file.FilePath);
+                EventTracker.Error(ex, "Removing underlining by Pub/Colour");
             }
             finally
             {
@@ -356,6 +366,8 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
+                EventTracker.Track(EventName.RemoveUnderliningByColour);
+
                 var underliningRemoved = 0;
 
                 await Task.Run(() =>
@@ -381,6 +393,7 @@ namespace JWLMerge.ViewModel
             {
                 _snackbarService.Enqueue("Error removing underlining by Colour!");
                 Log.Logger.Error(ex, "Could not remove underlining by Colour from file: {filePath}", file.FilePath);
+                EventTracker.Error(ex, "Removing underlining by Colour");
             }
             finally
             {
@@ -410,6 +423,8 @@ namespace JWLMerge.ViewModel
             IsBusy = true;
             try
             {
+                EventTracker.Track(EventName.RemoveNotesByTag);
+
                 var notesRemovedCount = 0;
 
                 await Task.Run(() =>
@@ -439,6 +454,7 @@ namespace JWLMerge.ViewModel
             {
                 _snackbarService.Enqueue("Error removing notes by Tag!");
                 Log.Logger.Error(ex, "Could not remove notes by Tag from file: {filePath}", file.FilePath);
+                EventTracker.Error(ex, "Removing notes by Tag");
             }
             finally
             {
@@ -468,6 +484,8 @@ namespace JWLMerge.ViewModel
                 IsBusy = true;
                 try
                 {
+                    EventTracker.Track(EventName.RedactNotes);
+
                     var count = 0;
                     await Task.Run(() =>
                     {
@@ -483,6 +501,7 @@ namespace JWLMerge.ViewModel
                 {
                     _snackbarService.Enqueue("Error obfuscating notes!");
                     Log.Logger.Error(ex, "Could not obfuscate notes from file: {filePath}", filePath);
+                    EventTracker.Error(ex, "Redacting notes");
                 }
                 finally
                 {
@@ -507,6 +526,8 @@ namespace JWLMerge.ViewModel
                 IsBusy = true;
                 try
                 {
+                    EventTracker.Track(EventName.RemoveFavs);
+
                     await Task.Run(() =>
                     {
                         _backupFileService.RemoveFavourites(file!.BackupFile);
@@ -522,6 +543,7 @@ namespace JWLMerge.ViewModel
                 {
                     _snackbarService.Enqueue("Error removing favourites!");
                     Log.Logger.Error(ex, "Could not remove favourites from file: {filePath}", filePath);
+                    EventTracker.Error(ex, "Removing Favs");
                 }
                 finally
                 {
@@ -574,7 +596,9 @@ namespace JWLMerge.ViewModel
             }
             
             IsBusy = true;
-            
+
+            EventTracker.TrackMerge(Files.Count);
+
             Task.Run(() =>
             {
                 PrepareForMerge();
@@ -593,6 +617,7 @@ namespace JWLMerge.ViewModel
                 {
                     _snackbarService.Enqueue("Could not merge. See log file for more information");
                     Log.Logger.Error(ex, "Could not merge");
+                    EventTracker.Error(ex, "Merging");
                 }
                 finally
                 {
@@ -669,6 +694,8 @@ namespace JWLMerge.ViewModel
             var file = GetFile(filePath);
             if (file != null)
             {
+                EventTracker.Track(EventName.ShowDetails);
+
                 _windowService.ShowDetailWindow(
                     _backupFileService,
                     filePath,
@@ -713,13 +740,14 @@ namespace JWLMerge.ViewModel
                 }
                 catch (AggregateException ex)
                 {
-                    Log.Logger.Information(ex, "Unable to accept file");
+                    Log.Logger.Information(ex, "Unable to accept file");                   
 
                     _dialogService.ShowFileFormatErrorsAsync(ex);
                 }
                 catch (Exception ex)
                 {
                     Log.Logger.Error(ex, "Unexpected error");
+                    EventTracker.Error(ex, "Dropping file");
                 }
             }
 
@@ -731,7 +759,7 @@ namespace JWLMerge.ViewModel
             var tmpFilesCollection = new ConcurrentBag<JwLibraryFile>();
 
             var jwLibraryFiles = _dragDropService.GetDroppedFiles(dragEventArgs);
-                
+            
             Parallel.ForEach(jwLibraryFiles, file =>
             {
                 var backupFile = _backupFileService.Load(file);
