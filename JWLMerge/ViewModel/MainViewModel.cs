@@ -275,6 +275,12 @@ namespace JWLMerge.ViewModel
 
                 file.RefreshTooltipSummary();
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _snackbarService.Enqueue("Error - could not gain access to create file!");
+                Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
+                EventTracker.Error(ex, "Importing notes");
+            }
             catch (Exception ex)
             {
                 _snackbarService.Enqueue("Error importing Bible notes!");
@@ -329,10 +335,16 @@ namespace JWLMerge.ViewModel
 
                 file.RefreshTooltipSummary();
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _snackbarService.Enqueue("Error - could not gain access to create file!");
+                Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
+                EventTracker.Error(ex, "Removing underlining by Pub/Colour");
+            }
             catch (Exception ex)
             {
                 _snackbarService.Enqueue("Error removing underlining by Publication/Colour!");
-                Log.Logger.Error(ex, "Could not remove underlining by Publication/Colour from file: {filePath}", file.FilePath);
+                Log.Logger.Error(ex, "Could not remove underlining by Publication/Colour from file: {filePath}", filePath);
                 EventTracker.Error(ex, "Removing underlining by Pub/Colour");
             }
             finally
@@ -389,10 +401,16 @@ namespace JWLMerge.ViewModel
 
                 file.RefreshTooltipSummary();
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _snackbarService.Enqueue("Error - could not gain access to create file!");
+                Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
+                EventTracker.Error(ex, "Removing underlining by Colour");
+            }
             catch (Exception ex)
             {
                 _snackbarService.Enqueue("Error removing underlining by Colour!");
-                Log.Logger.Error(ex, "Could not remove underlining by Colour from file: {filePath}", file.FilePath);
+                Log.Logger.Error(ex, "Could not remove underlining by Colour from file: {filePath}", filePath);
                 EventTracker.Error(ex, "Removing underlining by Colour");
             }
             finally
@@ -450,10 +468,16 @@ namespace JWLMerge.ViewModel
 
                 file.RefreshTooltipSummary();
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _snackbarService.Enqueue("Error - could not gain access to create file!");
+                Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
+                EventTracker.Error(ex, "Removing notes by Tag");
+            }
             catch (Exception ex)
             {
                 _snackbarService.Enqueue("Error removing notes by Tag!");
-                Log.Logger.Error(ex, "Could not remove notes by Tag from file: {filePath}", file.FilePath);
+                Log.Logger.Error(ex, "Could not remove notes by Tag from file: {filePath}", filePath);
                 EventTracker.Error(ex, "Removing notes by Tag");
             }
             finally
@@ -492,10 +516,16 @@ namespace JWLMerge.ViewModel
                         count = _backupFileService.RedactNotes(file.BackupFile);
                         _backupFileService.WriteNewDatabase(file.BackupFile, filePath!, filePath!);
                     });
-                    
+
                     _windowService.Close(filePath!);
                     file.NotesRedacted = true;
                     _snackbarService.Enqueue($"{count} Notes obfuscated successfully");
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    _snackbarService.Enqueue("Error - could not gain access to create file!");
+                    Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
+                    EventTracker.Error(ex, "Redacting notes");
                 }
                 catch (Exception ex)
                 {
@@ -538,6 +568,12 @@ namespace JWLMerge.ViewModel
                     _windowService.Close(filePath!);
 
                     file!.RefreshTooltipSummary();
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    _snackbarService.Enqueue("Error - could not gain access to create file!");
+                    Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
+                    EventTracker.Error(ex, "Removing Favs");
                 }
                 catch (Exception ex)
                 {
@@ -612,6 +648,12 @@ namespace JWLMerge.ViewModel
                         _backupFileService.WriteNewDatabase(mergedFile, destPath, schemaFilePath);
                         _snackbarService.Enqueue("Merged successfully");
                     }
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    _snackbarService.Enqueue("Error - could not gain access to create file!");
+                    Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", destPath);
+                    EventTracker.Error(ex, "Merging");
                 }
                 catch (Exception ex)
                 {

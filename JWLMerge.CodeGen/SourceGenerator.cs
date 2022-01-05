@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -41,8 +40,10 @@ namespace SecretsNamespace
                 if (File.Exists(PathToSecrets))
                 {
                     var s = File.ReadAllText(PathToSecrets);
-                    var secrets = JsonConvert.DeserializeObject<Secrets>(s);
-                    _secret = secrets.Apps.SingleOrDefault(x => x.Name.Equals("jwlMerge"))?.AppCenter ?? string.Empty;                    
+                    var secrets = JsonConvert.DeserializeObject<Secrets>(s); 
+                    
+                    _secret = secrets?.Apps.SingleOrDefault(
+                                      x => x.Name.Equals("jwlMerge"))?.AppCenter ?? string.Empty;
                 }
             }
             catch (Exception)
