@@ -1,4 +1,5 @@
-﻿using System.Windows.Threading;
+﻿using System.Diagnostics;
+using System.Windows.Threading;
 using JWLMerge.Helpers;
 
 namespace JWLMerge
@@ -58,6 +59,10 @@ namespace JWLMerge
             Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
         }
 
+#if !DEBUG
+    #define USE_APP_CENTER
+#endif
+        [Conditional("USE_APP_CENTER")]
         private void ConfigureAppCenter()
         {
 #pragma warning disable CA1416 // Validate platform compatibility

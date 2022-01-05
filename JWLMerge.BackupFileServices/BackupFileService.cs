@@ -42,7 +42,7 @@
             {
                 throw new ArgumentNullException(nameof(backupFilePath));
             }
-
+            
             if (!File.Exists(backupFilePath))
             {
                 throw new BackupFileServicesException($"File does not exist: {backupFilePath}");
@@ -261,7 +261,7 @@
                 throw new ArgumentNullException(nameof(backup));
             }
 
-            ProgressMessage(" Checking validity");
+            ProgressMessage("Checking validity");
             backup.Database.CheckValidity();
 
             ProgressMessage("Writing merged database file");
