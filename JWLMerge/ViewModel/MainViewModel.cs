@@ -275,6 +275,12 @@ namespace JWLMerge.ViewModel
 
                 file.RefreshTooltipSummary();
             }
+            catch (IOException ex) when ((uint)ex.HResult == 0x80070020)
+            {
+                _snackbarService.Enqueue("Error - Bible notes file is in use by another process!");
+                Log.Logger.Error(ex, "Bible notes file is in use: {filePath}", filePath);
+                EventTracker.Error(ex, "Importing notes");
+            }
             catch (UnauthorizedAccessException ex)
             {
                 _snackbarService.Enqueue("Error - could not gain access to create file!");
