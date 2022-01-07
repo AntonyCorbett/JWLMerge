@@ -263,6 +263,3 @@ __pycache__/
 /Installer/Output/JWLMergePortable.zip
 /Installer/Output/JWLMergePortable
 /Installer/Staging
-
-# AppCenter
-JWLMerge/AppCenterInit.cs
