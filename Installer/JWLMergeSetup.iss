@@ -73,22 +73,22 @@ UseRelativePaths=True
 [Code]
 procedure InitializeWizard;
 begin
-  Dependency_InitializeWizard;
+  InitializeWizard;
 end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-  Result := Dependency_PrepareToInstall(NeedsRestart);
+  Result := PrepareToInstall(NeedsRestart);
 end;
 
 function NeedRestart: Boolean;
 begin
-  Result := Dependency_NeedRestart;
+  Result := NeedRestart;
 end;
 
 function UpdateReadyMemo(const Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo: String): String;
 begin
-  Result := Dependency_UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo);
+  Result := UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo, MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo, MemoTasksInfo);
 end;
 
 function InitializeSetup: Boolean;
