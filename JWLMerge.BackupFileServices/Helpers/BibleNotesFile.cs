@@ -269,7 +269,7 @@
                 return null;
             }
 
-            return line.Substring(equalsPos + 1).TrimEnd(']').Trim();
+            return line[(equalsPos + 1)..].TrimEnd(']').Trim();
         }
     }
 }

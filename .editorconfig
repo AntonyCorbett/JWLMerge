@@ -20,3 +20,6 @@ dotnet_diagnostic.U2U1212.severity = silent
 
 # U2U1201: Local collections should be initialized with capacity
 dotnet_diagnostic.U2U1201.severity = silent
+
+# S5445: Insecure temporary file creation methods should not be used
+dotnet_diagnostic.S5445.severity = suggestion

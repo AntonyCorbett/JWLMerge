@@ -37,8 +37,8 @@
 
                 sb.Append(GetRandomSentence());
             }
-
-            return sb.ToString().Substring(0, length);
+            
+            return sb.ToString()[..length];
         }
 
         private string GetRandomSentence()

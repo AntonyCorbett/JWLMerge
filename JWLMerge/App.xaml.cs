@@ -1,4 +1,8 @@
-﻿using System.Diagnostics;
+﻿#if !DEBUG
+#define USE_APP_CENTER
+#endif
+
+using System.Diagnostics;
 using System.Windows.Threading;
 using JWLMerge.Helpers;
 
@@ -59,9 +63,6 @@ namespace JWLMerge
             Current.DispatcherUnhandledException += CurrentDispatcherUnhandledException;
         }
 
-#if !DEBUG
-    #define USE_APP_CENTER
-#endif
         [Conditional("USE_APP_CENTER")]
         private void ConfigureAppCenter()
         {

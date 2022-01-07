@@ -583,9 +583,7 @@
             Database backupDatabase,
             string originalDatabaseFilePathForSchema)
         {
-#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
             string tmpFile = Path.GetTempFileName();
-#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
 
             Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
 
@@ -761,9 +759,8 @@
             }
 
             Database result;
-#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
             var tmpFile = Path.GetTempFileName();
-#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
+
             try
             {
                 Log.Logger.Debug("Extracting database to {tmpFile}", tmpFile);
@@ -789,9 +786,8 @@
             var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
 
             var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
-#pragma warning disable S5445 // Insecure temporary file creation methods should not be used
             var tmpFile = Path.GetTempFileName();
-#pragma warning restore S5445 // Insecure temporary file creation methods should not be used
+
             databaseEntry.ExtractToFile(tmpFile, overwrite: true);
 
             Log.Logger.Information("Created temp file: {tmpDatabaseFileName}", tmpFile);

@@ -4,9 +4,7 @@
     using System.Runtime.Serialization;
 
     [Serializable]
-#pragma warning disable RCS1194 // Implement exception constructors.
     public class WrongManifestVersionException : BackupFileServicesException
-#pragma warning restore RCS1194 // Implement exception constructors.
     {
         public WrongManifestVersionException(string filename, int expectedVersion, int foundVersion)
             : base($"Wrong manifest version found ({foundVersion}) in {filename}. Expecting {expectedVersion}")
