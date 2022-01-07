@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /Installer/Output/JWLMergeSetup.exe
 /Installer/Output/JWLMergePortable.zip
+/Installer/Output/JWLMergePortable
+/Installer/Staging

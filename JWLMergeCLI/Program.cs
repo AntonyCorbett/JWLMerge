@@ -1,7 +1,6 @@
 ﻿namespace JWLMergeCLI
 {
     using System;
-    using System.Diagnostics;
     using System.IO;
     using Args;
     using Serilog;
@@ -69,9 +68,8 @@
 
         private static string GetVersion()
         {
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion ?? "Unknown";
+            var ver = typeof(Program).Assembly.GetName().Version;
+            return ver?.ToString() ?? "Unknown";
         }
 
         private static void ShowUsage()

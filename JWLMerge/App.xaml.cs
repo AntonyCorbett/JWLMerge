@@ -66,17 +66,7 @@ namespace JWLMerge
         [Conditional("USE_APP_CENTER")]
         private void ConfigureAppCenter()
         {
-#pragma warning disable CA1416 // Validate platform compatibility
-                        
-            AppCenter.SetCountryCode(RegionInfo.CurrentRegion.TwoLetterISORegionName);
-
-            var secret = SecretsNamespace.GeneratedCodeForSecrets.GetAppCenterSecret();
-            if (!string.IsNullOrEmpty(secret))
-            {
-                AppCenter.Start(secret, typeof(Analytics), typeof(Crashes));
-            }            
-
-#pragma warning restore CA1416 // Validate platform compatibility
+            AppCenterInit.Execute();
         }
 
         private void CurrentDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
