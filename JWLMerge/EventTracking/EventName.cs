@@ -14,5 +14,6 @@
         ShowDetails,
         WrongVer,
         WrongManifestVer,
+        LoggingFailed
     }
 }

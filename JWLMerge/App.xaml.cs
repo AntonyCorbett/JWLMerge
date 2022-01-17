@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Windows.Threading;
 using JWLMerge.Helpers;
+using Microsoft.AppCenter;
 
 namespace JWLMerge
 {
@@ -21,11 +22,7 @@ namespace JWLMerge
     using ViewModel;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Toolkit.Mvvm.DependencyInjection;
-    using Microsoft.AppCenter;
-    using Microsoft.AppCenter.Analytics;
-    using Microsoft.AppCenter.Crashes;
-    using System.Globalization;
-    using JWLMerge.EventTracking;
+    using EventTracking;
 
     /// <summary>
     /// Interaction logic for App.xaml
@@ -127,18 +124,30 @@ namespace JWLMerge
         private static void ConfigureLogger()
         {
             var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMerge\\Logs");
-            if (!Directory.Exists(folder))
+
+            try
             {
-                Directory.CreateDirectory(folder);
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.File(Path.Combine(folder, "log.txt"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 28)
+                    .CreateLogger();
+
+                Log.Logger.Information("==== Launched ====");
+                Log.Logger.Information($"Version {VersionDetection.GetCurrentVersion()}");
             }
+            catch (Exception ex)
+            {
+                // logging won't work but silently fails
+                EventTracker.Error(ex, "Logging cannot be configured");
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File(Path.Combine(folder, "log.txt"), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 28)
-                .CreateLogger();
-
-            Log.Logger.Information("==== Launched ====");
-            Log.Logger.Information($"Version {VersionDetection.GetCurrentVersion()}");
+                // "no-op" logger
+                Log.Logger = new LoggerConfiguration().CreateLogger();
+            }
         }
 
         private bool AnotherInstanceRunning()

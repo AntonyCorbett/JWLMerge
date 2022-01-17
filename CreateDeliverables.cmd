@@ -10,6 +10,8 @@ REM build / publish
 dotnet publish JWLMerge\JWLMerge.csproj -p:PublishProfile=FolderProfile -c:Release
 dotnet publish JWLMergeCLI\JWLMergeCLI.csproj -p:PublishProfile=FolderProfile -c:Release
 
+md Installer\Staging
+
 REM copy items into staging area
 xcopy JWLMergeCLI\bin\Release\net6.0\publish\*.* Installer\Staging /q /s /y /d
 xcopy JWLMerge\bin\Release\net6.0-windows\publish\*.* Installer\Staging /q /s /y /d
