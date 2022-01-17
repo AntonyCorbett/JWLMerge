@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices
+﻿using JWLMerge.ExcelServices.Models;
+
+namespace JWLMerge.BackupFileServices
 {
     using System;
     using System.Collections.Generic;
@@ -121,7 +123,7 @@
             int mepsLanguageId, 
             ImportBibleNotesParams options);
 
-        void ExportBibleNotesToExcel(BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService);
+        ExportBibleNotesResult ExportBibleNotesToExcel(BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService);
 
         /// <summary>
         /// Cleans the database (ensuring integrity), then writes the specified backup to a "jwlibrary" file.

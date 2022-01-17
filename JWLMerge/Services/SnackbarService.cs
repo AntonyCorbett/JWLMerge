@@ -47,7 +47,7 @@
             {
                 if (Application.Current.MainWindow?.WindowState != WindowState.Minimized)
                 {
-                    TheSnackbarMessageQueue.Enqueue(content, "OK", () => { });
+                    TheSnackbarMessageQueue.Enqueue(content, "OK", (obj) => { }, () => { }, true, true, TimeSpan.FromSeconds(20));
                 }
             }));
         }

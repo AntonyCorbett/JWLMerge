@@ -12,13 +12,22 @@ namespace JWLMerge.ExcelServices
     {
         private const string WorkbookName = "Notes";
 
-        // returns the last row written
-        public int AppendToBibleNotesFile(
+        /// <summary>
+        /// Appends Bible notes to spreadsheet page
+        /// </summary>
+        /// <param name="excelFilePath">Excel file path.</param>
+        /// <param name="notes">Notes.</param>
+        /// <param name="startRow">Row to start at.</param>
+        /// <param name="backupFilePath">Path to backup file.</param>
+        /// <returns>Results.</returns>
+        public ExportBibleNotesResult AppendToBibleNotesFile(
             string excelFilePath, 
             IReadOnlyCollection<BibleNote>? notes, 
             int startRow, 
             string backupFilePath)
         {
+            var result = new ExportBibleNotesResult { Row = startRow };
+
             if (string.IsNullOrEmpty(excelFilePath))
             {
                 throw new ArgumentNullException(nameof(excelFilePath));
@@ -32,7 +41,8 @@ namespace JWLMerge.ExcelServices
 
             if (notes == null || !notes.Any())
             {
-                return startRow;
+                result.NoNotesFound = true;
+                return result;
             }
 
             using var workbook = new XLWorkbook(excelFilePath);
@@ -45,6 +55,16 @@ namespace JWLMerge.ExcelServices
             var row = startRow;
             foreach (var note in notes)
             {
+                var noteTooLarge = note.NoteContent != null && note.NoteContent.Length > Int16.MaxValue;
+                if (noteTooLarge)
+                {
+                    result.SomeNotesTooLarge = true;
+                }
+                
+                var noteContent = noteTooLarge
+                    ? note.NoteContent!.Substring(0, Int16.MaxValue)
+                    : note.NoteContent;
+
                 SetCellStringValue(worksheet, row, 1, note.PubSymbol);
                 SetCellStringValue(worksheet, row, 2, note.BookName);
                 SetCellIntegerValue(worksheet, row, 3, note.BookNumber);
@@ -55,14 +75,15 @@ namespace JWLMerge.ExcelServices
                 SetCellIntegerValue(worksheet, row, 8, note.ColorCode);
                 SetCellStringValue(worksheet, row, 9, note.TagsCsv);
                 SetCellStringValue(worksheet, row, 10, note.NoteTitle);
-                SetCellStringValue(worksheet, row, 11, note.NoteContent);
+                SetCellStringValue(worksheet, row, 11, noteContent);
 
                 ++row;
             }
 
             workbook.Save();
 
-            return row;
+            result.Row = row;
+            return result;
         }
 
         private static void SetCellStringValue(IXLWorksheet worksheet, int row, int col, string? value)

@@ -1,3 +1,5 @@
+using JWLMerge.ExcelServices.Models;
+
 namespace JWLMerge.ViewModel
 {
     using System;
@@ -202,16 +204,29 @@ namespace JWLMerge.ViewModel
             try
             {
                 EventTracker.Track(EventName.ExportNotes);
+                
+                ExportBibleNotesResult? result = null;
 
                 await Task.Run(() =>
                 {
-                    _backupFileService.ExportBibleNotesToExcel(
+                    result = _backupFileService.ExportBibleNotesToExcel(
                         file.BackupFile,
                         bibleNotesExportFilePath,
                         _excelService);
                 });
 
-                _snackbarService.Enqueue("Bible notes exported successfully");
+                if (result is { NoNotesFound: true })
+                {
+                    _snackbarService.Enqueue("No Bible notes found!");
+                }
+                else if (result is { SomeNotesTooLarge: true })
+                {
+                    _snackbarService.EnqueueWithOk("Some notes were too large to store in a spreadsheet cell and were truncated!");
+                }
+                else
+                {
+                    _snackbarService.Enqueue("Bible notes exported successfully");
+                }
             }
             catch (Exception ex)
             {
