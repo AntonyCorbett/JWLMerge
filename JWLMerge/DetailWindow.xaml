@@ -1,51 +1,63 @@
-﻿<Window x:Class="JWLMerge.DetailWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        DataContext="{Binding Detail, Source={StaticResource Locator}}"
-        xmlns:local="clr-namespace:JWLMerge"
-        mc:Ignorable="d"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        TextElement.Foreground="{StaticResource MaterialDesignBody}"
-        TextElement.FontWeight="Medium"
-        TextElement.FontSize="14"
-        TextOptions.TextFormattingMode="Ideal"
-        TextOptions.TextRenderingMode="Auto"
-        Background="{StaticResource MaterialDesignPaper}"
-        FontFamily="{StaticResource MaterialDesignFont}"
-        Title="{Binding WindowTitle}" Height="402" Width="544" MinHeight="450" MinWidth="450" ShowInTaskbar="False">
+﻿<Window
+    x:Class="JWLMerge.DetailWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:JWLMerge"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding WindowTitle}"
+    Width="544"
+    Height="402"
+    MinWidth="450"
+    MinHeight="450"
+    Background="{StaticResource MaterialDesignPaper}"
+    DataContext="{Binding Detail, Source={StaticResource Locator}}"
+    FontFamily="{StaticResource MaterialDesignFont}"
+    ShowInTaskbar="False"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Medium"
+    TextElement.Foreground="{StaticResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
     <materialDesign:DialogHost Identifier="DetailDialogHost">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="175"/>
-                <ColumnDefinition Width="373*"/>
+                <ColumnDefinition Width="175" />
+                <ColumnDefinition Width="373*" />
             </Grid.ColumnDefinitions>
 
-            <GroupBox Grid.Column="0" Header="Data Type" Margin="10,10,5,10">
-                <ListBox ItemsSource="{Binding ListItems}" DisplayMemberPath="Caption" 
-                     SelectedItem="{Binding SelectedDataType, Mode=TwoWay}">
-                </ListBox>
+            <GroupBox
+                Grid.Column="0"
+                Margin="10,10,5,10"
+                Header="Data Type">
+                <ListBox
+                    DisplayMemberPath="Caption"
+                    ItemsSource="{Binding ListItems}"
+                    SelectedItem="{Binding SelectedDataType, Mode=TwoWay}" />
             </GroupBox>
 
-            <GroupBox Grid.Column="1" Header="Data" Margin="5,10,10,10">
+            <GroupBox
+                Grid.Column="1"
+                Margin="5,10,10,10"
+                Header="Data">
 
-                <DataGrid ItemsSource="{Binding DataItemsSource}"
-                      IsReadOnly="True"
-                      CanUserSortColumns="True"
-                      CanUserAddRows="False"
-                      materialDesign:DataGridAssist.CellPadding="4 2 2 2"
-                      materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2">
-                </DataGrid>
+                <DataGrid
+                    materialDesign:DataGridAssist.CellPadding="4 2 2 2"
+                    materialDesign:DataGridAssist.ColumnHeaderPadding="4 2 2 2"
+                    CanUserAddRows="False"
+                    CanUserSortColumns="True"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding DataItemsSource}" />
 
             </GroupBox>
 
         </Grid>
         <materialDesign:DialogHost.DialogContent>
-            <StackPanel Margin="16">
-            </StackPanel>
+            <StackPanel Margin="16" />
         </materialDesign:DialogHost.DialogContent>
     </materialDesign:DialogHost>
 
 </Window>
- 
+
