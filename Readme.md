@@ -24,13 +24,7 @@ JWLMergeCLI.exe is a command-line version of the application. Run in at a comman
 
 #### Wine
 
-If you are interested in running JWLMerge on Wine, please see this fork:
-
-https://github.com/SuperJC710e/JWLMerge
-
-And the notes here: 
-
-https://github.com/SuperJC710e/JWLMerge/wiki/Running-Under-Wine
+If you are interested in running JWLMerge on Wine, please see this fork (although depending on how frequently it is updated, the instructions may relate to an older version of JWLMerge): https://github.com/SuperJC710e/JWLMerge
 
 ### Important Notes
 
