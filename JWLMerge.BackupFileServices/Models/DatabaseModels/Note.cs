@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Models.DatabaseModels
+﻿using System.Globalization;
+
+namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 {
     using System;
 
@@ -60,7 +62,7 @@
 
         public DateTime GetLastModifiedDateTime()
         {
-            return DateTime.Parse(LastModified);
+            return DateTime.Parse(LastModified, CultureInfo.InvariantCulture);
         }
 
         public Note Clone()

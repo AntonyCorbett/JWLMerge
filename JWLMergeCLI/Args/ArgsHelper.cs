@@ -27,7 +27,7 @@
 
             foreach (var a in args)
             {
-                if (a.Equals("-o") || a.Equals("--output"))
+                if (a.Equals("-o", StringComparison.Ordinal) || a.Equals("--output", StringComparison.Ordinal))
                 {
                     state = State.AwaitingOutput;
                     continue;

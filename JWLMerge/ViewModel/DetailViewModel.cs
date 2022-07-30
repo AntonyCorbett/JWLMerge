@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.ViewModel
+﻿using System.Globalization;
+
+namespace JWLMerge.ViewModel
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -138,13 +140,13 @@
             {
                 result.Add(new KeyValuePair<string, string>("Name", manifest.Name));
                 result.Add(new KeyValuePair<string, string>("Created", manifest.CreationDate));
-                result.Add(new KeyValuePair<string, string>("Version", manifest.Version.ToString()));
-                result.Add(new KeyValuePair<string, string>("Type", manifest.Type.ToString()));
+                result.Add(new KeyValuePair<string, string>("Version", manifest.Version.ToString(CultureInfo.InvariantCulture)));
+                result.Add(new KeyValuePair<string, string>("Type", manifest.Type.ToString(CultureInfo.InvariantCulture)));
                 result.Add(new KeyValuePair<string, string>("LastModified", manifest.UserDataBackup.LastModifiedDate));
                 result.Add(new KeyValuePair<string, string>("Device", manifest.UserDataBackup.DeviceName));
                 result.Add(new KeyValuePair<string, string>("Database", manifest.UserDataBackup.DatabaseName));
                 result.Add(new KeyValuePair<string, string>("Hash", manifest.UserDataBackup.Hash));
-                result.Add(new KeyValuePair<string, string>("SchemaVersion", manifest.UserDataBackup.SchemaVersion.ToString()));
+                result.Add(new KeyValuePair<string, string>("SchemaVersion", manifest.UserDataBackup.SchemaVersion.ToString(CultureInfo.InvariantCulture)));
             }
 
             return result;

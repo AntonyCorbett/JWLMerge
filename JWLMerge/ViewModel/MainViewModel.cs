@@ -142,7 +142,7 @@ namespace JWLMerge.ViewModel
 
         private JwLibraryFile? GetFile(string? filePath)
         {
-            var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath));
+            var file = Files.SingleOrDefault(x => x.FilePath.Equals(filePath, StringComparison.Ordinal));
             if (file == null)
             {
                 Log.Logger.Error($"Could not find file: {filePath}");

@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Helpers
+﻿using System.Globalization;
+
+namespace JWLMerge.BackupFileServices.Helpers
 {
     using Microsoft.Data.Sqlite;
     using System;
@@ -119,13 +121,13 @@
 
         private static int ReadInt(SqliteDataReader reader, string columnName)
         {
-            return Convert.ToInt32(reader[columnName]);
+            return Convert.ToInt32(reader[columnName], CultureInfo.InvariantCulture);
         }
 
         private static int? ReadNullableInt(SqliteDataReader reader, string columnName)
         {
             var value = reader[columnName];
-            return value == DBNull.Value ? (int?)null : Convert.ToInt32(value);
+            return value == DBNull.Value ? (int?)null : Convert.ToInt32(value, CultureInfo.InvariantCulture);
         }
 
         private static SqliteConnection CreateConnection(string filePath)

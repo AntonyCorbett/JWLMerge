@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace JWLMerge.Models
 {
@@ -31,11 +32,11 @@ namespace JWLMerge.Models
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendLine($"{BackupFile.Database.Notes.Count} notes");
-                sb.AppendLine($"{BackupFile.Database.Bookmarks.Count} bookmarks");
-                sb.AppendLine($"{BackupFile.Database.InputFields.Count} input fields");
-                sb.AppendLine($"{BackupFile.Database.UserMarks.Count} underlining");
-                sb.Append($"{BackupFile.Database.Tags.Count} tags");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"{BackupFile.Database.Notes.Count} notes");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"{BackupFile.Database.Bookmarks.Count} bookmarks");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"{BackupFile.Database.InputFields.Count} input fields");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"{BackupFile.Database.UserMarks.Count} underlining");
+                sb.Append(CultureInfo.InvariantCulture, $"{BackupFile.Database.Tags.Count} tags");
 
                 return sb.ToString();
             }

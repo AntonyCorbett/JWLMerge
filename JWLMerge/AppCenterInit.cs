@@ -7,7 +7,9 @@ namespace JWLMerge
 {
     internal static class AppCenterInit
     {
+#pragma warning disable CA1805 // Do not initialize unnecessarily
         private static readonly string? TheToken = null;
+#pragma warning restore CA1805 // Do not initialize unnecessarily
 
 #pragma warning disable U2U1112 // Do not call string.IsNullOrEmpty() on a constant string
 #pragma warning disable CA1416 // Validate platform compatibility

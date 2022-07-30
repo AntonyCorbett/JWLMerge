@@ -2,6 +2,7 @@
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace JWLMerge.EventTracking
 {
@@ -18,8 +19,8 @@ namespace JWLMerge.EventTracking
         {
             var properties = new Dictionary<string, string> 
             { 
-                { "found", verFound.ToString() },
-                { "expected", verExpected.ToString() },
+                { "found", verFound.ToString(CultureInfo.InvariantCulture) },
+                { "expected", verExpected.ToString(CultureInfo.InvariantCulture) },
             };
 
             Track(EventName.WrongVer, properties);
@@ -29,8 +30,8 @@ namespace JWLMerge.EventTracking
         {
             var properties = new Dictionary<string, string>
             {
-                { "found", verFound.ToString() },
-                { "expected", verExpected.ToString() },
+                { "found", verFound.ToString(CultureInfo.InvariantCulture) },
+                { "expected", verExpected.ToString(CultureInfo.InvariantCulture) },
             };
 
             Track(EventName.WrongManifestVer, properties);
@@ -53,7 +54,7 @@ namespace JWLMerge.EventTracking
         {
             Track(EventName.Merge, new Dictionary<string, string>
             {
-                { "count", numSourceFiles.ToString() },
+                { "count", numSourceFiles.ToString(CultureInfo.InvariantCulture) },
             });
         }
     }

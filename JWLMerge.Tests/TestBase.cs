@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.Tests
+﻿using System.Globalization;
+
+namespace JWLMerge.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -79,7 +81,7 @@
                 result.Add(new Note
                 {
                     NoteId = n,
-                    Guid = Guid.NewGuid().ToString().ToLower(),
+                    Guid = Guid.NewGuid().ToString().ToLower(CultureInfo.InvariantCulture),
                     UserMarkId = n,
                     LocationId = n,
                     Title = $"Title {n}",
@@ -104,7 +106,7 @@
                     UserMarkId = n,
                     ColorIndex = 1,
                     LocationId = n,
-                    UserMarkGuid = Guid.NewGuid().ToString().ToLower(),
+                    UserMarkGuid = Guid.NewGuid().ToString().ToLower(CultureInfo.InvariantCulture),
                     Version = 1,
                 });
             }

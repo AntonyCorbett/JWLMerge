@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Helpers
+﻿using System.Globalization;
+
+namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -130,7 +132,7 @@
             var newNote = new Note
             {
                 NoteId = ++_maxNoteId,
-                Guid = Guid.NewGuid().ToString().ToLower(),
+                Guid = Guid.NewGuid().ToString().ToLower(CultureInfo.InvariantCulture),
                 UserMarkId = userMark?.UserMarkId,
                 LocationId = location.LocationId,
                 Title = note.NoteTitle,
@@ -172,7 +174,7 @@
             {
                 UserMarkId = ++_maxUserMarkId,
                 LocationId = locationId,
-                UserMarkGuid = Guid.NewGuid().ToString().ToLower(),
+                UserMarkGuid = Guid.NewGuid().ToString().ToLower(CultureInfo.InvariantCulture),
                 Version = 1,
                 ColorIndex = colourIndex,
             };
