@@ -535,7 +535,7 @@ namespace JWLMerge.ViewModel
                     await Task.Run(() =>
                     {
                         count = _backupFileService.RedactNotes(file.BackupFile);
-                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath!, filePath!);
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath!, filePath!);
                     });
 
                     _windowService.Close(filePath!);
@@ -582,7 +582,7 @@ namespace JWLMerge.ViewModel
                     await Task.Run(() =>
                     {
                         _backupFileService.RemoveFavourites(file!.BackupFile);
-                        _backupFileService.WriteNewDatabase(file.BackupFile, filePath!, filePath!);
+                        _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, filePath!, filePath!);
                     });
 
                     _snackbarService.Enqueue("Favourites removed successfully");

@@ -23,16 +23,55 @@
         /// <returns>Number of rows removed.</returns>
         public int Clean()
         {
-            return CleanBlockRanges() + CleanLocations();
+            // see also DatabaseForeignKeyChecker
+            return CleanBlockRanges() + 
+                   CleanTagMaps() +
+                   CleanLocations();
         }
-
-        private HashSet<int> GetUserMarkIdsInUse()
+        
+        private HashSet<int> GetValidUserMarkIds()
         {
             var result = new HashSet<int>();
             
             foreach (var userMark in _database.UserMarks)
             {
                 result.Add(userMark.UserMarkId);
+            }
+
+            return result;
+        }
+
+        private HashSet<int> GetValidTagIds()
+        {
+            var result = new HashSet<int>();
+
+            foreach (var tag in _database.Tags)
+            {
+                result.Add(tag.TagId);
+            }
+
+            return result;
+        }
+
+        private HashSet<int> GetValidNoteIds()
+        {
+            var result = new HashSet<int>();
+
+            foreach (var note in _database.Notes)
+            {
+                result.Add(note.NoteId);
+            }
+
+            return result;
+        }
+
+        private HashSet<int> GetValidLocationIds()
+        {
+            var result = new HashSet<int>();
+
+            foreach (var location in _database.Locations)
+            {
+                result.Add(location.LocationId);
             }
 
             return result;
@@ -106,6 +145,33 @@
             return removed;
         }
 
+        private int CleanTagMaps()
+        {
+            var removed = 0;
+
+            var tagMaps = _database.TagMaps;
+            if (tagMaps.Any())
+            {
+                var tagIds = GetValidTagIds();
+                var noteIds = GetValidNoteIds();
+                var locationIds = GetValidLocationIds();
+
+                foreach (var tag in Enumerable.Reverse(tagMaps))
+                {
+                    if (!tagIds.Contains(tag.TagId) || 
+                        (tag.NoteId != null && !noteIds.Contains(tag.NoteId.Value)) ||
+                        (tag.LocationId != null && !locationIds.Contains(tag.LocationId.Value)))
+                    {
+                        Log.Logger.Debug($"Removing redundant tag map entry: {tag.TagMapId}");
+                        tagMaps.Remove(tag);
+                        ++removed;
+                    }
+                }
+            }
+
+            return removed;
+        }
+
         /// <summary>
         /// Cleans the block ranges.
         /// </summary>
@@ -118,7 +184,7 @@
             if (ranges.Any())
             {
                 var userMarkIdsFound = new HashSet<int>();
-                var userMarkIds = GetUserMarkIdsInUse();
+                var userMarkIds = GetValidUserMarkIds();
                 
                 foreach (var range in Enumerable.Reverse(ranges))
                 {

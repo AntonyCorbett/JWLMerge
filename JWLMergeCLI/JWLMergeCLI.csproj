@@ -1,19 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Nullable>Enable</Nullable>
-    <ApplicationIcon>JWLMerge.ico</ApplicationIcon>
-    <Platforms>AnyCPU</Platforms>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<Nullable>Enable</Nullable>
+		<ApplicationIcon>JWLMerge.ico</ApplicationIcon>
+		<AnalysisLevel>latest-recommended</AnalysisLevel>
+		<Platforms>AnyCPU</Platforms>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj" />
+	</ItemGroup>
 </Project>

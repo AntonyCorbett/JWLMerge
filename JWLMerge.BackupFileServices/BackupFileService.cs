@@ -86,7 +86,7 @@ namespace JWLMerge.BackupFileServices
             {
                 throw new ArgumentNullException(nameof(backup));
             }
-
+            
             backup.Database.TagMaps.RemoveAll(x => x.TagId == 1);
         }
 

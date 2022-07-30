@@ -5,8 +5,6 @@
 
     internal static class DatabaseForeignKeyChecker
     {
-        // todo: call this as part of the sanity check when loading backup files.
-        // Also perform auto cleanup
         public static void Execute(Database database)
         {
             CheckBlockRangeValidity(database);
