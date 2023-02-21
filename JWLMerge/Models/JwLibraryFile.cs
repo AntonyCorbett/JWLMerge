@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace JWLMerge.Models
 {
     using System.Text;
     using JWLMerge.BackupFileServices.Models;
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-
+    
     internal sealed class JwLibraryFile : ObservableObject
     {
         public JwLibraryFile(string filePath, BackupFile backupFile)

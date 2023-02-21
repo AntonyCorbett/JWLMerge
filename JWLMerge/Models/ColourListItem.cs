@@ -1,6 +1,7 @@
-﻿namespace JWLMerge.Models
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace JWLMerge.Models
 {
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
     using System.Windows.Media;
 
     internal sealed class ColourListItem : ObservableObject

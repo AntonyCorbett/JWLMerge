@@ -1,172 +1,171 @@
 ﻿using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace JWLMerge.ViewModel
+namespace JWLMerge.ViewModel;
+
+using System.Collections;
+using System.Collections.Generic;
+using JWLMerge.BackupFileServices.Models;
+using JWLMerge.BackupFileServices.Models.DatabaseModels;
+using JWLMerge.BackupFileServices.Models.ManifestFile;
+using Models;
+
+// ReSharper disable once ClassNeverInstantiated.Global
+internal sealed class DetailViewModel : ObservableObject
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using JWLMerge.BackupFileServices.Models.ManifestFile;
-    using Models;
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-
-    // ReSharper disable once ClassNeverInstantiated.Global
-    internal sealed class DetailViewModel : ObservableObject
-    {
-        private DataTypeListItem? _selectedDataType;
-        private bool _notesRedacted;
-        private string? _windowTitle;
-        private BackupFile? _backupFile;
+    private DataTypeListItem? _selectedDataType;
+    private bool _notesRedacted;
+    private string? _windowTitle;
+    private BackupFile? _backupFile;
         
-        public DetailViewModel() 
-        {
-            ListItems = CreateListItems();
-        }
+    public DetailViewModel() 
+    {
+        ListItems = CreateListItems();
+    }
 
-        public string? FilePath { get; set; }
+    public string? FilePath { get; set; }
 
-        public BackupFile? BackupFile
+    public BackupFile? BackupFile
+    {
+        get => _backupFile;
+        set
         {
-            get => _backupFile;
-            set
+            if (_backupFile != value)
             {
-                if (_backupFile != value)
-                {
-                    SetProperty(ref _backupFile, value);
-                    var deviceName = BackupFile?.Manifest.UserDataBackup.DeviceName;
-                    WindowTitle = $"Details - {deviceName}";
-                }
+                SetProperty(ref _backupFile, value);
+                var deviceName = BackupFile?.Manifest.UserDataBackup.DeviceName;
+                WindowTitle = $"Details - {deviceName}";
             }
         }
+    }
 
-        public List<DataTypeListItem> ListItems { get; }
+    public List<DataTypeListItem> ListItems { get; }
 
-        public string WindowTitle
+    public string WindowTitle
+    {
+        get => _windowTitle ?? string.Empty;
+        private set => SetProperty(ref _windowTitle, value);
+    }
+
+    public bool NotesRedacted
+    {
+        get => _notesRedacted;
+        set
         {
-            get => _windowTitle ?? string.Empty;
-            private set => SetProperty(ref _windowTitle, value);
-        }
-
-        public bool NotesRedacted
-        {
-            get => _notesRedacted;
-            set
+            if (_notesRedacted != value)
             {
-                if (_notesRedacted != value)
-                {
-                    _notesRedacted = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(NotesNotRedacted));
-                }
+                _notesRedacted = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(NotesNotRedacted));
             }
         }
+    }
 
-        public bool NotesNotRedacted => !NotesRedacted;
+    public bool NotesNotRedacted => !NotesRedacted;
 
-        public DataTypeListItem? SelectedDataType
+    public DataTypeListItem? SelectedDataType
+    {
+        get => _selectedDataType;
+        set
         {
-            get => _selectedDataType;
-            set
+            if (_selectedDataType != value)
             {
-                if (_selectedDataType != value)
-                {
-                    _selectedDataType = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(DataItemsSource));
-                    OnPropertyChanged(nameof(IsNotesItemSelected));
-                }
+                _selectedDataType = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(DataItemsSource));
+                OnPropertyChanged(nameof(IsNotesItemSelected));
             }
         }
+    }
 
 #pragma warning disable U2U1200 // Prefer generic collections over non-generic ones
-        public IEnumerable? DataItemsSource
+    public IEnumerable? DataItemsSource
 #pragma warning restore U2U1200 // Prefer generic collections over non-generic ones
+    {
+        get
         {
-            get
+            if (SelectedDataType != null)
             {
-                if (SelectedDataType != null)
+                switch (SelectedDataType.DataType)
                 {
-                    switch (SelectedDataType.DataType)
-                    {
-                        case JwLibraryFileDataTypes.BlockRange:
-                            return BackupFile?.Database.BlockRanges;
+                    case JwLibraryFileDataTypes.BlockRange:
+                        return BackupFile?.Database.BlockRanges;
 
-                        case JwLibraryFileDataTypes.Location:
-                            return BackupFile?.Database.Locations;
+                    case JwLibraryFileDataTypes.Location:
+                        return BackupFile?.Database.Locations;
 
-                        case JwLibraryFileDataTypes.Bookmark:
-                            return BackupFile?.Database.Bookmarks;
+                    case JwLibraryFileDataTypes.Bookmark:
+                        return BackupFile?.Database.Bookmarks;
 
-                        case JwLibraryFileDataTypes.InputField:
-                            return BackupFile?.Database.InputFields;
+                    case JwLibraryFileDataTypes.InputField:
+                        return BackupFile?.Database.InputFields;
 
-                        case JwLibraryFileDataTypes.Note:
-                            return BackupFile?.Database.Notes;
+                    case JwLibraryFileDataTypes.Note:
+                        return BackupFile?.Database.Notes;
 
-                        case JwLibraryFileDataTypes.LastModified:
-                            return BackupFile != null
-                                ? new List<LastModified> { BackupFile.Database.LastModified }
-                                : null;
+                    case JwLibraryFileDataTypes.LastModified:
+                        return BackupFile != null
+                            ? new List<LastModified> { BackupFile.Database.LastModified }
+                            : null;
 
-                        case JwLibraryFileDataTypes.Tag:
-                            return BackupFile?.Database.Tags;
+                    case JwLibraryFileDataTypes.Tag:
+                        return BackupFile?.Database.Tags;
 
-                        case JwLibraryFileDataTypes.TagMap:
-                            return BackupFile?.Database.TagMaps;
+                    case JwLibraryFileDataTypes.TagMap:
+                        return BackupFile?.Database.TagMaps;
 
-                        case JwLibraryFileDataTypes.UserMark:
-                            return BackupFile?.Database.UserMarks;
+                    case JwLibraryFileDataTypes.UserMark:
+                        return BackupFile?.Database.UserMarks;
 
-                        case JwLibraryFileDataTypes.Manifest:
-                            return ManifestAsItemsSource(BackupFile?.Manifest);
-                    }
+                    case JwLibraryFileDataTypes.Manifest:
+                        return ManifestAsItemsSource(BackupFile?.Manifest);
                 }
+            }
 
 #pragma warning disable S1168 // Empty arrays and collections should be returned instead of null
-                return null;
+            return null;
 #pragma warning restore S1168 // Empty arrays and collections should be returned instead of null
-            }
         }
+    }
 
-        public bool IsNotesItemSelected => SelectedDataType?.DataType == JwLibraryFileDataTypes.Note;
+    public bool IsNotesItemSelected => SelectedDataType?.DataType == JwLibraryFileDataTypes.Note;
 
 #pragma warning disable U2U1011 // Return types should be specific
-        private static IEnumerable ManifestAsItemsSource(Manifest? manifest)
+    private static IEnumerable ManifestAsItemsSource(Manifest? manifest)
 #pragma warning restore U2U1011 // Return types should be specific
+    {
+        var result = new List<KeyValuePair<string, string>>();
+
+        if (manifest != null)
         {
-            var result = new List<KeyValuePair<string, string>>();
-
-            if (manifest != null)
-            {
-                result.Add(new KeyValuePair<string, string>("Name", manifest.Name));
-                result.Add(new KeyValuePair<string, string>("Created", manifest.CreationDate));
-                result.Add(new KeyValuePair<string, string>("Version", manifest.Version.ToString(CultureInfo.InvariantCulture)));
-                result.Add(new KeyValuePair<string, string>("Type", manifest.Type.ToString(CultureInfo.InvariantCulture)));
-                result.Add(new KeyValuePair<string, string>("LastModified", manifest.UserDataBackup.LastModifiedDate));
-                result.Add(new KeyValuePair<string, string>("Device", manifest.UserDataBackup.DeviceName));
-                result.Add(new KeyValuePair<string, string>("Database", manifest.UserDataBackup.DatabaseName));
-                result.Add(new KeyValuePair<string, string>("Hash", manifest.UserDataBackup.Hash));
-                result.Add(new KeyValuePair<string, string>("SchemaVersion", manifest.UserDataBackup.SchemaVersion.ToString(CultureInfo.InvariantCulture)));
-            }
-
-            return result;
+            result.Add(new KeyValuePair<string, string>("Name", manifest.Name));
+            result.Add(new KeyValuePair<string, string>("Created", manifest.CreationDate));
+            result.Add(new KeyValuePair<string, string>("Version", manifest.Version.ToString(CultureInfo.InvariantCulture)));
+            result.Add(new KeyValuePair<string, string>("Type", manifest.Type.ToString(CultureInfo.InvariantCulture)));
+            result.Add(new KeyValuePair<string, string>("LastModified", manifest.UserDataBackup.LastModifiedDate));
+            result.Add(new KeyValuePair<string, string>("Device", manifest.UserDataBackup.DeviceName));
+            result.Add(new KeyValuePair<string, string>("Database", manifest.UserDataBackup.DatabaseName));
+            result.Add(new KeyValuePair<string, string>("Hash", manifest.UserDataBackup.Hash));
+            result.Add(new KeyValuePair<string, string>("SchemaVersion", manifest.UserDataBackup.SchemaVersion.ToString(CultureInfo.InvariantCulture)));
         }
 
-        private static List<DataTypeListItem> CreateListItems()
+        return result;
+    }
+
+    private static List<DataTypeListItem> CreateListItems()
+    {
+        return new()
         {
-            return new()
-            {
-                new("Manifest", JwLibraryFileDataTypes.Manifest),
-                new("Block Range", JwLibraryFileDataTypes.BlockRange),
-                new("Bookmark", JwLibraryFileDataTypes.Bookmark),
-                new("InputField", JwLibraryFileDataTypes.InputField),
-                new("Last Modified", JwLibraryFileDataTypes.LastModified),
-                new("Location", JwLibraryFileDataTypes.Location),
-                new("Note", JwLibraryFileDataTypes.Note),
-                new("Tag", JwLibraryFileDataTypes.Tag),
-                new("Tag Map", JwLibraryFileDataTypes.TagMap),
-                new("User Mark", JwLibraryFileDataTypes.UserMark),
-            };
-        }
+            new("Manifest", JwLibraryFileDataTypes.Manifest),
+            new("Block Range", JwLibraryFileDataTypes.BlockRange),
+            new("Bookmark", JwLibraryFileDataTypes.Bookmark),
+            new("InputField", JwLibraryFileDataTypes.InputField),
+            new("Last Modified", JwLibraryFileDataTypes.LastModified),
+            new("Location", JwLibraryFileDataTypes.Location),
+            new("Note", JwLibraryFileDataTypes.Note),
+            new("Tag", JwLibraryFileDataTypes.Tag),
+            new("Tag Map", JwLibraryFileDataTypes.TagMap),
+            new("User Mark", JwLibraryFileDataTypes.UserMark),
+        };
     }
 }

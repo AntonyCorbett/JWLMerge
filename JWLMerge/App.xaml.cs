@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Windows.Threading;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using JWLMerge.Helpers;
 using Microsoft.AppCenter;
 
@@ -21,7 +22,6 @@ namespace JWLMerge
     using Services;
     using ViewModel;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Toolkit.Mvvm.DependencyInjection;
     using EventTracking;
 
     /// <summary>

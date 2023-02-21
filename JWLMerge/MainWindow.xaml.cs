@@ -1,10 +1,11 @@
-﻿namespace JWLMerge
+﻿using CommunityToolkit.Mvvm.Messaging;
+
+namespace JWLMerge
 {
     using System.ComponentModel;
     using System.Windows;
     using Messages;
-    using Microsoft.Toolkit.Mvvm.Messaging;
-
+    
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

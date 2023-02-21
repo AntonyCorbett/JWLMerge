@@ -1,55 +1,55 @@
-﻿namespace JWLMerge.ViewModel
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+namespace JWLMerge.ViewModel;
+
+using System.Collections.Generic;
+using JWLMerge.BackupFileServices.Models;
+using JWLMerge.BackupFileServices.Models.DatabaseModels;
+using MaterialDesignThemes.Wpf;
+
+// ReSharper disable once ClassNeverInstantiated.Global
+internal sealed class ImportBibleNotesViewModel : ObservableObject
 {
-    using System.Collections.Generic;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using MaterialDesignThemes.Wpf;
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-    using Microsoft.Toolkit.Mvvm.Input;
+    private IReadOnlyCollection<Tag>? _tags;
 
-    // ReSharper disable once ClassNeverInstantiated.Global
-    internal sealed class ImportBibleNotesViewModel : ObservableObject
+    public ImportBibleNotesViewModel()
     {
-        private IReadOnlyCollection<Tag>? _tags;
+        OkCommand = new RelayCommand(Ok);
+        CancelCommand = new RelayCommand(Cancel);
+    }
 
-        public ImportBibleNotesViewModel()
+    public ImportBibleNotesParams? Result { get; private set; }
+
+    public RelayCommand OkCommand { get; set; }
+
+    public RelayCommand CancelCommand { get; set; }
+
+    public IReadOnlyCollection<Tag>? Tags
+    {
+        get => _tags;
+        set
         {
-            OkCommand = new RelayCommand(Ok);
-            CancelCommand = new RelayCommand(Cancel);
+            _tags = value;
+            OnPropertyChanged();
         }
+    }
 
-        public ImportBibleNotesParams? Result { get; private set; }
+    public int SelectedTagId { get; set; }
 
-        public RelayCommand OkCommand { get; set; }
+    private void Cancel()
+    {
+        Result = null;
+        DialogHost.CloseDialogCommand.Execute(null, null);
+    }
 
-        public RelayCommand CancelCommand { get; set; }
-
-        public IReadOnlyCollection<Tag>? Tags
+    private void Ok()
+    {
+        Result = new ImportBibleNotesParams
         {
-            get => _tags;
-            set
-            {
-                _tags = value;
-                OnPropertyChanged();
-            }
-        }
+            TagId = SelectedTagId,
+        };
 
-        public int SelectedTagId { get; set; }
-
-        private void Cancel()
-        {
-            Result = null;
-            DialogHost.CloseDialogCommand.Execute(null, null);
-        }
-
-        private void Ok()
-        {
-            Result = new ImportBibleNotesParams
-            {
-                TagId = SelectedTagId,
-            };
-
-            DialogHost.CloseDialogCommand.Execute(null, null);
-        }
+        DialogHost.CloseDialogCommand.Execute(null, null);
     }
 }

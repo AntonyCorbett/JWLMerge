@@ -1,8 +1,9 @@
-﻿namespace JWLMerge.ViewModel
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+namespace JWLMerge.ViewModel
 {
     using MaterialDesignThemes.Wpf;
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-    using Microsoft.Toolkit.Mvvm.Input;
 
     // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class RemoveFavouritesPromptViewModel : ObservableObject

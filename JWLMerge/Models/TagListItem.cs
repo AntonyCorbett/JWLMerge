@@ -1,34 +1,33 @@
-﻿namespace JWLMerge.Models
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace JWLMerge.Models;
+
+internal sealed class TagListItem : ObservableObject
 {
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    private bool _isChecked;
 
-    internal sealed class TagListItem : ObservableObject
+    public TagListItem(string name, int id)
     {
-        private bool _isChecked;
+        Name = name;
+        Id = id;
+    }
 
-        public TagListItem(string name, int id)
+    public string Name { get; }
+
+    public int Id { get; }
+
+    public bool IsChecked
+    {
+        get => _isChecked;
+        set
         {
-            Name = name;
-            Id = id;
-        }
-
-        public string Name { get; }
-
-        public int Id { get; }
-
-        public bool IsChecked
-        {
-            get => _isChecked;
-            set
+            if (_isChecked != value)
             {
-                if (_isChecked != value)
-                {
-                    _isChecked = value;
-                    OnPropertyChanged();
-                }
+                _isChecked = value;
+                OnPropertyChanged();
             }
         }
-
-        public override string ToString() => Name;
     }
+
+    public override string ToString() => Name;
 }

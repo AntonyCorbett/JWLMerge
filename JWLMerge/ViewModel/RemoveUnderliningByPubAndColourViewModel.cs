@@ -1,10 +1,11 @@
-﻿namespace JWLMerge.ViewModel
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
+namespace JWLMerge.ViewModel
 {
     using System.Collections.ObjectModel;
     using Models;
     using MaterialDesignThemes.Wpf;
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
-    using Microsoft.Toolkit.Mvvm.Input;
 
     internal sealed class RemoveUnderliningByPubAndColourViewModel : ObservableObject
     {

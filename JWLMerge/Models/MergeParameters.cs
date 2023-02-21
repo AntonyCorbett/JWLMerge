@@ -1,97 +1,96 @@
-﻿namespace JWLMerge.Models
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace JWLMerge.Models;
+
+public class MergeParameters : ObservableObject
 {
-    using Microsoft.Toolkit.Mvvm.ComponentModel;
+    private bool _includeBookmarks;
+    private bool _includeNotes;
+    private bool _includeUnderlining;
+    private bool _includeTags;
+    private bool _includeInputFields;
 
-    public class MergeParameters : ObservableObject
+    public MergeParameters()
     {
-        private bool _includeBookmarks;
-        private bool _includeNotes;
-        private bool _includeUnderlining;
-        private bool _includeTags;
-        private bool _includeInputFields;
+        IncludeBookmarks = true;
+        IncludeNotes = true;
+        IncludeUnderlining = true;
+        IncludeTags = true;
+        IncludeInputFields = true;
+    }
 
-        public MergeParameters()
+    public bool IncludeInputFields
+    {
+        get => _includeInputFields;
+        set
         {
-            IncludeBookmarks = true;
-            IncludeNotes = true;
-            IncludeUnderlining = true;
-            IncludeTags = true;
-            IncludeInputFields = true;
-        }
-
-        public bool IncludeInputFields
-        {
-            get => _includeInputFields;
-            set
+            if (_includeInputFields != value)
             {
-                if (_includeInputFields != value)
-                {
-                    _includeInputFields = value;
-                    OnPropertyChanged();
-                }
+                _includeInputFields = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public bool IncludeBookmarks
+    public bool IncludeBookmarks
+    {
+        get => _includeBookmarks;
+        set
         {
-            get => _includeBookmarks;
-            set
+            if (_includeBookmarks != value)
             {
-                if (_includeBookmarks != value)
-                {
-                    _includeBookmarks = value;
-                    OnPropertyChanged();
-                }
+                _includeBookmarks = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public bool IncludeNotes
+    public bool IncludeNotes
+    {
+        get => _includeNotes;
+        set
         {
-            get => _includeNotes;
-            set
+            if (_includeNotes != value)
             {
-                if (_includeNotes != value)
-                {
-                    _includeNotes = value;
-                    OnPropertyChanged();
-                }
+                _includeNotes = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public bool IncludeUnderlining
+    public bool IncludeUnderlining
+    {
+        get => _includeUnderlining;
+        set
         {
-            get => _includeUnderlining;
-            set
+            if (_includeUnderlining != value)
             {
-                if (_includeUnderlining != value)
-                {
-                    _includeUnderlining = value;
-                    OnPropertyChanged();
-                }
+                _includeUnderlining = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public bool IncludeTags
+    public bool IncludeTags
+    {
+        get => _includeTags;
+        set
         {
-            get => _includeTags;
-            set
+            if (_includeTags != value)
             {
-                if (_includeTags != value)
-                {
-                    _includeTags = value;
-                    OnPropertyChanged();
-                }
+                _includeTags = value;
+                OnPropertyChanged();
             }
         }
+    }
 
-        public bool AnyIncludes()
-        {
-            return IncludeTags || IncludeBookmarks || IncludeNotes || IncludeUnderlining || IncludeInputFields;
-        }
+    public bool AnyIncludes()
+    {
+        return IncludeTags || IncludeBookmarks || IncludeNotes || IncludeUnderlining || IncludeInputFields;
+    }
 
-        public bool AnyExcludes()
-        {
-            return !IncludeTags || !IncludeBookmarks || !IncludeNotes || !IncludeUnderlining || !IncludeInputFields;
-        }
+    public bool AnyExcludes()
+    {
+        return !IncludeTags || !IncludeBookmarks || !IncludeNotes || !IncludeUnderlining || !IncludeInputFields;
     }
 }
