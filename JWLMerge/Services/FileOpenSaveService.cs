@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.Services
+﻿using JWLMerge.ImportExportServices.Models;
+
+namespace JWLMerge.Services
 {
     using System;
     using System.IO;
@@ -19,7 +21,7 @@
             {
                 AddExtension = true,
                 Title = title,
-                Filter = "Excel file (*.xlsx)|*.xlsx",
+                Filter = "Excel file (*.xlsx)|*.xlsx|Text file (*.txt)|*.txt",
                 InitialDirectory = ExportDirectory ?? GetDefaultExportFolder(),
             };
 
@@ -30,6 +32,27 @@
             }
 
             return null;
+        }
+
+        public ImportExportFileType GetFileType(string? fileName)
+        {
+            var ext = Path.GetExtension(fileName);
+            if (string.IsNullOrWhiteSpace(ext))
+            {
+                return ImportExportFileType.Unknown;
+            }
+
+            if (string.Equals(ext, "txt", StringComparison.OrdinalIgnoreCase))
+            {
+                return ImportExportFileType.Text;
+            }
+
+            if (string.Equals(ext, "xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                return ImportExportFileType.Excel;
+            }
+
+            return ImportExportFileType.Unknown;
         }
 
         public string? GetBibleNotesImportFilePath(string title)

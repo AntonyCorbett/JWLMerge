@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
 using JWLMerge.ExcelServices.Exceptions;
-using JWLMerge.ExcelServices.Models;
+using JWLMerge.ImportExportServices.Models;
 
 namespace JWLMerge.ExcelServices
 {
@@ -22,7 +22,7 @@ namespace JWLMerge.ExcelServices
         /// <returns>Results.</returns>
         public ExportBibleNotesResult AppendToBibleNotesFile(
             string excelFilePath, 
-            IReadOnlyCollection<BibleNote>? notes, 
+            IReadOnlyCollection<BibleNoteForImportExport>? notes, 
             int startRow, 
             string backupFilePath)
         {

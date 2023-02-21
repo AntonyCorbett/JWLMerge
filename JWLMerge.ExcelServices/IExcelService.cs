@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using JWLMerge.ExcelServices.Models;
+using JWLMerge.ImportExportServices.Models;
 
 namespace JWLMerge.ExcelServices
 {
@@ -7,7 +7,7 @@ namespace JWLMerge.ExcelServices
     {
         ExportBibleNotesResult AppendToBibleNotesFile(
             string excelFilePath, 
-            IReadOnlyCollection<BibleNote>? notes, 
+            IReadOnlyCollection<BibleNoteForImportExport>? notes, 
             int startRow, 
             string backupFilePath);
     }

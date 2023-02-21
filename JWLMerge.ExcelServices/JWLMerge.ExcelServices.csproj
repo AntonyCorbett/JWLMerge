@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<Nullable>Enable</Nullable>
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
@@ -22,6 +22,10 @@
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\JWLMerge.ImportExportServices\JWLMerge.ImportExportServices.csproj" />
 	</ItemGroup>
 
 </Project>

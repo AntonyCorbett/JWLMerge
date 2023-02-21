@@ -1,8 +1,8 @@
-﻿namespace JWLMerge.ExcelServices.Models
+﻿namespace JWLMerge.ImportExportServices.Models
 {
-    public class BibleNote
+    public class BibleNoteForImportExport
     {
-        public BibleNote(int bookNumber, string bookName)
+        public BibleNoteForImportExport(int bookNumber, string bookName)
         {
             BookNumber = bookNumber;
             BookName = bookName;

@@ -13,7 +13,7 @@
         private const string BibleKeySymbolToken = "[BibleKeySymbol";
         private const string MepsLanguageIdToken = "[MepsLanguageId";
 
-        private readonly List<BibleNote> _notes = new List<BibleNote>();
+        private readonly List<BibleNote> _notes = new();
         private readonly string _path;
         private string _bibleKeySymbol = null!;
         private int _mepsLanguageId;

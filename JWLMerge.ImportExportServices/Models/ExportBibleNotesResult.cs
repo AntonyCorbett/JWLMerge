@@ -1,4 +1,4 @@
-﻿namespace JWLMerge.ExcelServices.Models
+﻿namespace JWLMerge.ImportExportServices.Models
 {
     public class ExportBibleNotesResult
     {
