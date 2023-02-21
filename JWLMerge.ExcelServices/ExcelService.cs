@@ -88,13 +88,11 @@ namespace JWLMerge.ExcelServices
 
         private static void SetCellStringValue(IXLWorksheet worksheet, int row, int col, string? value)
         {
-            worksheet.Cell(row, col).DataType = XLDataType.Text;
             worksheet.Cell(row, col).SetValue(value ?? string.Empty);
         }
 
         private static void SetCellIntegerValue(IXLWorksheet worksheet, int row, int col, int? value)
         {
-            worksheet.Cell(row, col).DataType = XLDataType.Number;
             worksheet.Cell(row, col).SetValue(value);
         }
 

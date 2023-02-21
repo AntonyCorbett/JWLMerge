@@ -712,7 +712,7 @@ public sealed class BackupFileService : IBackupFileService
         database.UserMarks.RemoveAll(x => userMarksToRemove.Contains(x.UserMarkId));
     }
 
-    private int SortBibleNotes(ImportExportServices.Models.BibleNoteForImportExport x, ImportExportServices.Models.BibleNoteForImportExport y)
+    private int SortBibleNotes(BibleNoteForImportExport x, BibleNoteForImportExport y)
     {
         if (x.BookNumber != y.BookNumber)
         {

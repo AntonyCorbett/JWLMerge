@@ -42,12 +42,12 @@ namespace JWLMerge.Services
                 return ImportExportFileType.Unknown;
             }
 
-            if (string.Equals(ext, "txt", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(ext, ".txt", StringComparison.OrdinalIgnoreCase))
             {
                 return ImportExportFileType.Text;
             }
 
-            if (string.Equals(ext, "xlsx", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(ext, ".xlsx", StringComparison.OrdinalIgnoreCase))
             {
                 return ImportExportFileType.Excel;
             }
