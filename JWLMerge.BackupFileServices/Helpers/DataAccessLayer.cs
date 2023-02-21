@@ -132,7 +132,7 @@ namespace JWLMerge.BackupFileServices.Helpers
 
         private static SqliteConnection CreateConnection(string filePath)
         {
-            var connectionString = $"Data Source={filePath};";
+            var connectionString = $"Data Source={filePath};Pooling=false";
             Log.Logger.Debug("SQL create connection: {connection}", connectionString);
 
             var connection = new SqliteConnection(connectionString);
