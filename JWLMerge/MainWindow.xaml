@@ -1,90 +1,97 @@
-﻿    <Window x:Class="JWLMerge.MainWindow"
-        x:Name="JwlMergeWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="{Binding Title}" Height="650" Width="725"
-        Closing="MainWindowOnClosing"
-        DataContext="{Binding Main, Source={StaticResource Locator}}"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:models="clr-namespace:JWLMerge.Models"
-        TextElement.Foreground="{StaticResource MaterialDesignBody}"
-        TextElement.FontWeight="Medium"
-        TextElement.FontSize="14"
-        TextOptions.TextFormattingMode="Ideal"
-        TextOptions.TextRenderingMode="Auto"
-        MinWidth="400"
-        MinHeight="400"
-        Background="{StaticResource MaterialDesignPaper}"
-        FontFamily="{StaticResource MaterialDesignFont}">
+﻿    
+<Window
+    x:Class="JWLMerge.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:JWLMerge.Models"
+    x:Name="JwlMergeWindow"
+    Title="{Binding Title}"
+    Width="725"
+    Height="650"
+    MinWidth="400"
+    MinHeight="400"
+    Background="{StaticResource MaterialDesignPaper}"
+    Closing="MainWindowOnClosing"
+    DataContext="{Binding Main, Source={StaticResource Locator}}"
+    FontFamily="{StaticResource MaterialDesignFont}"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Medium"
+    TextElement.Foreground="{StaticResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
     <Window.Resources>
-        
+
         <DataTemplate DataType="{x:Type models:JwLibraryFile}">
-            <materialDesign:Card 
-                IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}"
-                Margin="20,20,0,0" Padding="10" Width="220" Height="245">
+            <materialDesign:Card
+                Width="220"
+                Height="245"
+                Margin="20,20,0,0"
+                Padding="10"
+                IsEnabled="{Binding Path=DataContext.IsNotBusy, ElementName=JwlMergeWindow}">
                 <materialDesign:Card.ToolTip>
-                    <ToolTip Content="{Binding TooltipSummaryText}" 
-                             Placement="Right"/>
+                    <ToolTip Content="{Binding TooltipSummaryText}" Placement="Right" />
                 </materialDesign:Card.ToolTip>
                 <StackPanel Orientation="Vertical">
                     <DockPanel>
-                        <materialDesign:PackIcon Kind="FileOutline" 
-                                                 Width="22"
-                                                 Height="22"
-                                                 ToolTip="{Binding BackupFile.Manifest.Name}"
-                                                 DockPanel.Dock="Left"/>
+                        <materialDesign:PackIcon
+                            Width="22"
+                            Height="22"
+                            DockPanel.Dock="Left"
+                            Kind="FileOutline"
+                            ToolTip="{Binding BackupFile.Manifest.Name}" />
 
-                        <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}" 
-                                   DockPanel.Dock="Left"
-                                   ToolTip="{Binding BackupFile.Manifest.Name}"
-                                   Text="{Binding BackupFile.Manifest.CreationDate}" />
-                        
-                        <Button Height="24" Width="24" Padding="0" 
-                                DockPanel.Dock="Right" HorizontalAlignment="Right"
-                                Command="{Binding Path=DataContext.CloseCardCommand, ElementName=JwlMergeWindow}"
-                                CommandParameter="{Binding FilePath}"
-                                Style="{StaticResource MaterialDesignFlatButton}"
-                                materialDesign:ShadowAssist.ShadowDepth="Depth0">
-                            <materialDesign:PackIcon
-                                HorizontalAlignment="Center"
-                                Kind="Close" />
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                            Text="{Binding BackupFile.Manifest.CreationDate}"
+                            ToolTip="{Binding BackupFile.Manifest.Name}" />
+
+                        <Button
+                            Width="24"
+                            Height="24"
+                            Padding="0"
+                            HorizontalAlignment="Right"
+                            materialDesign:ElevationAssist.Elevation="Dp0"
+                            Command="{Binding Path=DataContext.CloseCardCommand, ElementName=JwlMergeWindow}"
+                            CommandParameter="{Binding FilePath}"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                            <materialDesign:PackIcon HorizontalAlignment="Center" Kind="Close" />
                         </Button>
                     </DockPanel>
 
-                    <TextBlock Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
-                               Margin="0,5,0,0"
-                               TextTrimming="CharacterEllipsis"
-                               ToolTip="{Binding BackupFile.Manifest.Name}"
-                               Text="{Binding BackupFile.Manifest.UserDataBackup.DeviceName}"/>
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                        Text="{Binding BackupFile.Manifest.UserDataBackup.DeviceName}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding BackupFile.Manifest.Name}" />
 
-                    <TextBlock Style="{StaticResource MaterialDesignBody2TextBlock}" 
-                               Margin="0,5,0,0"
-                               FontSize="10"
-                               TextTrimming="CharacterEllipsis"
-                               ToolTip="{Binding BackupFile.FilePath}"
-                               Text="{Binding BackupFile.FilePath}"/>
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        FontSize="10"
+                        Style="{StaticResource MaterialDesignBody2TextBlock}"
+                        Text="{Binding BackupFile.FilePath}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding BackupFile.FilePath}" />
 
-                    <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,0,0,-4"/>
+                    <Separator Margin="0,0,0,-4" Style="{StaticResource MaterialDesignDarkSeparator}" />
 
-                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}" 
-                              IsChecked="{Binding MergeParameters.IncludeNotes}">Notes</CheckBox>
+                    <CheckBox IsChecked="{Binding MergeParameters.IncludeNotes}" Style="{StaticResource MaterialDesignCheckBox}">Notes</CheckBox>
 
-                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
-                              IsChecked="{Binding MergeParameters.IncludeBookmarks}">Bookmarks</CheckBox>
+                    <CheckBox IsChecked="{Binding MergeParameters.IncludeBookmarks}" Style="{StaticResource MaterialDesignCheckBox}">Bookmarks</CheckBox>
 
-                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
-                              IsChecked="{Binding MergeParameters.IncludeInputFields}">Input Fields</CheckBox>
+                    <CheckBox IsChecked="{Binding MergeParameters.IncludeInputFields}" Style="{StaticResource MaterialDesignCheckBox}">Input Fields</CheckBox>
 
-                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
-                              IsChecked="{Binding MergeParameters.IncludeUnderlining}">Underlining</CheckBox>
+                    <CheckBox IsChecked="{Binding MergeParameters.IncludeUnderlining}" Style="{StaticResource MaterialDesignCheckBox}">Underlining</CheckBox>
 
-                    <CheckBox Style="{StaticResource MaterialDesignCheckBox}"
-                              IsChecked="{Binding MergeParameters.IncludeTags}">Tags</CheckBox>
+                    <CheckBox IsChecked="{Binding MergeParameters.IncludeTags}" Style="{StaticResource MaterialDesignCheckBox}">Tags</CheckBox>
 
-                    <Separator Style="{StaticResource MaterialDesignDarkSeparator}" Margin="0,-4,0,0"/>
+                    <Separator Margin="0,-4,0,0" Style="{StaticResource MaterialDesignDarkSeparator}" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -92,70 +99,64 @@
                             <ColumnDefinition Width="55" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                                Grid.Column="0"
-                                ToolTip="Display more details"
-                                Margin="0,5,0,0"
-                                Content="DETAILS"
-                                Command="{Binding Path=DataContext.ShowDetailsCommand, ElementName=JwlMergeWindow}"
-                                CommandParameter="{Binding FilePath}"/>
+                        <Button
+                            Grid.Column="0"
+                            Margin="0,5,0,0"
+                            Command="{Binding Path=DataContext.ShowDetailsCommand, ElementName=JwlMergeWindow}"
+                            CommandParameter="{Binding FilePath}"
+                            Content="DETAILS"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            ToolTip="Display more details" />
 
                         <materialDesign:PopupBox
                             Grid.Column="1"
-                            VerticalAlignment="Bottom"
-                            HorizontalAlignment="Right"
-                            PlacementMode="BottomAndAlignCentres"
-                            Height="34"
                             Width="34"
+                            Height="34"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            PlacementMode="BottomAndAlignCentres"
                             ToolTipService.Placement="Right">
                             <StackPanel Orientation="Vertical">
 
                                 <MenuItem
-                                    Header="Remove Favourites"
                                     Command="{Binding Path=DataContext.RemoveFavouritesCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Remove Favourites" />
 
                                 <MenuItem
-                                    Header="Remove Notes by Tag..."
                                     Command="{Binding Path=DataContext.RemoveNotesByTagCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Remove Notes by Tag..." />
 
                                 <MenuItem
-                                    Header="Remove Underlining by Colour..."
                                     Command="{Binding Path=DataContext.RemoveUnderliningByColourCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Remove Underlining by Colour..." />
 
                                 <MenuItem
-                                    Header="Remove Underlining by Publication/Colour..."
                                     Command="{Binding Path=DataContext.RemoveUnderliningByPubAndColourCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Remove Underlining by Publication/Colour..." />
 
                                 <MenuItem
-                                    Header="Import Bible Notes..."
                                     Command="{Binding Path=DataContext.ImportBibleNotesCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Import Bible Notes..." />
 
                                 <MenuItem
-                                    Header="Export Bible Notes..."
                                     Command="{Binding Path=DataContext.ExportBibleNotesCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Export Bible Notes..." />
 
                                 <MenuItem
-                                    Header="Obfuscate Notes..."
                                     Command="{Binding Path=DataContext.RedactNotesCommand, ElementName=JwlMergeWindow}"
-                                    CommandParameter="{Binding FilePath}">
-                                </MenuItem>
+                                    CommandParameter="{Binding FilePath}"
+                                    Header="Obfuscate Notes..." />
 
                             </StackPanel>
                         </materialDesign:PopupBox>
                     </Grid>
-                    
+
                 </StackPanel>
             </materialDesign:Card>
         </DataTemplate>
@@ -165,65 +166,80 @@
     </Window.Resources>
 
     <materialDesign:DialogHost Identifier="MainDialogHost">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="257*"/>
-            <RowDefinition Height="62"/>
-        </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Margin="10" 
-                   Visibility="{Binding Path=FileListEmpty, Converter={StaticResource BoolToVis}, Mode=OneWay}"
-                   Style="{StaticResource MaterialDesignBody1TextBlock}">
-            Drag and drop .jwlibrary files here
-        </TextBlock>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="257*" />
+                <RowDefinition Height="62" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="10"
+                Style="{StaticResource MaterialDesignBody1TextBlock}"
+                Visibility="{Binding Path=FileListEmpty, Converter={StaticResource BoolToVis}, Mode=OneWay}">
+                Drag and drop .jwlibrary files here
+            </TextBlock>
 
 
-        <ScrollViewer Grid.Row="0" 
-                      AllowDrop="True" 
-                      VerticalScrollBarVisibility="Auto"
-                      DragOver="PanelOnDragOver" 
-                      Drop="PanelOnDrop">
-            <ItemsControl ItemsSource="{Binding Files}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-            </ItemsControl>
-        </ScrollViewer>
+            <ScrollViewer
+                Grid.Row="0"
+                AllowDrop="True"
+                DragOver="PanelOnDragOver"
+                Drop="PanelOnDrop"
+                VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Files}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
 
-        <materialDesign:ColorZone
-            Grid.Row="1"
-            Mode="PrimaryLight"
-            Padding="10" VerticalAlignment="Stretch">
-            <DockPanel>
-                <Button DockPanel.Dock="Left" Command="{Binding MergeCommand}" 
-                        Width="110" Margin="0,0,10,0" Content="{Binding MergeCommandCaption}" />
-                    <Button Style="{StaticResource MaterialDesignFlatButton}" Width="110" 
-                        Command="{Binding HomepageCommand}" Margin="0,0,10,0">HOMEPAGE</Button>
-                    <Button Style="{StaticResource MaterialDesignRaisedAccentButton}" 
+            <materialDesign:ColorZone
+                Grid.Row="1"
+                Padding="10"
+                VerticalAlignment="Stretch"
+                Mode="PrimaryLight">
+                <DockPanel>
+                    <Button
                         Width="110"
-                        Command="{Binding UpdateCommand}" 
+                        Margin="0,0,10,0"
+                        Command="{Binding MergeCommand}"
+                        Content="{Binding MergeCommandCaption}"
+                        DockPanel.Dock="Left" />
+                    <Button
+                        Width="110"
+                        Margin="0,0,10,0"
+                        Command="{Binding HomepageCommand}"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                        HOMEPAGE
+                    </Button>
+                    <Button
+                        Width="110"
+                        Margin="0,0,10,0"
+                        Command="{Binding UpdateCommand}"
+                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         ToolTip="New version available!"
-                        Visibility="{Binding Path=IsNewVersionAvailable, Converter={StaticResource BoolToVis}, Mode=OneWay}"
-                        Margin="0,0,10,0">UPDATE</Button>
-                <ProgressBar
-                    DockPanel.Dock="Right"
-                    HorizontalAlignment="Right"
-                    Visibility="{Binding Path=IsBusy, Converter={StaticResource BoolToVis}, Mode=OneWay}"
-                    Style="{StaticResource MaterialDesignCircularProgressBar}"
-                    Value="0"
-                    IsIndeterminate="True" />
-            </DockPanel>
-        </materialDesign:ColorZone>
+                        Visibility="{Binding Path=IsNewVersionAvailable, Converter={StaticResource BoolToVis}, Mode=OneWay}">
+                        UPDATE
+                    </Button>
+                    <ProgressBar
+                        HorizontalAlignment="Right"
+                        DockPanel.Dock="Right"
+                        IsIndeterminate="True"
+                        Style="{StaticResource MaterialDesignCircularProgressBar}"
+                        Visibility="{Binding Path=IsBusy, Converter={StaticResource BoolToVis}, Mode=OneWay}"
+                        Value="0" />
+                </DockPanel>
+            </materialDesign:ColorZone>
 
-        <materialDesign:Snackbar 
-            Grid.Row="0"
-            MessageQueue="{Binding TheSnackbarMessageQueue}" 
-            HorizontalAlignment="Stretch"/>
+            <materialDesign:Snackbar
+                Grid.Row="0"
+                HorizontalAlignment="Stretch"
+                MessageQueue="{Binding TheSnackbarMessageQueue}" />
         </Grid>
         <materialDesign:DialogHost.DialogContent>
-            <StackPanel Margin="16">
-            </StackPanel>
+            <StackPanel Margin="16" />
         </materialDesign:DialogHost.DialogContent>
     </materialDesign:DialogHost>
 

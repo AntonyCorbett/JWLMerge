@@ -1,62 +1,71 @@
-﻿<UserControl x:Class="JWLMerge.Dialogs.RemoveUnderliningByColourDialog"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:JWLMerge.Dialogs"
-             mc:Ignorable="d" 
-             DataContext="{Binding RemoveUnderliningByColourDialog, Source={StaticResource Locator}}"
-             TextElement.Foreground="{StaticResource MaterialDesignBody}"
-             TextElement.FontWeight="Medium"
-             TextElement.FontSize="14"
-             TextOptions.TextFormattingMode="Ideal"
-             TextOptions.TextRenderingMode="Auto"
-             Width="600"
-             Height="390"
-             Background="{StaticResource MaterialDesignPaper}"
-             FontFamily="{StaticResource MaterialDesignFont}">
+﻿<UserControl
+    x:Class="JWLMerge.Dialogs.RemoveUnderliningByColourDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="600"
+    Height="390"
+    Background="{StaticResource MaterialDesignPaper}"
+    DataContext="{Binding RemoveUnderliningByColourDialog, Source={StaticResource Locator}}"
+    FontFamily="{StaticResource MaterialDesignFont}"
+    TextElement.FontSize="14"
+    TextElement.FontWeight="Medium"
+    TextElement.Foreground="{StaticResource MaterialDesignBody}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="BtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedLightButton}">
-            <Setter Property="Width" Value="125"/>
+        <Style
+            x:Key="BtnStyle"
+            BasedOn="{StaticResource MaterialDesignRaisedLightButton}"
+            TargetType="{x:Type Button}">
+            <Setter Property="Width" Value="125" />
         </Style>
-        <Style x:Key="OkBtnStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
-            <Setter Property="Margin" Value="0,0,10,0"/>
-            <Setter Property="Width" Value="125"/>
+        <Style
+            x:Key="OkBtnStyle"
+            BasedOn="{StaticResource MaterialDesignRaisedAccentButton}"
+            TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Width" Value="125" />
         </Style>
     </UserControl.Resources>
 
     <Border Padding="20,20,20,10">
         <StackPanel Orientation="Vertical">
-            <TextBlock Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                       Margin="0,0,0,10"
-                       Text="Removing Underlining by Colour" />
+            <TextBlock
+                Margin="0,0,0,10"
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                Text="Removing Underlining by Colour" />
 
-            <TextBlock 
+            <TextBlock
+                Margin="0,0,0,10"
                 Style="{StaticResource MaterialDesignBody2TextBlock}"
-                Margin="0,0,0,10"
-                TextWrapping="Wrap"
-                Text="Remove all underlining associated with the chosen Colours" />
+                Text="Remove all underlining associated with the chosen Colours"
+                TextWrapping="Wrap" />
 
-            <TextBlock 
+            <TextBlock
+                Margin="0,0,0,10"
                 Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                TextWrapping="Wrap"
-                Margin="0,0,0,10"
-                Text="Removes all underlining that is associated with one or more of the Colours selected from the following list and then overwrites the original backup file." />
+                Text="Removes all underlining that is associated with one or more of the Colours selected from the following list and then overwrites the original backup file."
+                TextWrapping="Wrap" />
 
-            <Border Height="160" 
-                    Padding="10,0,0,0"
-                    BorderBrush="{StaticResource MaterialDesignChipBackground}" BorderThickness="1">
+            <Border
+                Height="160"
+                Padding="10,0,0,0"
+                BorderBrush="{StaticResource MaterialDesignChipBackground}"
+                BorderThickness="1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding ColourItems}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Margin="0,4,10,0">
                                     <Border.Background>
-                                        <SolidColorBrush Color="{Binding Color}"></SolidColorBrush>
+                                        <SolidColorBrush Color="{Binding Color}" />
                                     </Border.Background>
-                                    
-                                    <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding}"/>
+
+                                    <CheckBox Content="{Binding}" IsChecked="{Binding IsChecked}" />
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -71,23 +80,24 @@
                 Remove associated notes
             </CheckBox>
 
-            <StackPanel Orientation="Horizontal" 
-                        HorizontalAlignment="Center" 
-                        Margin="0,20,0,0" >
+            <StackPanel
+                Margin="0,20,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
 
-                <Button Style="{StaticResource OkBtnStyle}"
-                        Command="{Binding OkCommand}"
-                        IsEnabled="{Binding SelectionMade}"
-                        Content="OK">
-                </Button>
+                <Button
+                    Command="{Binding OkCommand}"
+                    Content="OK"
+                    IsEnabled="{Binding SelectionMade}"
+                    Style="{StaticResource OkBtnStyle}" />
 
-                <Button Style="{StaticResource BtnStyle}" 
-                        HorizontalAlignment="Right"
-                        IsDefault="true" 
-                        Command="{Binding CancelCommand}"
-                        IsCancel="true" 
-                        Content="CANCEL">
-                </Button>
+                <Button
+                    HorizontalAlignment="Right"
+                    Command="{Binding CancelCommand}"
+                    Content="CANCEL"
+                    IsCancel="true"
+                    IsDefault="true"
+                    Style="{StaticResource BtnStyle}" />
 
             </StackPanel>
         </StackPanel>

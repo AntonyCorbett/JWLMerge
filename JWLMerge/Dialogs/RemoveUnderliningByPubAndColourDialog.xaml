@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:JWLMerge.Dialogs"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              DataContext="{Binding RemoveUnderliningByPubAndColourDialog, Source={StaticResource Locator}}"
@@ -53,7 +52,6 @@
                               Style="{StaticResource MaterialDesignComboBox}"
                               materialDesign:HintAssist.Hint="Publication"
                               DisplayMemberPath="KeySymbol"
-                              materialDesign:ComboBoxAssist.ClassicMode="true"
                               SelectedItem="{Binding SelectedPublication}" />
                 
                 <ComboBox ItemsSource="{Binding ColourItems}" 
@@ -61,7 +59,6 @@
                               Width="250"
                               Style="{StaticResource MaterialDesignComboBox}"
                               materialDesign:HintAssist.Hint="Colour"
-                              materialDesign:ComboBoxAssist.ClassicMode="true"
                               SelectedItem="{Binding SelectedColour}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
