@@ -18,12 +18,12 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="MaterialDesignThemes" Version="4.1.0" />
-		<PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.4.0" />
-		<PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.4.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+		<PackageReference Include="Microsoft.AppCenter.Analytics" Version="5.0.1" />
+		<PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.2" />
-		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\JWLMerge.BackupFileServices\JWLMerge.BackupFileServices.csproj" />
