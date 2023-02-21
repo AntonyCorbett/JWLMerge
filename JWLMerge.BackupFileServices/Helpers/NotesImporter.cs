@@ -101,7 +101,7 @@ namespace JWLMerge.BackupFileServices.Helpers
                 return !string.IsNullOrEmpty(newNote);
             }
 
-            return !existingNote.Content.Equals(newNote);
+            return !existingNote.Content.Equals(newNote, StringComparison.Ordinal);
         }
 
         private void InsertNote(BibleNote note)

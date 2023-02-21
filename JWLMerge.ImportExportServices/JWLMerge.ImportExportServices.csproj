@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
+		<NeutralLanguage>en-GB</NeutralLanguage>
 	</PropertyGroup>
 
 	<ItemGroup>

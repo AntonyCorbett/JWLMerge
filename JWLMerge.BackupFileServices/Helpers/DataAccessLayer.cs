@@ -110,7 +110,7 @@ namespace JWLMerge.BackupFileServices.Helpers
 
         private static string ReadString(SqliteDataReader reader, string columnName)
         {
-            return reader[columnName].ToString();
+            return reader[columnName].ToString()!;
         }
 
         private static string? ReadNullableString(SqliteDataReader reader, string columnName)

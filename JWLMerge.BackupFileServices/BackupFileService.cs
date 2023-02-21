@@ -28,7 +28,7 @@ public sealed class BackupFileService : IBackupFileService
     private const string ManifestEntryName = "manifest.json";
     private const string DatabaseEntryName = "userData.db";
 
-    private readonly Merger _merger = new Merger();
+    private readonly Merger _merger = new();
         
     public BackupFileService()
     {
@@ -386,7 +386,7 @@ public sealed class BackupFileService : IBackupFileService
         }
 
         // we must retain user marks that are associated with notes...
-        HashSet<int> userMarksToRetain = new HashSet<int>();
+        HashSet<int> userMarksToRetain = new();
         foreach (var note in database.Notes)
         {
             if (note.UserMarkId != null)
@@ -738,7 +738,7 @@ public sealed class BackupFileService : IBackupFileService
         return _merger.Merge(jwlibraryFiles.Select(x => x.Database));
     }
 
-    private void MergerProgressEvent(object sender, ProgressEventArgs e)
+    private void MergerProgressEvent(object? sender, ProgressEventArgs e)
     {
         OnProgressEvent(e);
     }
@@ -793,6 +793,11 @@ public sealed class BackupFileService : IBackupFileService
         var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
 
         var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
+        if (databaseEntry == null)
+        {
+            throw new BackupFileServicesException($"Could not find database entry in ZipArchive: {jwlibraryFile}");
+        }
+
         var tmpFile = Path.GetTempFileName();
 
         databaseEntry.ExtractToFile(tmpFile, overwrite: true);
@@ -901,7 +906,9 @@ public sealed class BackupFileService : IBackupFileService
 
         using var fs = new FileStream(databaseFilePath, FileMode.Open);
         using var bs = new BufferedStream(fs);
+#pragma warning disable SYSLIB0021
         using var sha1 = new SHA256Managed();
+#pragma warning restore SYSLIB0021
 
         byte[] hash = sha1.ComputeHash(bs);
         var sb = new StringBuilder(2 * hash.Length);

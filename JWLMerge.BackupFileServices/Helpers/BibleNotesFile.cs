@@ -1,4 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Helpers
+﻿using JWLMerge.BackupFileServices.Exceptions;
+
+namespace JWLMerge.BackupFileServices.Helpers
 {
     using System;
     using System.Collections.Generic;
@@ -85,12 +87,12 @@
         {
             if (string.IsNullOrEmpty(_path))
             {
-                throw new Exception("Bible notes file not specified");
+                throw new BackupFileServicesException("Bible notes file not specified");
             }
 
             if (!File.Exists(_path))
             {
-                throw new Exception("Bible notes file does not exist");
+                throw new BackupFileServicesException("Bible notes file does not exist");
             }
 
             return File.ReadAllLines(_path);
@@ -236,7 +238,7 @@
             var bibleKeySymbol = FindValue(lines, BibleKeySymbolToken);
             if (string.IsNullOrEmpty(bibleKeySymbol))
             {
-                throw new Exception("Could not find Bible Key Symbol");
+                throw new BackupFileServicesException("Could not find Bible Key Symbol");
             }
 
             _bibleKeySymbol = bibleKeySymbol.Trim('"');
@@ -244,12 +246,12 @@
             var mepsLanguageId = FindValue(lines, MepsLanguageIdToken);
             if (string.IsNullOrEmpty(mepsLanguageId))
             {
-                throw new Exception("Could not find Meps Language Id");
+                throw new BackupFileServicesException("Could not find Meps Language Id");
             }
 
             if (!int.TryParse(mepsLanguageId.Trim('"'), out _mepsLanguageId))
             {
-                throw new Exception("Could not parse Meps Language Id");
+                throw new BackupFileServicesException("Could not parse Meps Language Id");
             }
         }
 

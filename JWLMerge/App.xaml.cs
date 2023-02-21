@@ -27,7 +27,9 @@ namespace JWLMerge
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
     public partial class App : Application
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly string _appString = "JWLMergeAC";
         private Mutex? _appMutex;
@@ -61,7 +63,7 @@ namespace JWLMerge
         }
 
         [Conditional("USE_APP_CENTER")]
-        private void ConfigureAppCenter()
+        private static void ConfigureAppCenter()
         {
             AppCenterInit.Execute();
         }

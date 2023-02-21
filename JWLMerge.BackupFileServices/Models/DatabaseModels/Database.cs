@@ -9,7 +9,7 @@ namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 
     public class Database
     {
-        private readonly Dictionary<int, int> _bookmarkSlots = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _bookmarkSlots = new();
         
         private Lazy<Dictionary<string, Note>> _notesGuidIndex = null!;
         private Lazy<Dictionary<int, Note>> _notesIdIndex = null!;
@@ -358,8 +358,7 @@ namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 
         private Dictionary<BibleBookChapterAndVerse, List<Note>> NoteVerseIndexValueFactory()
         {
-            Dictionary<BibleBookChapterAndVerse, List<Note>> result = 
-                new Dictionary<BibleBookChapterAndVerse, List<Note>>();
+            Dictionary<BibleBookChapterAndVerse, List<Note>> result = new();
 
             foreach (var note in Notes)
             {

@@ -639,7 +639,9 @@ internal sealed class MainViewModel : ObservableObject
         Process.Start(psi);
     }
 
+#pragma warning disable U2U1003 // Avoid declaring methods used in delegate constructors static
     private static void LaunchHomepage()
+#pragma warning restore U2U1003 // Avoid declaring methods used in delegate constructors static
     {
         var psi = new ProcessStartInfo
         {

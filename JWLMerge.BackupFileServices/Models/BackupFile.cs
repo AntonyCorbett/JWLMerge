@@ -28,9 +28,7 @@ namespace JWLMerge.BackupFileServices.Models
         public string FilePath { get; }
 
 #pragma warning disable IDE0051 // Remove unused private members
-#pragma warning disable S1144 // Remove unused private members
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-#pragma warning restore S1144 // Remove unused private members
 #pragma warning restore IDE0051 // Remove unused private members
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

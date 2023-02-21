@@ -6,6 +6,7 @@
 		<Nullable>Enable</Nullable>
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
 		<Platforms>AnyCPU</Platforms>
+		<NeutralLanguage>en-GB</NeutralLanguage>
 	</PropertyGroup>
 
 	<ItemGroup>

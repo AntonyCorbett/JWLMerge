@@ -17,7 +17,7 @@
             return new { TagType, Name }.GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             switch (obj)
             {

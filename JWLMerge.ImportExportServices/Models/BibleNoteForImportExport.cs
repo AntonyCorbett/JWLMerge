@@ -37,7 +37,7 @@
 
                 if (VerseNumber == null)
                 {
-                    return ChapterNumber.ToString();
+                    return ChapterNumber.ToString()!;
                 }
 
                 return $"{ChapterNumber}:{VerseNumber}";

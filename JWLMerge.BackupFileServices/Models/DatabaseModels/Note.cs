@@ -62,6 +62,11 @@ namespace JWLMerge.BackupFileServices.Models.DatabaseModels
 
         public DateTime GetLastModifiedDateTime()
         {
+            if (string.IsNullOrWhiteSpace(LastModified))
+            {
+                return DateTime.Now;
+            }
+
             return DateTime.Parse(LastModified, CultureInfo.InvariantCulture);
         }
 

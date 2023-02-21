@@ -12,10 +12,10 @@
     /// </summary>
     internal sealed class Merger
     {
-        private readonly IdTranslator _translatedLocationIds = new IdTranslator();
-        private readonly IdTranslator _translatedTagIds = new IdTranslator();
-        private readonly IdTranslator _translatedUserMarkIds = new IdTranslator();
-        private readonly IdTranslator _translatedNoteIds = new IdTranslator();
+        private readonly IdTranslator _translatedLocationIds = new();
+        private readonly IdTranslator _translatedTagIds = new();
+        private readonly IdTranslator _translatedUserMarkIds = new();
+        private readonly IdTranslator _translatedNoteIds = new();
 
         private int _maxLocationId;
         private int _maxUserMarkId;

@@ -8,6 +8,7 @@
 		<AnalysisLevel>latest-recommended</AnalysisLevel>
 		<ApplicationIcon>JWLMerge.ico</ApplicationIcon>
 		<Platforms>AnyCPU</Platforms>
+		<NeutralLanguage>en-GB</NeutralLanguage>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Include="..\SolutionInfo.cs" Link="Properties\SolutionInfo.cs" />

@@ -7,7 +7,7 @@
     internal sealed class RedactService
     {
         private readonly Lazy<string[]> _loremIpsumLines;
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         public RedactService()
         {
