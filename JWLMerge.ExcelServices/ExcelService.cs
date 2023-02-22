@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
 using JWLMerge.ExcelServices.Exceptions;
+using JWLMerge.ImportExportServices;
 using JWLMerge.ImportExportServices.Models;
 
 namespace JWLMerge.ExcelServices;
 
-public class ExcelService : IExcelService
+public class ExcelService : IExportToFileService
 {
     private const string WorkbookName = "Notes";
 
@@ -17,16 +18,15 @@ public class ExcelService : IExcelService
     /// </summary>
     /// <param name="excelFilePath">Excel file path.</param>
     /// <param name="notes">Notes.</param>
-    /// <param name="startRow">Row to start at.</param>
     /// <param name="backupFilePath">Path to backup file.</param>
     /// <returns>Results.</returns>
     public ExportBibleNotesResult AppendToBibleNotesFile(
         string excelFilePath, 
-        IReadOnlyCollection<BibleNoteForImportExport>? notes, 
-        int startRow, 
+        IReadOnlyCollection<BibleNoteForImportExport>? notes,
         string backupFilePath)
     {
-        var result = new ExportBibleNotesResult { Row = startRow };
+        var result = new ExportBibleNotesResult();
+        var startRow = 0;
 
         if (string.IsNullOrEmpty(excelFilePath))
         {
@@ -82,7 +82,7 @@ public class ExcelService : IExcelService
 
         workbook.Save();
 
-        result.Row = row;
+        result.RowCount = row;
         return result;
     }
 

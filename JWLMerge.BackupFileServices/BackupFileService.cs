@@ -12,7 +12,7 @@ using JWLMerge.BackupFileServices.Helpers;
 using JWLMerge.BackupFileServices.Models;
 using JWLMerge.BackupFileServices.Models.DatabaseModels;
 using JWLMerge.BackupFileServices.Models.ManifestFile;
-using JWLMerge.ExcelServices;
+using JWLMerge.ImportExportServices;
 using JWLMerge.ImportExportServices.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -497,82 +497,17 @@ public sealed class BackupFileService : IBackupFileService
         return new BackupFile(newManifest, originalBackupFile.Database, originalBackupFile.FilePath);
     }
 
-    public ExportBibleNotesResult ExportBibleNotesToExcel(
-        BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService)
+    public ExportBibleNotesResult ExportBibleNotes(
+        BackupFile backupFile, string bibleNotesExportFilePath, IExportToFileService exportService)
     {
-        File.Delete(bibleNotesExportFilePath);
-        if (File.Exists(bibleNotesExportFilePath))
-        {
-            throw new BackupFileServicesException(
-                $"Could not delete existing Excel file: {bibleNotesExportFilePath}");
-        }
-
-        var notesToWrite = new List<BibleNoteForImportExport>();
-
-        var tags = backupFile.Database.TagMaps.Where(x => x.NoteId != null).ToLookup(map => map.NoteId, map => map);
-
-        foreach (var note in backupFile.Database.Notes)
-        {
-            if (note.LocationId == null)
-            {
-                continue;
-            }
-
-            var location = backupFile.Database.FindLocation(note.LocationId.Value);
-
-            if (location?.BookNumber == null)
-            {
-                continue;
-            }
-
-            int? colorCode = null;
-            if (note.UserMarkId != null)
-            {
-                var userMark = backupFile.Database.FindUserMark(note.UserMarkId.Value);
-                if (userMark != null)
-                {
-                    colorCode = userMark.ColorIndex;
-                }
-            }
-                
-            notesToWrite.Add(new BibleNoteForImportExport(location.BookNumber.Value, BibleBookNames.GetName(location.BookNumber.Value))
-            {
-                ChapterNumber = location.ChapterNumber,
-                VerseNumber = note.BlockIdentifier,
-                NoteTitle = note.Title?.Trim(),
-                NoteContent = note.Content?.Trim(),
-                PubSymbol = location.KeySymbol,
-                ColorCode = colorCode,
-                TagsCsv = GetTagsAsCsv(tags, note.NoteId, backupFile.Database),
-            });
-        }
-
-        notesToWrite.Sort(SortBibleNotes);
-
-        return excelService.AppendToBibleNotesFile(bibleNotesExportFilePath, notesToWrite, 0, bibleNotesExportFilePath);
-    }
-
-    public ExportBibleNotesResult ExportBibleNotesToText(BackupFile backupFile, string bibleNotesExportFilePath)
-    {
-        throw new NotImplementedException();
+        var service = new NotesExporter();
+        return service.ExportBibleNotes(backupFile, bibleNotesExportFilePath, exportService);
     }
 
     private static void RemoveSelectedTags(Database database, HashSet<int> tagIds)
     {
         database.Tags.RemoveAll(x => tagIds.Contains(x.TagId));
         database.TagMaps.RemoveAll(x => tagIds.Contains(x.TagMapId));
-    }
-
-    private static string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
-    {
-        var t = tags[noteId].ToArray();
-        if (!t.Any())
-        {
-            return string.Empty;
-        }
-
-        var tagNames = t.Select(x => database.FindTag(x.TagId)?.Name).Where(x => !string.IsNullOrEmpty(x));
-        return string.Join(", ", tagNames);
     }
 
     private static bool SupportDatabaseVersion(int version)
@@ -709,26 +644,6 @@ public sealed class BackupFileService : IBackupFileService
         }
 
         database.UserMarks.RemoveAll(x => userMarksToRemove.Contains(x.UserMarkId));
-    }
-
-    private int SortBibleNotes(BibleNoteForImportExport x, BibleNoteForImportExport y)
-    {
-        if (x.BookNumber != y.BookNumber)
-        {
-            return x.BookNumber.CompareTo(y.BookNumber);
-        }
-
-        if (x.ChapterNumber != y.ChapterNumber)
-        {
-            return x.ChapterNumber ?? 0.CompareTo(y.ChapterNumber ?? 0);
-        }
-
-        if (x.VerseNumber != y.VerseNumber)
-        {
-            return x.VerseNumber ?? 0.CompareTo(y.VerseNumber ?? 0);
-        }
-
-        return 0;
     }
 
     private Database MergeDatabases(IEnumerable<BackupFile> jwlibraryFiles)

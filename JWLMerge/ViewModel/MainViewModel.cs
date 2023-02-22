@@ -12,16 +12,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using JWLMerge.BackupFileServices.Helpers;
-using JWLMerge.BackupFileServices.Models.DatabaseModels;
 using JWLMerge.BackupFileServices;
 using MaterialDesignThemes.Wpf;
 using Serilog;
 using JWLMerge.EventTracking;
 using JWLMerge.ExcelServices;
 using JWLMerge.Helpers;
+using JWLMerge.ImportExportServices;
 using JWLMerge.Messages;
 using JWLMerge.Models;
 using JWLMerge.Services;
+using Tag = JWLMerge.BackupFileServices.Models.DatabaseModels.Tag;
 
 namespace JWLMerge.ViewModel;
 
@@ -35,7 +36,6 @@ internal sealed class MainViewModel : ObservableObject
     private readonly IFileOpenSaveService _fileOpenSaveService;
     private readonly IDialogService _dialogService;
     private readonly ISnackbarService _snackbarService;
-    private readonly IExcelService _excelService;
     private bool _isBusy;
 
     public MainViewModel(
@@ -44,8 +44,7 @@ internal sealed class MainViewModel : ObservableObject
         IWindowService windowService,
         IFileOpenSaveService fileOpenSaveService,
         IDialogService dialogService,
-        ISnackbarService snackbarService,
-        IExcelService excelService)
+        ISnackbarService snackbarService)
     {
         _dragDropService = dragDropService;
         _backupFileService = backupFileService;
@@ -53,8 +52,7 @@ internal sealed class MainViewModel : ObservableObject
         _fileOpenSaveService = fileOpenSaveService;
         _dialogService = dialogService;
         _snackbarService = snackbarService;
-        _excelService = excelService;
-
+        
         Files.CollectionChanged += FilesCollectionChanged;
 
         SetTitle();
@@ -211,24 +209,19 @@ internal sealed class MainViewModel : ObservableObject
         try
         {
             EventTracker.Track(EventName.ExportNotes);
-                
-            ExportBibleNotesResult? result = null;
+            
+            IExportToFileService? exportService = null;
 
             await Task.Run(() =>
             {
                 switch (exportFileType)
                 {
                     case ImportExportFileType.Text:
-                        result = _backupFileService.ExportBibleNotesToText(
-                            file.BackupFile,
-                            bibleNotesExportFilePath);
+                        exportService = new TextFileService();
                         break;
 
                     case ImportExportFileType.Excel:
-                        result = _backupFileService.ExportBibleNotesToExcel(
-                            file.BackupFile,
-                            bibleNotesExportFilePath,
-                            _excelService);
+                        exportService = new ExcelService();
                         break;
 
                     default:
@@ -236,17 +229,22 @@ internal sealed class MainViewModel : ObservableObject
                 }
             });
 
-            if (result is { NoNotesFound: true })
+            var result = _backupFileService.ExportBibleNotes(
+                file.BackupFile, bibleNotesExportFilePath, exportService!);
+            
+            switch (result)
             {
-                _snackbarService.Enqueue("No Bible notes found!");
-            }
-            else if (result is { SomeNotesTooLarge: true })
-            {
-                _snackbarService.EnqueueWithOk("Some notes were too large to store in a spreadsheet cell and were truncated!");
-            }
-            else
-            {
-                _snackbarService.Enqueue("Bible notes exported successfully");
+                case { NoNotesFound: true }:
+                    _snackbarService.Enqueue("No Bible notes found!");
+                    break;
+
+                case { SomeNotesTooLarge: true }:
+                    _snackbarService.EnqueueWithOk("Some notes were too large to store in a spreadsheet cell and were truncated!");
+                    break;
+
+                default:
+                    _snackbarService.Enqueue("Bible notes exported successfully");
+                    break;
             }
         }
         catch (Exception ex)

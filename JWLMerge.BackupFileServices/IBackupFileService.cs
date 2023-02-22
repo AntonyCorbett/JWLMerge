@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using JWLMerge.BackupFileServices.Events;
 using JWLMerge.BackupFileServices.Models;
 using JWLMerge.BackupFileServices.Models.DatabaseModels;
-using JWLMerge.ExcelServices;
+using JWLMerge.ImportExportServices;
 
 namespace JWLMerge.BackupFileServices;
 
@@ -122,9 +122,7 @@ public interface IBackupFileService
         int mepsLanguageId, 
         ImportBibleNotesParams options);
 
-    ExportBibleNotesResult ExportBibleNotesToExcel(BackupFile backupFile, string bibleNotesExportFilePath, IExcelService excelService);
-
-    ExportBibleNotesResult ExportBibleNotesToText(BackupFile backupFile, string bibleNotesExportFilePath);
+    ExportBibleNotesResult ExportBibleNotes(BackupFile backupFile, string bibleNotesExportFilePath, IExportToFileService exportService);
 
     /// <summary>
     /// Cleans the database (ensuring integrity), then writes the specified backup to a "jwlibrary" file.

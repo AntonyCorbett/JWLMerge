@@ -15,7 +15,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using Serilog;
 using JWLMerge.BackupFileServices;
-using JWLMerge.ExcelServices;
 using JWLMerge.Services;
 using JWLMerge.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
@@ -87,9 +86,6 @@ public partial class App
         serviceCollection.AddSingleton<IFileOpenSaveService, FileOpenSaveService>();
         serviceCollection.AddSingleton<IWindowService, WindowService>();
         serviceCollection.AddSingleton<IDialogService, DialogService>();
-        serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
-        serviceCollection.AddSingleton<IExcelService, ExcelService>();
-
         serviceCollection.AddSingleton<ISnackbarService, SnackbarService>();
 
         serviceCollection.AddSingleton<MainViewModel>();

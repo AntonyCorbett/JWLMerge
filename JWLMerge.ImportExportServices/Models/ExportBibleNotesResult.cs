@@ -2,7 +2,7 @@
 
 public class ExportBibleNotesResult
 {
-    public int Row { get; set; }
+    public int RowCount { get; set; }
 
     public bool SomeNotesTooLarge { get; set; }
 
