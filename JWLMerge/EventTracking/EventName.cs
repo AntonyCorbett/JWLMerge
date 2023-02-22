@@ -1,19 +1,18 @@
-﻿namespace JWLMerge.EventTracking
+﻿namespace JWLMerge.EventTracking;
+
+internal enum EventName
 {
-    internal enum EventName
-    {
-        Unknown,
-        ExportNotes,
-        ImportNotes,
-        RemoveUnderliningByPubColour,
-        RemoveUnderliningByColour,
-        RemoveNotesByTag,
-        RedactNotes,
-        RemoveFavs,
-        Merge,
-        ShowDetails,
-        WrongVer,
-        WrongManifestVer,
-        LoggingFailed
-    }
+    Unknown,
+    ExportNotes,
+    ImportNotes,
+    RemoveUnderliningByPubColour,
+    RemoveUnderliningByColour,
+    RemoveNotesByTag,
+    RedactNotes,
+    RemoveFavs,
+    Merge,
+    ShowDetails,
+    WrongVer,
+    WrongManifestVer,
+    LoggingFailed
 }

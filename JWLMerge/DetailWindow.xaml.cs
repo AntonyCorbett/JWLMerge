@@ -1,15 +1,12 @@
-﻿namespace JWLMerge
-{
-    using System.Windows;
+﻿namespace JWLMerge;
 
-    /// <summary>
-    /// Interaction logic for DetailWindow.xaml
-    /// </summary>
-    public partial class DetailWindow : Window
+/// <summary>
+/// Interaction logic for DetailWindow.xaml
+/// </summary>
+public partial class DetailWindow
+{
+    public DetailWindow()
     {
-        public DetailWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

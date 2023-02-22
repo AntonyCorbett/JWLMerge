@@ -1,28 +1,27 @@
-﻿namespace JWLMerge.Services
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JWLMerge.BackupFileServices.Models;
+using JWLMerge.BackupFileServices.Models.DatabaseModels;
+using JWLMerge.Models;
+
+namespace JWLMerge.Services;
+
+internal interface IDialogService
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using JWLMerge.BackupFileServices.Models;
-    using JWLMerge.BackupFileServices.Models.DatabaseModels;
-    using Models;
+    Task ShowFileFormatErrorsAsync(AggregateException ex);
 
-    internal interface IDialogService
-    {
-        Task ShowFileFormatErrorsAsync(AggregateException ex);
+    Task<bool> ShouldRedactNotesAsync();
 
-        Task<bool> ShouldRedactNotesAsync();
+    Task<bool> ShouldRemoveFavouritesAsync();
 
-        Task<bool> ShouldRemoveFavouritesAsync();
+    Task<ImportBibleNotesParams?> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
 
-        Task<ImportBibleNotesParams?> GetImportBibleNotesParamsAsync(IReadOnlyCollection<Tag> databaseTags);
+    Task<NotesByTagResult> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes);
 
-        Task<NotesByTagResult> GetTagSelectionForNotesRemovalAsync(Tag[] tags, bool includeUntaggedNotes);
+    Task<ColorResult> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
 
-        Task<ColorResult> GetColourSelectionForUnderlineRemovalAsync(ColourDef[] colours);
+    Task<PubColourResult?> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors);
 
-        Task<PubColourResult?> GetPubAndColourSelectionForUnderlineRemovalAsync(PublicationDef[] pubs, ColourDef[] colors);
-
-        bool IsDialogVisible();
-    }
+    bool IsDialogVisible();
 }

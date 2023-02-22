@@ -1,9 +1,8 @@
-﻿namespace JWLMerge.Models
-{
-    internal sealed class ColorResult
-    {
-        public int[]? ColourIndexes { get; set; }
+﻿namespace JWLMerge.Models;
 
-        public bool RemoveNotes { get; set; }
-    }
+internal sealed class ColorResult
+{
+    public int[]? ColourIndexes { get; set; }
+
+    public bool RemoveNotes { get; set; }
 }

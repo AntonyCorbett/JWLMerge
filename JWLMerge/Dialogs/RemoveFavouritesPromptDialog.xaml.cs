@@ -1,12 +1,9 @@
-﻿namespace JWLMerge.Dialogs
-{
-    using System.Windows.Controls;
+﻿namespace JWLMerge.Dialogs;
 
-    public partial class RemoveFavouritesPromptDialog : UserControl
+public partial class RemoveFavouritesPromptDialog
+{
+    public RemoveFavouritesPromptDialog()
     {
-        public RemoveFavouritesPromptDialog()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

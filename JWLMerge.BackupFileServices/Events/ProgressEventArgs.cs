@@ -1,14 +1,13 @@
-﻿namespace JWLMerge.BackupFileServices.Events
+﻿using System;
+
+namespace JWLMerge.BackupFileServices.Events;
+
+public class ProgressEventArgs : EventArgs
 {
-    using System;
-
-    public class ProgressEventArgs : EventArgs
+    public ProgressEventArgs(string msg)
     {
-        public ProgressEventArgs(string msg)
-        {
-            Message = msg;
-        }
-
-        public string Message { get; }
+        Message = msg;
     }
+
+    public string Message { get; }
 }

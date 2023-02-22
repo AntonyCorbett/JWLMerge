@@ -1,22 +1,21 @@
-﻿namespace JWLMerge.Models
+﻿using System.Windows.Media;
+
+namespace JWLMerge.Models;
+
+internal sealed class ColourDef
 {
-    using System.Windows.Media;
-
-    internal sealed class ColourDef
+    public ColourDef(int colourIndex, string name, string rgb)
     {
-        public ColourDef(int colourIndex, string name, string rgb)
-        {
-            ColourIndex = colourIndex;
-            Name = name;
-            RgbString = rgb;
-        }
-
-        public int ColourIndex { get; }
-
-        public string Name { get; }
-
-        public string RgbString { get; }
-
-        public Color Color => (Color)ColorConverter.ConvertFromString(RgbString);
+        ColourIndex = colourIndex;
+        Name = name;
+        RgbString = rgb;
     }
+
+    public int ColourIndex { get; }
+
+    public string Name { get; }
+
+    public string RgbString { get; }
+
+    public Color Color => (Color)ColorConverter.ConvertFromString(RgbString);
 }

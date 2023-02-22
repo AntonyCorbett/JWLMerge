@@ -1,39 +1,37 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Media;
 
-namespace JWLMerge.Models
+namespace JWLMerge.Models;
+
+internal sealed class ColourListItem : ObservableObject
 {
-    using System.Windows.Media;
+    private bool _isChecked;
 
-    internal sealed class ColourListItem : ObservableObject
+    public ColourListItem(string name, int id, Color color)
     {
-        private bool _isChecked;
+        Name = name;
+        Id = id;
+        Color = color;
+    }
 
-        public ColourListItem(string name, int id, Color color)
+    public string Name { get; }
+
+    public int Id { get; }
+
+    public Color Color { get; }
+
+    public bool IsChecked
+    {
+        get => _isChecked;
+        set
         {
-            Name = name;
-            Id = id;
-            Color = color;
-        }
-
-        public string Name { get; }
-
-        public int Id { get; }
-
-        public Color Color { get; }
-
-        public bool IsChecked
-        {
-            get => _isChecked;
-            set
+            if (_isChecked != value)
             {
-                if (_isChecked != value)
-                {
-                    _isChecked = value;
-                    OnPropertyChanged();
-                }
+                _isChecked = value;
+                OnPropertyChanged();
             }
         }
-
-        public override string ToString() => Name;
     }
+
+    public override string ToString() => Name;
 }

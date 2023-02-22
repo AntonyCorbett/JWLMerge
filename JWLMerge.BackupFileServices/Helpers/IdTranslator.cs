@@ -1,32 +1,31 @@
-﻿namespace JWLMerge.BackupFileServices.Helpers
+﻿using System.Collections.Generic;
+
+namespace JWLMerge.BackupFileServices.Helpers;
+
+/// <summary>
+/// Used by the <see cref="Merger"/> to map old and new id values./>
+/// </summary>
+internal sealed class IdTranslator
 {
-    using System.Collections.Generic;
+    private readonly Dictionary<int, int> _ids;
 
-    /// <summary>
-    /// Used by the <see cref="Merger"/> to map old and new id values./>
-    /// </summary>
-    internal sealed class IdTranslator
+    public IdTranslator()
     {
-        private readonly Dictionary<int, int> _ids;
+        _ids = new Dictionary<int, int>();
+    }
 
-        public IdTranslator()
-        {
-            _ids = new Dictionary<int, int>();
-        }
+    public int GetTranslatedId(int oldId)
+    {
+        return _ids.TryGetValue(oldId, out var translatedId) ? translatedId : 0;
+    }
 
-        public int GetTranslatedId(int oldId)
-        {
-            return _ids.TryGetValue(oldId, out var translatedId) ? translatedId : 0;
-        }
+    public void Add(int oldId, int translatedId)
+    {
+        _ids[oldId] = translatedId;
+    }
 
-        public void Add(int oldId, int translatedId)
-        {
-            _ids[oldId] = translatedId;
-        }
-
-        public void Clear()
-        {
-            _ids.Clear();
-        }
+    public void Clear()
+    {
+        _ids.Clear();
     }
 }

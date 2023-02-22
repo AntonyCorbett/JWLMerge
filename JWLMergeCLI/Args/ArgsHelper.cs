@@ -1,69 +1,68 @@
-﻿namespace JWLMergeCLI.Args
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+namespace JWLMergeCLI.Args;
+
+internal static class ArgsHelper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-
-    internal static class ArgsHelper
+    private enum State
     {
-        private enum State
+        Unknown,
+        AwaitingOutput,
+    }
+
+    public static CommandLineArgs? Parse(string[]? args)
+    {
+        if (args == null || args.Length < 2)
         {
-            Unknown,
-            AwaitingOutput,
+            return null;
         }
 
-        public static CommandLineArgs? Parse(string[]? args)
+        var state = State.Unknown;
+
+        var result = new CommandLineArgs();
+        var inputFiles = new List<string>();
+        var outputFilePath = string.Empty;
+
+        foreach (var a in args)
         {
-            if (args == null || args.Length < 2)
+            if (a.Equals("-o", StringComparison.Ordinal) || a.Equals("--output", StringComparison.Ordinal))
             {
-                return null;
+                state = State.AwaitingOutput;
+                continue;
             }
 
-            var state = State.Unknown;
-
-            var result = new CommandLineArgs();
-            var inputFiles = new List<string>();
-            var outputFilePath = string.Empty;
-
-            foreach (var a in args)
+            switch (state)
             {
-                if (a.Equals("-o", StringComparison.Ordinal) || a.Equals("--output", StringComparison.Ordinal))
-                {
-                    state = State.AwaitingOutput;
-                    continue;
-                }
+                case State.AwaitingOutput:
+                    outputFilePath = a;
+                    break;
 
-                switch (state)
-                {
-                    case State.AwaitingOutput:
-                        outputFilePath = a;
-                        break;
+                case State.Unknown:
+                    if (IsInputFile(a))
+                    {
+                        inputFiles.Add(a);
+                    }
 
-                    case State.Unknown:
-                        if (IsInputFile(a))
-                        {
-                            inputFiles.Add(a);
-                        }
-
-                        break;
-                }
+                    break;
             }
-
-            if (inputFiles.Count < 2)
-            {
-                return null;
-            }
-
-            result.OutputFilePath = outputFilePath;
-            result.BackupFiles = inputFiles.ToArray();
-
-            return result;
         }
 
-        private static bool IsInputFile(string filePath)
+        if (inputFiles.Count < 2)
         {
-            var ext = Path.GetExtension(filePath);
-            return ext.Equals(".jwlibrary", StringComparison.OrdinalIgnoreCase);
+            return null;
         }
+
+        result.OutputFilePath = outputFilePath;
+        result.BackupFiles = inputFiles.ToArray();
+
+        return result;
+    }
+
+    private static bool IsInputFile(string filePath)
+    {
+        var ext = Path.GetExtension(filePath);
+        return ext.Equals(".jwlibrary", StringComparison.OrdinalIgnoreCase);
     }
 }

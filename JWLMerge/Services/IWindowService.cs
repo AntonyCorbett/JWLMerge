@@ -1,13 +1,12 @@
-﻿namespace JWLMerge.Services
+﻿using JWLMerge.BackupFileServices;
+
+namespace JWLMerge.Services;
+
+internal interface IWindowService
 {
-    using JWLMerge.BackupFileServices;
+    void ShowDetailWindow(IBackupFileService backupFileService, string filePath, bool notesRedacted);
 
-    internal interface IWindowService
-    {
-        void ShowDetailWindow(IBackupFileService backupFileService, string filePath, bool notesRedacted);
-
-        void Close(string filePath);
+    void Close(string filePath);
         
-        void CloseAll();
-    }
+    void CloseAll();
 }

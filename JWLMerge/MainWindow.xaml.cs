@@ -1,34 +1,32 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using System.ComponentModel;
+using System.Windows;
+using JWLMerge.Messages;
 
-namespace JWLMerge
+namespace JWLMerge;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow
 {
-    using System.ComponentModel;
-    using System.Windows;
-    using Messages;
-    
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void PanelOnDragOver(object sender, DragEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new DragOverMessage(e));
-        }
+    private void PanelOnDragOver(object sender, DragEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Send(new DragOverMessage(e));
+    }
 
-        private void PanelOnDrop(object sender, DragEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new DragDropMessage(e));
-        }
+    private void PanelOnDrop(object sender, DragEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Send(new DragDropMessage(e));
+    }
 
-        private void MainWindowOnClosing(object sender, CancelEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new MainWindowClosingMessage(e));
-        }
+    private void MainWindowOnClosing(object sender, CancelEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Send(new MainWindowClosingMessage(e));
     }
 }

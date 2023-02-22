@@ -1,7 +1,6 @@
-﻿namespace JWLMerge.BackupFileServices.Models
+﻿namespace JWLMerge.BackupFileServices.Models;
+
+public class ImportBibleNotesParams
 {
-    public class ImportBibleNotesParams
-    {
-        public int TagId { get; set; }
-    }
+    public int TagId { get; set; }
 }

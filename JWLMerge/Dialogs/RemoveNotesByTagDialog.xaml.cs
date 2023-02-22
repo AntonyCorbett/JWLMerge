@@ -1,15 +1,12 @@
-﻿namespace JWLMerge.Dialogs
-{
-    using System.Windows.Controls;
+﻿namespace JWLMerge.Dialogs;
 
-    /// <summary>
-    /// Interaction logic for RemoveNotesByTagDialog.xaml
-    /// </summary>
-    public partial class RemoveNotesByTagDialog : UserControl
+/// <summary>
+/// Interaction logic for RemoveNotesByTagDialog.xaml
+/// </summary>
+public partial class RemoveNotesByTagDialog
+{
+    public RemoveNotesByTagDialog()
     {
-        public RemoveNotesByTagDialog()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

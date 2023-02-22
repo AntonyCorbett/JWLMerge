@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Generic;
+using JWLMerge.Models;
+using MaterialDesignThemes.Wpf;
 
 namespace JWLMerge.ViewModel;
-
-using System.Collections.Generic;
-using Models;
-using MaterialDesignThemes.Wpf;
 
 internal sealed class BackupFileFormatErrorViewModel : ObservableObject
 {
@@ -20,6 +19,8 @@ internal sealed class BackupFileFormatErrorViewModel : ObservableObject
 
     private void Ok()
     {
+#pragma warning disable CA1416 // Validate platform compatibility
         DialogHost.CloseDialogCommand.Execute(null, null);
+#pragma warning restore CA1416 // Validate platform compatibility
     }
 }

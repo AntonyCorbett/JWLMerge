@@ -1,15 +1,12 @@
-﻿namespace JWLMerge.Dialogs
-{
-    using System.Windows.Controls;
+﻿namespace JWLMerge.Dialogs;
 
-    /// <summary>
-    /// Interaction logic for RemoveUnderliningByColourDialog.xaml
-    /// </summary>
-    public partial class RemoveUnderliningByColourDialog : UserControl
+/// <summary>
+/// Interaction logic for RemoveUnderliningByColourDialog.xaml
+/// </summary>
+public partial class RemoveUnderliningByColourDialog
+{
+    public RemoveUnderliningByColourDialog()
     {
-        public RemoveUnderliningByColourDialog()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

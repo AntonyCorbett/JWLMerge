@@ -1,21 +1,19 @@
-﻿namespace JWLMerge.Tests
-{
-    using BackupFileServices.Helpers;
-    using BackupFileServices.Models.ManifestFile;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using JWLMerge.BackupFileServices.Helpers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    [TestClass]
-    public class TestCleaner : TestBase
+namespace JWLMerge.Tests;
+
+[TestClass]
+public class TestCleaner : TestBase
+{
+    [TestMethod]
+    public void TestAllClean()
     {
-        [TestMethod]
-        public void TestAllClean()
-        {
-            var file = CreateMockBackup();
+        var file = CreateMockBackup();
             
-            var cleaner = new Cleaner(file.Database);
-            var removedRows = cleaner.Clean();
+        var cleaner = new Cleaner(file.Database);
+        var removedRows = cleaner.Clean();
             
-            Assert.AreEqual(0, removedRows);
-        }
+        Assert.AreEqual(0, removedRows);
     }
 }

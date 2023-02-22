@@ -1,14 +1,13 @@
 ﻿using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace JWLMerge.ViewModel;
-
 using System.Collections;
 using System.Collections.Generic;
 using JWLMerge.BackupFileServices.Models;
 using JWLMerge.BackupFileServices.Models.DatabaseModels;
 using JWLMerge.BackupFileServices.Models.ManifestFile;
-using Models;
+using JWLMerge.Models;
+
+namespace JWLMerge.ViewModel;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class DetailViewModel : ObservableObject

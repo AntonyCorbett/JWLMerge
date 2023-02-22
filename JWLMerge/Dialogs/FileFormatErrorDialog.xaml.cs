@@ -1,15 +1,12 @@
-﻿namespace JWLMerge.Dialogs
-{
-    using System.Windows.Controls;
+﻿namespace JWLMerge.Dialogs;
 
-    /// <summary>
-    /// Interaction logic for FileFormatErrorDialog.xaml
-    /// </summary>
-    public partial class FileFormatErrorDialog : UserControl
+/// <summary>
+/// Interaction logic for FileFormatErrorDialog.xaml
+/// </summary>
+public partial class FileFormatErrorDialog
+{
+    public FileFormatErrorDialog()
     {
-        public FileFormatErrorDialog()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -1,12 +1,11 @@
-﻿namespace JWLMerge.Services
+﻿using System.Collections.Generic;
+using System.Windows;
+
+namespace JWLMerge.Services;
+
+internal interface IDragDropService
 {
-    using System.Collections.Generic;
-    using System.Windows;
+    bool CanAcceptDrop(DragEventArgs e);
 
-    internal interface IDragDropService
-    {
-        bool CanAcceptDrop(DragEventArgs e);
-
-        IEnumerable<string> GetDroppedFiles(DragEventArgs e);
-    }
+    IEnumerable<string> GetDroppedFiles(DragEventArgs e);
 }

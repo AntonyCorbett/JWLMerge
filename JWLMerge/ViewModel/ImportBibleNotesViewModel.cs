@@ -1,12 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
-namespace JWLMerge.ViewModel;
-
 using System.Collections.Generic;
 using JWLMerge.BackupFileServices.Models;
 using JWLMerge.BackupFileServices.Models.DatabaseModels;
 using MaterialDesignThemes.Wpf;
+
+namespace JWLMerge.ViewModel;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class ImportBibleNotesViewModel : ObservableObject
@@ -40,7 +39,10 @@ internal sealed class ImportBibleNotesViewModel : ObservableObject
     private void Cancel()
     {
         Result = null;
+
+#pragma warning disable CA1416
         DialogHost.CloseDialogCommand.Execute(null, null);
+#pragma warning restore CA1416
     }
 
     private void Ok()
@@ -50,6 +52,8 @@ internal sealed class ImportBibleNotesViewModel : ObservableObject
             TagId = SelectedTagId,
         };
 
+#pragma warning disable CA1416
         DialogHost.CloseDialogCommand.Execute(null, null);
+#pragma warning restore CA1416
     }
 }

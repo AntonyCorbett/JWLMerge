@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -17,7 +18,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Serilog;
-using BibleNote = JWLMerge.BackupFileServices.Models.DatabaseModels.BibleNote;
 
 namespace JWLMerge.BackupFileServices;
 
@@ -459,7 +459,7 @@ public sealed class BackupFileService : IBackupFileService
 
         // just pick the first manifest as the basis for the 
         // manifest in the final merged file...
-        var newManifest = UpdateManifest(originals.First().Manifest);
+        var newManifest = UpdateManifest(originals[0].Manifest);
             
         var mergedDatabase = MergeDatabases(originals);
         return new BackupFile(newManifest, mergedDatabase, "unknown.jwlibrary");
@@ -507,7 +507,7 @@ public sealed class BackupFileService : IBackupFileService
                 $"Could not delete existing Excel file: {bibleNotesExportFilePath}");
         }
 
-        var notesToWrite = new List<ImportExportServices.Models.BibleNoteForImportExport>();
+        var notesToWrite = new List<BibleNoteForImportExport>();
 
         var tags = backupFile.Database.TagMaps.Where(x => x.NoteId != null).ToLookup(map => map.NoteId, map => map);
 
@@ -535,8 +535,7 @@ public sealed class BackupFileService : IBackupFileService
                 }
             }
                 
-            notesToWrite.Add(new ImportExportServices.Models.BibleNoteForImportExport(
-                location.BookNumber.Value, BibleBookNames.GetName(location.BookNumber.Value))
+            notesToWrite.Add(new BibleNoteForImportExport(location.BookNumber.Value, BibleBookNames.GetName(location.BookNumber.Value))
             {
                 ChapterNumber = location.ChapterNumber,
                 VerseNumber = note.BlockIdentifier,
@@ -910,11 +909,11 @@ public sealed class BackupFileService : IBackupFileService
         using var sha1 = new SHA256Managed();
 #pragma warning restore SYSLIB0021
 
-        byte[] hash = sha1.ComputeHash(bs);
+        var hash = sha1.ComputeHash(bs);
         var sb = new StringBuilder(2 * hash.Length);
-        foreach (byte b in hash)
+        foreach (var b in hash)
         {
-            sb.Append($"{b:x2}");
+            sb.Append(CultureInfo.InvariantCulture, $"{b:x2}");
         }
 
         return sb.ToString();

@@ -117,7 +117,7 @@ public interface IBackupFileService
     /// </returns>
     BackupFile ImportBibleNotes(
         BackupFile originalBackupFile,
-        IEnumerable<Models.DatabaseModels.BibleNote> notes,
+        IEnumerable<BibleNote> notes,
         string bibleKeySymbol,
         int mepsLanguageId, 
         ImportBibleNotesParams options);

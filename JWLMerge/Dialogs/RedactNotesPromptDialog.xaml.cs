@@ -1,12 +1,9 @@
-﻿namespace JWLMerge.Dialogs
-{
-    using System.Windows.Controls;
+﻿namespace JWLMerge.Dialogs;
 
-    public partial class RedactNotesPromptDialog : UserControl
+public partial class RedactNotesPromptDialog
+{
+    public RedactNotesPromptDialog()
     {
-        public RedactNotesPromptDialog()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

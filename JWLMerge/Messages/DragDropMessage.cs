@@ -1,14 +1,13 @@
-﻿namespace JWLMerge.Messages
+﻿using System.Windows;
+
+namespace JWLMerge.Messages;
+
+internal sealed class DragDropMessage
 {
-    using System.Windows;
-
-    internal sealed class DragDropMessage
+    public DragDropMessage(DragEventArgs args)
     {
-        public DragDropMessage(DragEventArgs args)
-        {
-            DragEventArgs = args;
-        }
-
-        public DragEventArgs DragEventArgs { get; }
+        DragEventArgs = args;
     }
+
+    public DragEventArgs DragEventArgs { get; }
 }

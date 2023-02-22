@@ -1,18 +1,17 @@
-﻿namespace JWLMerge.BackupFileServices.Models.DatabaseModels
+﻿using Newtonsoft.Json;
+
+namespace JWLMerge.BackupFileServices.Models.DatabaseModels;
+
+public class LastModified
 {
-    using Newtonsoft.Json;
+    /// <summary>
+    /// Time stamp when the database was last modified.
+    /// </summary>
+    [JsonProperty(PropertyName = "LastModified")]
+    public string? TimeLastModified { get; set; }
 
-    public class LastModified
+    public void Reset()
     {
-        /// <summary>
-        /// Time stamp when the database was last modified.
-        /// </summary>
-        [JsonProperty(PropertyName = "LastModified")]
-        public string? TimeLastModified { get; set; }
-
-        public void Reset()
-        {
-            TimeLastModified = null;
-        }
+        TimeLastModified = null;
     }
 }

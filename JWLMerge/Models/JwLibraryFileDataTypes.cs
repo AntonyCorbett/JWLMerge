@@ -1,16 +1,15 @@
-﻿namespace JWLMerge.Models
+﻿namespace JWLMerge.Models;
+
+internal enum JwLibraryFileDataTypes
 {
-    internal enum JwLibraryFileDataTypes
-    {
-        Manifest,
-        BlockRange,
-        Bookmark,
-        InputField,
-        LastModified,
-        Location,
-        Note,
-        Tag,
-        TagMap,
-        UserMark,
-    }
+    Manifest,
+    BlockRange,
+    Bookmark,
+    InputField,
+    LastModified,
+    Location,
+    Note,
+    Tag,
+    TagMap,
+    UserMark,
 }

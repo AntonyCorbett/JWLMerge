@@ -1,33 +1,32 @@
-﻿namespace JWLMerge.Helpers
-{
-    using System;
-    using BackupFileServices;
-    using JWLMerge.BackupFileServices.Models.ManifestFile;
-    using Models;
+﻿using System;
+using JWLMerge.BackupFileServices;
+using JWLMerge.BackupFileServices.Models.ManifestFile;
+using JWLMerge.Models;
 
-    internal static class DesignTimeFileCreation
+namespace JWLMerge.Helpers;
+
+internal static class DesignTimeFileCreation
+{
+    public static JwLibraryFile CreateMockJwLibraryFile(
+        IBackupFileService backupFileService, 
+        int fileIndex)
     {
-        public static JwLibraryFile CreateMockJwLibraryFile(
-            IBackupFileService backupFileService, 
-            int fileIndex)
-        {
-            var file = backupFileService.CreateBlank();
+        var file = backupFileService.CreateBlank();
             
-            file.Manifest.Name = $"File {fileIndex + 1}";
-            file.Manifest.CreationDate = GenerateDateString(DateTime.Now.AddDays(-fileIndex));
-            file.Manifest.UserDataBackup = new UserDataBackup
-            {
-                DeviceName = "MYPC",
-            };
+        file.Manifest.Name = $"File {fileIndex + 1}";
+        file.Manifest.CreationDate = GenerateDateString(DateTime.Now.AddDays(-fileIndex));
+        file.Manifest.UserDataBackup = new UserDataBackup
+        {
+            DeviceName = "MYPC",
+        };
 
 #pragma warning disable S1075 // URIs should not be hardcoded
-            return new JwLibraryFile("c:\\temp\\myfile.jwlibrary", file);
+        return new JwLibraryFile("c:\\temp\\myfile.jwlibrary", file);
 #pragma warning restore S1075 // URIs should not be hardcoded
-        }
-
-        private static string GenerateDateString(DateTime dateTime)
-        {
-            return $"{dateTime.Year}-{dateTime.Month:D2}-{dateTime.Day:D2}";
-        } 
     }
+
+    private static string GenerateDateString(DateTime dateTime)
+    {
+        return $"{dateTime.Year}-{dateTime.Month:D2}-{dateTime.Day:D2}";
+    } 
 }
