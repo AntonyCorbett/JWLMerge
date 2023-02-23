@@ -14,6 +14,8 @@ internal sealed class FileOpenSaveService : IFileOpenSaveService
 
     private static string? ExportDirectory { get; set; }
 
+    private static int ExportFilterIndex { get; set; }
+
     public string? GetBibleNotesExportFilePath(string title)
     {
         var saveFileDialog = new SaveFileDialog
@@ -21,12 +23,14 @@ internal sealed class FileOpenSaveService : IFileOpenSaveService
             AddExtension = true,
             Title = title,
             Filter = "Excel file (*.xlsx)|*.xlsx|Text file (*.txt)|*.txt",
+            FilterIndex = ExportFilterIndex,
             InitialDirectory = ExportDirectory ?? GetDefaultExportFolder(),
         };
 
         if (saveFileDialog.ShowDialog() == true)
         {
             ExportDirectory = Path.GetDirectoryName(saveFileDialog.FileName);
+            ExportFilterIndex = saveFileDialog.FilterIndex;
             return saveFileDialog.FileName;
         }
 
@@ -94,7 +98,7 @@ internal sealed class FileOpenSaveService : IFileOpenSaveService
         return null;
     }
 
-    private static string GetJWLMergeDocsFolder()
+    private static string GetJwlMergeDocsFolder()
     {
         var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JWLMerge");
         if (!Directory.Exists(folder))
@@ -107,12 +111,12 @@ internal sealed class FileOpenSaveService : IFileOpenSaveService
 
     private static string GetDefaultSaveFolder()
     {
-        return GetJWLMergeDocsFolder();
+        return GetJwlMergeDocsFolder();
     }
 
     private static string GetDefaultExportFolder()
     {
-        return GetJWLMergeDocsFolder();
+        return GetJwlMergeDocsFolder();
     }
 
     private static string GetDefaultImportFolder()

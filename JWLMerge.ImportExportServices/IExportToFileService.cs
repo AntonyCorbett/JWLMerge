@@ -4,8 +4,8 @@ namespace JWLMerge.ImportExportServices;
 
 public interface IExportToFileService
 {
-    ExportBibleNotesResult AppendToBibleNotesFile(
-        string excelFilePath,
+    ExportBibleNotesResult Execute(
+        string exportFilePath,
         IReadOnlyCollection<BibleNoteForImportExport>? notes,
         string backupFilePath);
 }

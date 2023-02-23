@@ -16,6 +16,10 @@ public class BibleNoteForImportExport
 
     public int? VerseNumber { get; set; }
 
+    public int? StartTokenInVerse { get; set; }
+
+    public int? EndTokenInVerse { get; set; }
+
     public string? NoteTitle { get; set; }
 
     public string? NoteContent { get; set; }
@@ -25,6 +29,8 @@ public class BibleNoteForImportExport
     public int? ColorCode { get; set; }
 
     public string? PubSymbol { get; set; }
+
+    public int? MepsLanguageId { get; set; }
 
     public string ChapterAndVerseString
     {

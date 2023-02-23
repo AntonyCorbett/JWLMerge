@@ -14,28 +14,28 @@ public class ExcelService : IExportToFileService
     private const string WorkbookName = "Notes";
 
     /// <summary>
-    /// Appends Bible notes to spreadsheet page
+    /// Exports Bible notes to spreadsheet page
     /// </summary>
-    /// <param name="excelFilePath">Excel file path.</param>
+    /// <param name="exportFilePath">Excel file path.</param>
     /// <param name="notes">Notes.</param>
     /// <param name="backupFilePath">Path to backup file.</param>
     /// <returns>Results.</returns>
-    public ExportBibleNotesResult AppendToBibleNotesFile(
-        string excelFilePath, 
+    public ExportBibleNotesResult Execute(
+        string exportFilePath, 
         IReadOnlyCollection<BibleNoteForImportExport>? notes,
         string backupFilePath)
     {
         var result = new ExportBibleNotesResult();
         var startRow = 0;
 
-        if (string.IsNullOrEmpty(excelFilePath))
+        if (string.IsNullOrEmpty(exportFilePath))
         {
-            throw new ArgumentNullException(nameof(excelFilePath));
+            throw new ArgumentNullException(nameof(exportFilePath));
         }
 
-        if (!File.Exists(excelFilePath))
+        if (!File.Exists(exportFilePath))
         {
-            var lastRow = GenerateHeader(excelFilePath, backupFilePath);
+            var lastRow = GenerateHeader(exportFilePath, backupFilePath);
             startRow = lastRow + 2;
         }
 
@@ -45,7 +45,7 @@ public class ExcelService : IExportToFileService
             return result;
         }
 
-        using var workbook = new XLWorkbook(excelFilePath);
+        using var workbook = new XLWorkbook(exportFilePath);
 
         if (!workbook.Worksheets.TryGetWorksheet(WorkbookName, out var worksheet))
         {
@@ -66,16 +66,19 @@ public class ExcelService : IExportToFileService
                 : note.NoteContent;
 
             SetCellStringValue(worksheet, row, 1, note.PubSymbol);
-            SetCellStringValue(worksheet, row, 2, note.BookName);
-            SetCellIntegerValue(worksheet, row, 3, note.BookNumber);
-            SetCellIntegerValue(worksheet, row, 4, note.ChapterNumber);
-            SetCellIntegerValue(worksheet, row, 5, note.VerseNumber);
-            SetCellStringValue(worksheet, row, 6, note.ChapterAndVerseString);
-            SetCellStringValue(worksheet, row, 7, note.BookNameChapterAndVerseString);
-            SetCellIntegerValue(worksheet, row, 8, note.ColorCode);
-            SetCellStringValue(worksheet, row, 9, note.TagsCsv);
-            SetCellStringValue(worksheet, row, 10, note.NoteTitle);
-            SetCellStringValue(worksheet, row, 11, noteContent);
+            SetCellIntegerValue(worksheet, row, 2, note.MepsLanguageId);
+            SetCellStringValue(worksheet, row, 3, note.BookName);
+            SetCellIntegerValue(worksheet, row, 4, note.BookNumber);
+            SetCellIntegerValue(worksheet, row, 5, note.ChapterNumber);
+            SetCellIntegerValue(worksheet, row, 6, note.VerseNumber);
+            SetCellStringValue(worksheet, row, 7, note.ChapterAndVerseString);
+            SetCellStringValue(worksheet, row, 8, note.BookNameChapterAndVerseString);
+            SetCellIntegerValue(worksheet, row, 9, note.ColorCode);
+            SetCellStringValue(worksheet, row, 10, note.TagsCsv);
+            SetCellIntegerValue(worksheet, row, 11, note.StartTokenInVerse);
+            SetCellIntegerValue(worksheet, row, 12, note.EndTokenInVerse);
+            SetCellStringValue(worksheet, row, 13, note.NoteTitle);
+            SetCellStringValue(worksheet, row, 14, noteContent);
 
             ++row;
         }
@@ -106,16 +109,19 @@ public class ExcelService : IExportToFileService
         worksheet.Cell("A3").Value = $"Exported: {DateTime.Now.ToShortDateString()}";
 
         worksheet.Cell("A5").Value = "Symbol";
-        worksheet.Cell("B5").Value = "Book";
-        worksheet.Cell("C5").Value = "BookNumber";
-        worksheet.Cell("D5").Value = "Chapter";
-        worksheet.Cell("E5").Value = "Verse";
-        worksheet.Cell("F5").Value = "ChapterAndVerse";
-        worksheet.Cell("G5").Value = "FullRef";
-        worksheet.Cell("H5").Value = "Color";
-        worksheet.Cell("I5").Value = "Tags";
-        worksheet.Cell("J5").Value = "Title";
-        worksheet.Cell("K5").Value = "Content";
+        worksheet.Cell("B5").Value = "LanguageId";
+        worksheet.Cell("C5").Value = "Book";
+        worksheet.Cell("D5").Value = "BookNumber";
+        worksheet.Cell("E5").Value = "Chapter";
+        worksheet.Cell("F5").Value = "Verse";
+        worksheet.Cell("G5").Value = "ChapterAndVerse";
+        worksheet.Cell("H5").Value = "FullRef";
+        worksheet.Cell("I5").Value = "Color";
+        worksheet.Cell("J5").Value = "Tags";
+        worksheet.Cell("K5").Value = "StartToken";
+        worksheet.Cell("L5").Value = "EndToken";
+        worksheet.Cell("M5").Value = "Title";
+        worksheet.Cell("N5").Value = "Content";
 
         workbook.SaveAs(excelFilePath);
 

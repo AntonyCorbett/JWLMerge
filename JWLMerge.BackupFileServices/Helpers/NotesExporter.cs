@@ -36,16 +36,27 @@ internal sealed class NotesExporter
 
             if (location?.BookNumber == null)
             {
+                // not from a Bible
                 continue;
             }
 
             int? colorCode = null;
+            int? startToken = null;
+            int? endToken = null;
+
             if (note.UserMarkId != null)
             {
                 var userMark = backupFile.Database.FindUserMark(note.UserMarkId.Value);
                 if (userMark != null)
                 {
                     colorCode = userMark.ColorIndex;
+
+                    var blockRanges = backupFile.Database.FindBlockRanges(userMark.UserMarkId);
+                    if (blockRanges != null)
+                    {
+                        startToken = blockRanges.First().StartToken;
+                        endToken = blockRanges.First().EndToken;
+                    }
                 }
             }
 
@@ -53,9 +64,12 @@ internal sealed class NotesExporter
             {
                 ChapterNumber = location.ChapterNumber,
                 VerseNumber = note.BlockIdentifier,
+                StartTokenInVerse = startToken,
+                EndTokenInVerse = endToken,
                 NoteTitle = note.Title?.Trim(),
                 NoteContent = note.Content?.Trim(),
                 PubSymbol = location.KeySymbol,
+                MepsLanguageId = location.MepsLanguage,
                 ColorCode = colorCode,
                 TagsCsv = GetTagsAsCsv(tags, note.NoteId, backupFile.Database),
             });
@@ -63,7 +77,7 @@ internal sealed class NotesExporter
 
         notesToWrite.Sort(SortBibleNotes);
 
-        return exportService.AppendToBibleNotesFile(bibleNotesExportFilePath, notesToWrite, bibleNotesExportFilePath);
+        return exportService.Execute(bibleNotesExportFilePath, notesToWrite, bibleNotesExportFilePath);
     }
 
     private static string GetTagsAsCsv(ILookup<int?, TagMap> tags, int noteId, Database database)
