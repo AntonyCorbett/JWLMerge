@@ -293,13 +293,16 @@ internal sealed class MainViewModel : ObservableObject
             await Task.Run(() =>
             {
                 var notesFile = new BibleNotesFile(bibleNotesImportFilePath);
-
-                _backupFileService.ImportBibleNotes(
-                    file.BackupFile,
-                    notesFile.GetNotes(),
-                    notesFile.GetBibleKeySymbol(),
-                    notesFile.GetMepsLanguageId(),
-                    options);
+                
+                foreach (var section in notesFile.GetPubSymbolsAndLanguages())
+                {
+                    _backupFileService.ImportBibleNotes(
+                        file.BackupFile,
+                        notesFile.GetNotes(section),
+                        section.PubSymbol,
+                        section.LanguageId,
+                        options);
+                }
 
                 _backupFileService.WriteNewDatabaseWithClean(file.BackupFile, file.FilePath, file.FilePath);
             });

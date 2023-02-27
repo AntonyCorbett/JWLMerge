@@ -14,75 +14,107 @@ public class BibleNotesFile
     private const string BibleKeySymbolToken = "[BibleKeySymbol";
     private const string MepsLanguageIdToken = "[MepsLanguageId";
 
-    private readonly List<BibleNote> _notes = new();
     private readonly string _path;
-    private string _bibleKeySymbol = null!;
-    private int _mepsLanguageId;
-    private bool _initialised;
 
+    private Lazy<string[]> FileContents { get; }
+
+    private readonly Lazy<PubNotesFileSection[]> _sections;
+       
     public BibleNotesFile(string path)
     {
         _path = path;
+
+        FileContents = new Lazy<string[]>(FileContentsFactory);
+        _sections = new Lazy<PubNotesFileSection[]>(SectionsFactory);
     }
 
-    public IEnumerable<BibleNote> GetNotes()
+    public PubSymbolAndLanguage[] GetPubSymbolsAndLanguages()
+        => _sections.Value.Select(x => x.SymbolAndLanguage).ToArray();
+    
+    public IEnumerable<BibleNote> GetNotes(PubSymbolAndLanguage symbolAndLanguage)
     {
-        Init();
-        return _notes;
-    }
+        var sections = _sections.Value.Where(x => x.SymbolAndLanguage == symbolAndLanguage).ToArray();
 
-    public string GetBibleKeySymbol()
-    {
-        Init();
-        return _bibleKeySymbol;
-    }
-
-    public int GetMepsLanguageId()
-    {
-        Init();
-        return _mepsLanguageId;
-    }
-
-    private void Init()
-    {
-        if (!_initialised)
+        if (!sections.Any())
         {
-            ParseFile();
+            yield break;
         }
-    }
 
-    private void ParseFile()
-    {
-        _initialised = true;
-
-        var lines = ReadLinesFromFile();
-
-        ParseParameters(lines);
-        RemoveParamLines(lines);
-        ParseNotes(lines);
-    }
-
-    private static void RemoveParamLines(string[] lines)    
-    {
-        RemoveLineStarting(BibleKeySymbolToken, lines);
-        RemoveLineStarting(MepsLanguageIdToken, lines);
-    }
-
-    private static void RemoveLineStarting(string token, string[] lines)
-    {
-#pragma warning disable U2U1015 // Do not index an array multiple times within a loop body
-        for (var n = 0; n < lines.Length; ++n)
-#pragma warning restore U2U1015 // Do not index an array multiple times within a loop body
+        foreach (var section in sections)
         {
-            if (lines[n].Trim().StartsWith(token, StringComparison.OrdinalIgnoreCase))
+            foreach (var note in GetNotes(section))
             {
-                lines[n] = string.Empty;
-                break;
+                yield return note;
             }
         }
     }
 
-    private string[] ReadLinesFromFile()
+    private PubNotesFileSection[] SectionsFactory()
+    {
+        var lineCount = FileContents.Value.Length;
+
+        var result = new List<PubNotesFileSection>();
+
+        PubNotesFileSection? currentSection = null;
+
+        for (var n = 0; n < lineCount; ++n)
+        {
+            var pubSymbolLine = FileContents.Value[n].TrimStart();
+            if (n == lineCount - 1 || !pubSymbolLine.StartsWith(BibleKeySymbolToken, StringComparison.OrdinalIgnoreCase))
+            {
+                if (currentSection != null)
+                {
+                    currentSection.ContentEndLine = n;
+                }
+
+                continue;
+            }
+
+            if (currentSection != null)
+            {
+                result.Add(currentSection);
+            }
+            
+            var equalsPos = pubSymbolLine.IndexOf('=', BibleKeySymbolToken.Length);
+            if (equalsPos < 0)
+            {
+                throw new BackupFileServicesException($"Could not find Publication Key Symbol in line {n+1}");
+            }
+
+            var pubSymbol = pubSymbolLine[(equalsPos + 1)..].TrimEnd(']').Trim().Trim('"');
+            if (string.IsNullOrWhiteSpace(pubSymbol))
+            {
+                throw new BackupFileServicesException($"Could not find Publication Key Symbol in line {n + 1}");
+            }
+
+            var languageIdLine = FileContents.Value[n + 1].TrimStart();
+            if (!languageIdLine.StartsWith(MepsLanguageIdToken, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new BackupFileServicesException($"Could not find MEPS Language Id in line {n + 2}");
+            }
+
+            equalsPos = languageIdLine.IndexOf('=', MepsLanguageIdToken.Length);
+            var languageIdStr = languageIdLine[(equalsPos + 1)..].TrimEnd(']').Trim().Trim('"');
+            if (string.IsNullOrWhiteSpace(languageIdStr) || !int.TryParse(languageIdStr, out var languageId))
+            {
+                throw new BackupFileServicesException($"Could not find MEPS Language Id in line {n + 2}");
+            }
+
+            ++n;
+
+            currentSection = new PubNotesFileSection(new PubSymbolAndLanguage(pubSymbol, languageId));
+            currentSection.ContentStartLine = n + 1;
+        }
+
+        if (currentSection != null)
+        {
+            result.Add(currentSection);
+        }
+
+        return result.ToArray();
+    }
+
+    private string[] FileContentsFactory()
     {
         if (string.IsNullOrEmpty(_path))
         {
@@ -97,7 +129,20 @@ public class BibleNotesFile
         return File.ReadAllLines(_path);
     }
 
-    private void ParseNotes(string[] lines)
+    private IEnumerable<BibleNote> GetNotes(PubNotesFileSection section)
+    {
+        return ParseNotes(GetLines(section));
+    }
+
+    private IEnumerable<string> GetLines(PubNotesFileSection section)
+    {
+        for (var pos = section.ContentStartLine; pos <= section.ContentEndLine; ++pos)
+        {
+            yield return FileContents.Value[pos];
+        }
+    }
+
+    private static IEnumerable<BibleNote> ParseNotes(IEnumerable<string> lines)
     {
         var linesInNote = new List<string>();
 
@@ -116,29 +161,38 @@ public class BibleNotesFile
             else
             {
                 // start of a new verse note
-                StoreNote(linesInNote, currentVerseSpec);
+                var note1 = CreateNote(linesInNote, currentVerseSpec);
+                if (note1 != null)
+                {
+                    yield return note1;
+                }
+
                 currentVerseSpec = verseSpec;
                 linesInNote.Clear();
             }
         }
 
-        StoreNote(linesInNote, currentVerseSpec);
+        var note2 = CreateNote(linesInNote, currentVerseSpec);
+        if (note2 != null)
+        {
+            yield return note2;
+        }
     }
 
-    private void StoreNote(IReadOnlyList<string> lines, BibleNotesVerseSpecification? currentVerseSpec)
+    private static BibleNote? CreateNote(IReadOnlyList<string> lines, BibleNotesVerseSpecification? currentVerseSpec)
     {
         if (currentVerseSpec == null)
         {
-            return;
+            return null;
         }
 
         var titleAndContent = ParseTitleAndContent(lines);
         if (titleAndContent == null)
         {
-            return;
+            return null;
         }
             
-        _notes.Add(new BibleNote
+        return new BibleNote
         {
             BookChapterAndVerse = new BibleBookChapterAndVerse(
                 currentVerseSpec.BookNumber, 
@@ -150,7 +204,7 @@ public class BibleNotesFile
             ColourIndex = currentVerseSpec.ColourIndex,
             StartTokenInVerse = currentVerseSpec.StartWordIndex,
             EndTokenInVerse = currentVerseSpec.EndWordIndex,
-        });
+        };
     }
 
     private static NoteTitleAndContent? ParseTitleAndContent(IReadOnlyList<string> lines)
@@ -230,46 +284,5 @@ public class BibleNotesFile
         }
 
         return result;
-    }
-
-    private void ParseParameters(string[] lines)
-    {
-        var bibleKeySymbol = FindValue(lines, BibleKeySymbolToken);
-        if (string.IsNullOrEmpty(bibleKeySymbol))
-        {
-            throw new BackupFileServicesException("Could not find Bible Key Symbol");
-        }
-
-        _bibleKeySymbol = bibleKeySymbol.Trim('"');
-            
-        var mepsLanguageId = FindValue(lines, MepsLanguageIdToken);
-        if (string.IsNullOrEmpty(mepsLanguageId))
-        {
-            throw new BackupFileServicesException("Could not find Meps Language Id");
-        }
-
-        if (!int.TryParse(mepsLanguageId.Trim('"'), out _mepsLanguageId))
-        {
-            throw new BackupFileServicesException("Could not parse Meps Language Id");
-        }
-    }
-
-    private static string? FindValue(string[] lines, string token)
-    {
-        var line = Array.Find(lines, x =>
-            x.Trim().StartsWith(token, StringComparison.OrdinalIgnoreCase));
-
-        if (line == null)
-        {
-            return null;
-        }
-
-        var equalsPos = line.IndexOf('=', token.Length);
-        if (equalsPos < 0)
-        {
-            return null;
-        }
-
-        return line[(equalsPos + 1)..].TrimEnd(']').Trim();
     }
 }
