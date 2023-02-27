@@ -14,17 +14,19 @@ public class BibleNotesFile
     private const string BibleKeySymbolToken = "[BibleKeySymbol";
     private const string MepsLanguageIdToken = "[MepsLanguageId";
 
-    private readonly string _path;
-
     private Lazy<string[]> FileContents { get; }
 
     private readonly Lazy<PubNotesFileSection[]> _sections;
        
     public BibleNotesFile(string path)
     {
-        _path = path;
+        FileContents = new Lazy<string[]>(() => FileContentsFactory(path));
+        _sections = new Lazy<PubNotesFileSection[]>(SectionsFactory);
+    }
 
-        FileContents = new Lazy<string[]>(FileContentsFactory);
+    public BibleNotesFile(string[] fileContents)
+    {
+        FileContents = new Lazy<string[]>(() => FileContentsFactory(fileContents));
         _sections = new Lazy<PubNotesFileSection[]>(SectionsFactory);
     }
 
@@ -114,19 +116,24 @@ public class BibleNotesFile
         return result.ToArray();
     }
 
-    private string[] FileContentsFactory()
+    private string[] FileContentsFactory(string filePath)
     {
-        if (string.IsNullOrEmpty(_path))
+        if (string.IsNullOrEmpty(filePath))
         {
             throw new BackupFileServicesException("Bible notes file not specified");
         }
 
-        if (!File.Exists(_path))
+        if (!File.Exists(filePath))
         {
             throw new BackupFileServicesException("Bible notes file does not exist");
         }
 
-        return File.ReadAllLines(_path);
+        return File.ReadAllLines(filePath);
+    }
+
+    private string[] FileContentsFactory(string[] fileContents)
+    {
+        return fileContents;
     }
 
     private IEnumerable<BibleNote> GetNotes(PubNotesFileSection section)
