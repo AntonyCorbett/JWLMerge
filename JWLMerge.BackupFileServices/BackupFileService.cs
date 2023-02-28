@@ -673,11 +673,8 @@ public sealed class BackupFileService : IBackupFileService
     {
         ProgressMessage($"Reading database {databaseName}");
             
-        var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(databaseName, StringComparison.OrdinalIgnoreCase));
-        if (databaseEntry == null)
-        {
-            throw new BackupFileServicesException("Could not find database entry in jwlibrary file");
-        }
+        var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(databaseName, StringComparison.OrdinalIgnoreCase)) 
+                            ?? throw new BackupFileServicesException("Could not find database entry in jwlibrary file");
 
         Database result;
         var tmpFile = Path.GetTempFileName();
@@ -706,11 +703,8 @@ public sealed class BackupFileService : IBackupFileService
         using var archive = new ZipArchive(File.OpenRead(jwlibraryFile), ZipArchiveMode.Read);
         var manifest = ReadManifest(Path.GetFileName(jwlibraryFile), archive);
 
-        var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase));
-        if (databaseEntry == null)
-        {
-            throw new BackupFileServicesException($"Could not find database entry in ZipArchive: {jwlibraryFile}");
-        }
+        var databaseEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(manifest.UserDataBackup.DatabaseName, StringComparison.OrdinalIgnoreCase))
+            ?? throw new BackupFileServicesException($"Could not find database entry in ZipArchive: {jwlibraryFile}");
 
         var tmpFile = Path.GetTempFileName();
 
@@ -724,12 +718,9 @@ public sealed class BackupFileService : IBackupFileService
     {
         ProgressMessage("Reading manifest");
             
-        var manifestEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(ManifestEntryName, StringComparison.OrdinalIgnoreCase));
-        if (manifestEntry == null)
-        {
-            throw new BackupFileServicesException($"Could not find manifest entry in jwlibrary file: {filename}");
-        }
-
+        var manifestEntry = archive.Entries.FirstOrDefault(x => x.Name.Equals(ManifestEntryName, StringComparison.OrdinalIgnoreCase))
+            ?? throw new BackupFileServicesException($"Could not find manifest entry in jwlibrary file: {filename}");
+        
         using var stream = new StreamReader(manifestEntry.Open());
 
         var fileContents = stream.ReadToEnd();

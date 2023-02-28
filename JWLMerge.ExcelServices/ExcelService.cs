@@ -62,7 +62,7 @@ public class ExcelService : IExportToFileService
             }
                 
             var noteContent = noteTooLarge
-                ? note.NoteContent!.Substring(0, Int16.MaxValue)
+                ? note.NoteContent![..short.MaxValue]
                 : note.NoteContent;
 
             SetCellStringValue(worksheet, row, 1, note.PubSymbol);

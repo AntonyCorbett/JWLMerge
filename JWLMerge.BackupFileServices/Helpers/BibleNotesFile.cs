@@ -104,8 +104,10 @@ public class BibleNotesFile
 
             ++n;
 
-            currentSection = new PubNotesFileSection(new PubSymbolAndLanguage(pubSymbol, languageId));
-            currentSection.ContentStartLine = n + 1;
+            currentSection = new PubNotesFileSection(new PubSymbolAndLanguage(pubSymbol, languageId))
+            {
+                ContentStartLine = n + 1
+            };
         }
 
         if (currentSection != null)
@@ -116,7 +118,7 @@ public class BibleNotesFile
         return result.ToArray();
     }
 
-    private string[] FileContentsFactory(string filePath)
+    private static string[] FileContentsFactory(string filePath)
     {
         if (string.IsNullOrEmpty(filePath))
         {
@@ -131,7 +133,7 @@ public class BibleNotesFile
         return File.ReadAllLines(filePath);
     }
 
-    private string[] FileContentsFactory(string[] fileContents)
+    private static string[] FileContentsFactory(string[] fileContents)
     {
         return fileContents;
     }
