@@ -1,4 +1,6 @@
-﻿using JWLMerge.BackupFileServices.Helpers;
+﻿using System.Linq;
+using JWLMerge.BackupFileServices.Helpers;
+using JWLMerge.BackupFileServices.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace JWLMerge.Tests;
@@ -10,14 +12,19 @@ public class TestMerge : TestBase
     public void TestMerge1()
     {
         const int numRecords = 100;
-            
-        var file1 = CreateMockBackup(numRecords);
-        var file2 = CreateMockBackup(numRecords);
-        var file3 = CreateMockBackup(numRecords);
+        const int numFilesToMerge = 3;
+
+        var files = Enumerable.Range(1, numFilesToMerge).Select(_ => CreateMockBackup(numRecords))?.ToArray();
+        Assert.IsNotNull(files);
             
         var merger = new Merger();
-        var mergedDatabase = merger.Merge(new[] { file1.Database, file2.Database, file3.Database });
+        var mergedDatabase = merger.Merge(files.Select(x => x.Database));
             
         mergedDatabase.CheckValidity();
+        
+        Assert.AreEqual(numRecords * numFilesToMerge, mergedDatabase.UserMarks.Count);
+        Assert.IsTrue(mergedDatabase.Locations.Count > numRecords);
+        Assert.AreEqual(numRecords * numFilesToMerge, mergedDatabase.Notes.Count);
+        Assert.AreEqual(numRecords * numFilesToMerge, mergedDatabase.BlockRanges.Count);
     }
 }

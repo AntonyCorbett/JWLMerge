@@ -524,7 +524,7 @@ public sealed class BackupFileService : IBackupFileService
         Database backupDatabase,
         string originalDatabaseFilePathForSchema)
     {
-        string tmpFile = Path.GetTempFileName();
+        var tmpFile = Path.GetTempFileName();
 
         Log.Logger.Debug("Creating temporary database file {tmpFile}", tmpFile);
 

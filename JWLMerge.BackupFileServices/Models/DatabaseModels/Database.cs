@@ -10,11 +10,11 @@ public class Database
 {
     private readonly Dictionary<int, int> _bookmarkSlots = new();
         
-    private Lazy<Dictionary<string, Note>> _notesGuidIndex = null!;
+    private Lazy<Dictionary<Guid, Note>> _notesGuidIndex = null!;
     private Lazy<Dictionary<int, Note>> _notesIdIndex = null!;
     private Lazy<Dictionary<int, List<InputField>>> _inputFieldsIndex = null!;
     private Lazy<Dictionary<BibleBookChapterAndVerse, List<Note>>> _notesVerseIndex = null!;
-    private Lazy<Dictionary<string, UserMark>> _userMarksGuidIndex = null!;
+    private Lazy<Dictionary<Guid, UserMark>> _userMarksGuidIndex = null!;
     private Lazy<Dictionary<int, UserMark>> _userMarksIdIndex = null!;
     private Lazy<Dictionary<int, List<UserMark>>> _userMarksLocationIdIndex = null!;
     private Lazy<Dictionary<int, Location>> _locationsIdIndex = null!;
@@ -108,9 +108,9 @@ public class Database
             TagMaps.Add(tagMap);
         }
 
-        if (_notesGuidIndex.IsValueCreated)
+        if (_notesGuidIndex.IsValueCreated && Guid.TryParse(value.Guid, out var g))
         {
-            _notesGuidIndex.Value.Add(value.Guid, value);
+            _notesGuidIndex.Value.TryAdd(g, value);
         }
 
         if (_notesIdIndex.IsValueCreated)
@@ -160,9 +160,9 @@ public class Database
 
         UserMarks.Add(value);
 
-        if (_userMarksGuidIndex.IsValueCreated)
+        if (_userMarksGuidIndex.IsValueCreated && Guid.TryParse(value.UserMarkGuid, out var g))
         {
-            _userMarksGuidIndex.Value.Add(value.UserMarkGuid, value);
+            _userMarksGuidIndex.Value.TryAdd(g, value);
         }
 
         if (_userMarksIdIndex.IsValueCreated)
@@ -199,10 +199,7 @@ public class Database
         if (_locationsValueIndex.IsValueCreated)
         {
             var key = GetLocationByValueKey(value);
-            if (!_locationsValueIndex.Value.ContainsKey(key))
-            {
-                _locationsValueIndex.Value.Add(key, value);
-            }
+            _locationsValueIndex.Value.TryAdd(key, value);
         }
 
         if (_locationsBibleChapterIndex.IsValueCreated && 
@@ -214,16 +211,18 @@ public class Database
                 value.ChapterNumber.Value,
                 value.KeySymbol);
 
-            if (!_locationsBibleChapterIndex.Value.ContainsKey(key))
-            {
-                _locationsBibleChapterIndex.Value.Add(key, value);
-            }
+            _locationsBibleChapterIndex.Value.TryAdd(key, value);
         }
     }
 
     public Note? FindNote(string noteGuid)
     {
-        return _notesGuidIndex.Value.TryGetValue(noteGuid, out var note) ? note : null;
+        if (!Guid.TryParse(noteGuid, out var g))
+        {
+            return null;
+        }
+
+        return _notesGuidIndex.Value.TryGetValue(g, out var note) ? note : null;
     }
 
     public Note? FindNote(int noteId)
@@ -238,7 +237,12 @@ public class Database
 
     public UserMark? FindUserMark(string userMarkGuid)
     {
-        return _userMarksGuidIndex.Value.TryGetValue(userMarkGuid, out var userMark) ? userMark : null;
+        if (!Guid.TryParse(userMarkGuid, out var g))
+        {
+            return null;
+        }
+
+        return _userMarksGuidIndex.Value.TryGetValue(g, out var userMark) ? userMark : null;
     }
 
     public UserMark? FindUserMark(int userMarkId)
@@ -327,9 +331,9 @@ public class Database
         return slot;
     }
 
-    private Dictionary<string, Note> NoteIndexValueFactory()
+    private Dictionary<Guid, Note> NoteIndexValueFactory()
     {
-        return Notes.ToDictionary(note => note.Guid);
+        return Notes.ToDictionary(note => Guid.Parse(note.Guid));
     }
 
     private Dictionary<int, List<InputField>> InputFieldsIndexValueFactory()
@@ -387,9 +391,9 @@ public class Database
         return result;
     }
 
-    private Dictionary<string, UserMark> UserMarkIndexValueFactory()
+    private Dictionary<Guid, UserMark> UserMarkIndexValueFactory()
     {
-        return UserMarks.ToDictionary(userMark => userMark.UserMarkGuid);
+        return UserMarks.ToDictionary(userMark => Guid.Parse(userMark.UserMarkGuid));
     }
 
     private Dictionary<int, UserMark> UserMarkIdIndexValueFactory()
@@ -427,10 +431,7 @@ public class Database
         foreach (var location in Locations)
         {
             var key = GetLocationByValueKey(location);
-            if (!result.ContainsKey(key)) 
-            {
-                result.Add(key, location);
-            }
+            result.TryAdd(key, location);
         }
 
         return result;
@@ -449,10 +450,7 @@ public class Database
                     location.ChapterNumber.Value,
                     location.KeySymbol);
 
-                if (!result.ContainsKey(key))
-                {
-                    result.Add(key, location);
-                }
+                result.TryAdd(key, location);
             }
         }
 
@@ -498,11 +496,8 @@ public class Database
 
         foreach (var bookmark in Bookmarks)
         {
-            string key = GetBookmarkKey(bookmark.LocationId, bookmark.PublicationLocationId);
-            if (!result.ContainsKey(key))
-            {
-                result.Add(key, bookmark);
-            }
+            var key = GetBookmarkKey(bookmark.LocationId, bookmark.PublicationLocationId);
+            result.TryAdd(key, bookmark);
         }
 
         return result;
@@ -562,11 +557,11 @@ public class Database
 
     private void ReinitializeIndexes()
     {
-        _notesGuidIndex = new Lazy<Dictionary<string, Note>>(NoteIndexValueFactory);
+        _notesGuidIndex = new Lazy<Dictionary<Guid, Note>>(NoteIndexValueFactory);
         _notesIdIndex = new Lazy<Dictionary<int, Note>>(NoteIdIndexValueFactory);
         _inputFieldsIndex = new Lazy<Dictionary<int, List<InputField>>>(InputFieldsIndexValueFactory);
         _notesVerseIndex = new Lazy<Dictionary<BibleBookChapterAndVerse, List<Note>>>(NoteVerseIndexValueFactory);
-        _userMarksGuidIndex = new Lazy<Dictionary<string, UserMark>>(UserMarkIndexValueFactory);
+        _userMarksGuidIndex = new Lazy<Dictionary<Guid, UserMark>>(UserMarkIndexValueFactory);
         _userMarksIdIndex = new Lazy<Dictionary<int, UserMark>>(UserMarkIdIndexValueFactory);
         _userMarksLocationIdIndex = new Lazy<Dictionary<int, List<UserMark>>>(UserMarksLocationIdIndexValueFactory);
         _locationsIdIndex = new Lazy<Dictionary<int, Location>>(LocationsIndexValueFactory);

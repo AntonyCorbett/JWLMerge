@@ -316,13 +316,11 @@ internal sealed class MainViewModel : ObservableObject
         {
             _snackbarService.Enqueue("Error - Bible notes file is in use by another process!");
             Log.Logger.Error(ex, "Bible notes file is in use: {filePath}", filePath);
-            EventTracker.Error(ex, "Importing notes");
         }
         catch (UnauthorizedAccessException ex)
         {
             _snackbarService.Enqueue("Error - could not gain access to create file!");
             Log.Logger.Error(ex, "Could not gain access to create file: {filePath}", filePath);
-            EventTracker.Error(ex, "Importing notes");
         }
         catch (Exception ex)
         {
