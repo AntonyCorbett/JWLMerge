@@ -28,7 +28,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge", "JWLMerge\JWLMer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.ExcelServices", "JWLMerge.ExcelServices\JWLMerge.ExcelServices.csproj", "{F8D64B6C-C475-4B5E-8B32-D717380F0F36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWLMerge.ImportExportServices", "JWLMerge.ImportExportServices\JWLMerge.ImportExportServices.csproj", "{97033B43-B1CE-48EB-B022-05BFD156AB47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JWLMerge.ImportExportServices", "JWLMerge.ImportExportServices\JWLMerge.ImportExportServices.csproj", "{97033B43-B1CE-48EB-B022-05BFD156AB47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
