@@ -56,6 +56,7 @@ internal sealed class DialogService : IDialogService
 
         await DialogHost.Show(
             dialog,
+            "MainDialogHost",
             (object _, DialogClosingEventArgs _) => _isDialogVisible = false).ConfigureAwait(false);
     }
 
