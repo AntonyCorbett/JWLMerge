@@ -1,5 +1,9 @@
 # JWLMerge <img src="https://ci.appveyor.com/api/projects/status/2nl90i7apndaxcac?svg=true">
 
+## NOW ARCHIVED
+
+Note that this project is no longer compatible with the latest version of the JW Library. In July 2023 the database schema was changed from v8 to v13 and I will not be updating JWLMerge to support the new version. In Jan 2023, the JW Library licence agreement was strengthened, but it also gave opportunity for 3rd party developers to apply for official permission to do the sort of work that is present in JWLMerge. I made an application in January but have not received permission, and in these circumstances feel it best to archive the project. Thank you for your understanding, and for your valuable input and feedback on the project over the last 6 years.
+
 ### Introduction
 
 JWLMerge is a utility to merge 2 or more .jwlibrary backup files. These backup files are created using the JW Library® backup command, and contain your personal notes, highlighting, etc.
